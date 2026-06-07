@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+}
+
+model Tour {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  title            String
+  category         String
+  shortDescription String
+  overview         String   @db.Text
+  highlights       String[]
+  duration         String
+  groupSize        String
+  departurePoint   String?
+  languages        String[]
+  priceFrom        Float?
+  priceCurrency    String   @default("USD")
+  included         String[]
+  excluded         String[]
+  itinerary        Json?
+  heroImage        String?
+  images           String[]
+  metaTitle        String?
+  metaDescription  String?
+  published        Boolean  @default(false)
+  featured         Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Destination {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  heroImage       String?
+  overview        String   @db.Text
+  highlights      String[]
+  metaTitle       String?
+  metaDescription String?
+  published       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model BlogPost {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  excerpt         String
+  contentText     String   @default("") @db.Text
+  category        String   @default("Travel Guide")
+  tags            String[]
+  content         Json?
+  heroImage       String?
+  metaTitle       String?
+  metaDescription String?
+  published       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Inquiry {
+  id              String    @id @default(cuid())
+  name            String
+  email           String?
+  phone           String?
+  whatsapp        String?
+  arrivalDate     DateTime?
+  departureDate   DateTime?
+  travelers       Int?
+  nationality     String?
+  budgetRange     String?
+  hotelCategory   String?
+  destinations    String[]
+  tourSlug        String?
+  message         String?   @db.Text
+  type            String    @default("GENERAL")
+  status          String    @default("NEW")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  nationality String?
+  rating      Int
+  text        String   @db.Text
+  source      String?
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model FAQ {
+  id       String @id @default(cuid())
+  question String
+  answer   String @db.Text
+  category String @default("General")
+  order    Int    @default(0)
+  active   Boolean @default(true)
+}
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String
+  category  String?
+  relatedTourSlug String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+}

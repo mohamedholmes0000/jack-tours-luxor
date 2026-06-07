@@ -1,0 +1,72 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { getFaqsSafe } from "@/lib/data/public";
+import { JsonLd, faqPageJsonLd } from "@/lib/seo";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
+
+export const metadata: Metadata = {
+  title: "FAQ",
+  description:
+    "Answers about booking private Luxor tours, Egypt itineraries, payment basics, safety, and custom trips with Jack Tours Luxor.",
+};
+
+export default async function FAQPage() {
+  const faqs = await getFaqsSafe();
+  const categories = Array.from(new Set(faqs.map((faq) => faq.category)));
+  return (
+    <>
+      <JsonLd data={faqPageJsonLd(faqs)} />
+      <section className="bg-[var(--color-navy)] py-20 text-white md:py-28">
+        <div className="container-premium">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
+            FAQ
+          </p>
+          <h1 className="mt-5 max-w-4xl font-serif text-5xl font-semibold leading-tight md:text-7xl">
+            Clear answers before you plan Egypt.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-white/76">
+            Practical guidance on booking, private tours, payments, safety, and custom itineraries.
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+        <div className="container-premium space-y-12">
+          {categories.map((category) => (
+            <div key={category}>
+              <h2 className="font-serif text-4xl font-semibold text-[var(--color-navy)]">{category}</h2>
+              <div className="mt-5 space-y-4">
+                {faqs
+                  .filter((item) => item.category === category)
+                  .map((item, index) => (
+                    <details key={item.question} className="border border-[var(--color-gray-100)] bg-white p-5" open={index === 0}>
+                      <summary className="cursor-pointer font-serif text-2xl font-semibold text-[var(--color-navy)]">
+                        {item.question}
+                      </summary>
+                      <p className="mt-3 text-sm leading-7 text-[var(--color-gray-600)]">{item.answer}</p>
+                    </details>
+                  ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[var(--color-sand)] py-16">
+        <div className="container-premium flex flex-col justify-between gap-8 md:flex-row md:items-center">
+          <h2 className="max-w-2xl font-serif text-4xl font-semibold text-[var(--color-navy)]">
+            Still choosing the right Egypt plan?
+          </h2>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link className="btn-secondary" href="/trip-planner">
+              Trip Planner
+            </Link>
+            <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
+              Ask on WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
