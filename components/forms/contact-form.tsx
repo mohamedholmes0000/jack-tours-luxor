@@ -46,7 +46,7 @@ export function ContactForm() {
 
   if (successUrl) {
     return (
-      <div className="border border-[var(--color-gray-100)] bg-[var(--color-sand)] p-6">
+      <div className="border border-[rgb(214_173_84_/_28%)] bg-[var(--color-sand)] p-6 shadow-[0_20px_55px_rgb(87_59_22_/_12%)]">
         <h2 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">
           Message prepared for WhatsApp.
         </h2>
@@ -61,7 +61,7 @@ export function ContactForm() {
   }
 
   return (
-    <form className="border border-[var(--color-gray-100)] bg-white p-5 shadow-xl md:p-8" onSubmit={handleSubmit(onSubmit)}>
+    <form className="border border-[rgb(214_173_84_/_28%)] bg-white/90 p-5 shadow-[0_24px_70px_rgb(87_59_22_/_14%)] backdrop-blur md:p-8" onSubmit={handleSubmit(onSubmit)}>
       <div className="grid gap-5 md:grid-cols-2">
         <FormField label="Name" error={errors.name?.message}>
           <input className={inputClassName} {...register("name")} />

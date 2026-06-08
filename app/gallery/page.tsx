@@ -25,11 +25,9 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
 
   return (
     <>
-      <section className="bg-[var(--color-navy)] py-20 text-white md:py-28">
-        <div className="container-premium">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
-            Gallery
-          </p>
+      <section className="section-dark pattern-overlay py-20 text-white md:py-28">
+        <div className="container-premium relative">
+          <p className="eyebrow text-[var(--color-gold-light)]">Gallery</p>
           <h1 className="mt-5 max-w-4xl font-serif text-5xl font-semibold leading-tight md:text-7xl">
             Egypt, framed for private travel.
           </h1>
@@ -39,7 +37,7 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
         </div>
       </section>
 
-      <section className="bg-white py-8">
+      <section className="section-dark border-y border-[rgb(214_173_84_/_22%)] py-8">
         <div className="container-premium flex gap-3 overflow-x-auto pb-2">
           {categories.map((category) => (
             <Link
@@ -48,7 +46,7 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
               className={`shrink-0 border px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] ${
                 active === category
                   ? "border-[var(--color-gold)] bg-[var(--color-gold)] text-[var(--color-navy)]"
-                  : "border-[var(--color-gray-100)] text-[var(--color-navy)]"
+                  : "border-[rgb(214_173_84_/_32%)] text-white"
               }`}
             >
               {category}
@@ -57,12 +55,12 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {visibleImages.map((image, index) => (
             <figure
               key={image.url}
-              className={`group overflow-hidden bg-white shadow-sm ${index % 5 === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
+              className={`group overflow-hidden border border-[rgb(214_173_84_/_20%)] bg-white shadow-[0_16px_45px_rgb(87_59_22_/_8%)] ${index % 5 === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
             >
               <div className="relative aspect-[4/5] overflow-hidden">
                 <Image
@@ -81,9 +79,9 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
         </div>
       </section>
 
-      <section className="bg-[var(--color-sand)] py-16">
+      <section className="section-dark py-16">
         <div className="container-premium flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <h2 className="max-w-2xl font-serif text-4xl font-semibold text-[var(--color-navy)]">
+          <h2 className="max-w-2xl font-serif text-4xl font-semibold text-white">
             Want a private Egypt itinerary around these places?
           </h2>
           <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">

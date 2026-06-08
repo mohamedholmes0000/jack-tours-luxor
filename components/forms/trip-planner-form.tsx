@@ -85,12 +85,12 @@ export function TripPlannerForm() {
   }
 
   return (
-    <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-xl md:p-8">
+    <div className="border border-[rgb(214_173_84_/_28%)] bg-white/90 p-5 shadow-[0_24px_70px_rgb(87_59_22_/_14%)] backdrop-blur md:p-8">
       <div className="grid gap-3 sm:grid-cols-4">
         {steps.map((label, index) => (
           <div key={label} className="min-w-0">
             <div
-              className={`h-1.5 ${index <= step ? "bg-[var(--color-gold)]" : "bg-[var(--color-gray-100)]"}`}
+              className={`h-1.5 ${index <= step ? "bg-[var(--color-gold)]" : "bg-[rgb(214_173_84_/_18%)]"}`}
             />
             <p className="mt-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-navy)]">
               {index + 1}. {label}
@@ -100,7 +100,7 @@ export function TripPlannerForm() {
       </div>
 
       {successUrl ? (
-        <div className="mt-10 bg-[var(--color-sand)] p-6">
+        <div className="mt-10 border border-[rgb(214_173_84_/_26%)] bg-[var(--color-sand)] p-6">
           <h2 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">
             Your trip brief is ready for WhatsApp.
           </h2>
@@ -144,7 +144,7 @@ export function TripPlannerForm() {
                 </p>
                 <div className="mt-4 grid gap-3">
                   {destinations.slice(0, 5).map((destination) => (
-                    <label key={destination.name} className="flex min-h-12 items-center gap-3 border border-[var(--color-gray-100)] px-4">
+                    <label key={destination.name} className="flex min-h-12 items-center gap-3 border border-[rgb(214_173_84_/_24%)] bg-[rgba(255,250,240,0.68)] px-4">
                       <input type="checkbox" value={destination.name} {...register("destinations")} />
                       <span className="text-sm font-semibold text-[var(--color-gray-900)]">{destination.name}</span>
                     </label>
@@ -158,7 +158,7 @@ export function TripPlannerForm() {
                 </p>
                 <div className="mt-4 grid gap-3">
                   {interestOptions.map((interest) => (
-                    <label key={interest} className="flex min-h-12 items-center gap-3 border border-[var(--color-gray-100)] px-4">
+                    <label key={interest} className="flex min-h-12 items-center gap-3 border border-[rgb(214_173_84_/_24%)] bg-[rgba(255,250,240,0.68)] px-4">
                       <input type="checkbox" value={interest} {...register("interests")} />
                       <span className="text-sm font-semibold text-[var(--color-gray-900)]">{interest}</span>
                     </label>

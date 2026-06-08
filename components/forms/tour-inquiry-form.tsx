@@ -54,12 +54,10 @@ export function TourInquiryForm({ tourTitle, tourSlug }: TourInquiryFormProps) {
   }
 
   return (
-    <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-xl md:p-8">
+    <div className="border border-[rgb(214_173_84_/_28%)] bg-white/90 p-5 shadow-[0_24px_70px_rgb(87_59_22_/_14%)] backdrop-blur md:p-8">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-gold)]">
-            Tour inquiry
-          </p>
+          <p className="eyebrow">Tour inquiry</p>
           <h2 className="mt-3 font-serif text-4xl font-semibold text-[var(--color-navy)]">
             Ask for dates and availability.
           </h2>
@@ -71,7 +69,7 @@ export function TourInquiryForm({ tourTitle, tourSlug }: TourInquiryFormProps) {
         ) : null}
       </div>
       {successUrl ? (
-        <p className="mt-5 bg-[var(--color-sand)] p-4 text-sm leading-7 text-[var(--color-gray-600)]">
+        <p className="mt-5 border border-[rgb(214_173_84_/_22%)] bg-[var(--color-sand)] p-4 text-sm leading-7 text-[var(--color-gray-600)]">
           Your inquiry message is ready. WhatsApp should have opened in a new tab.
         </p>
       ) : (

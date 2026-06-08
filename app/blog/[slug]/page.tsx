@@ -56,10 +56,10 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
           sizes="100vw"
           className="object-cover opacity-65"
         />
-        <div className="absolute inset-0 bg-[rgba(13,27,42,0.64)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06111f] via-[rgba(6,17,31,0.76)] to-[rgba(6,17,31,0.2)]" />
         <div className="container-premium relative flex min-h-[60vh] items-end py-16">
           <div className="max-w-4xl">
-            <Link href="/blog" className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
+            <Link href="/blog" className="eyebrow text-[var(--color-gold-light)]">
               Blog
             </Link>
             <h1 className="mt-5 font-serif text-5xl font-semibold leading-tight md:text-7xl">
@@ -72,7 +72,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
         </div>
       </section>
 
-      <article className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <article className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-12 lg:grid-cols-[minmax(0,760px)_320px]">
           <div className="space-y-10">
             <p className="font-serif text-3xl leading-snug text-[var(--color-navy)]">{article.excerpt}</p>
@@ -83,8 +83,8 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
               </section>
             ))}
           </div>
-          <aside className="border border-[var(--color-gray-100)] bg-white p-6 shadow-xl lg:self-start">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">
+          <aside className="border border-[rgb(214_173_84_/_28%)] bg-white/88 p-6 shadow-[0_24px_70px_rgb(87_59_22_/_12%)] lg:self-start">
+            <p className="eyebrow">
               Plan with a local team
             </p>
             <p className="mt-4 text-sm leading-7 text-[var(--color-gray-600)]">

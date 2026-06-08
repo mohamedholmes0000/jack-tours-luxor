@@ -14,11 +14,9 @@ export default async function BlogPage() {
   const blogArticles = await getBlogArticlesSafe();
   return (
     <>
-      <section className="bg-[var(--color-navy)] py-20 text-white md:py-28">
-        <div className="container-premium">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
-            Blog
-          </p>
+      <section className="section-dark pattern-overlay py-20 text-white md:py-28">
+        <div className="container-premium relative">
+          <p className="eyebrow text-[var(--color-gold-light)]">Blog</p>
           <h1 className="mt-5 max-w-4xl font-serif text-5xl font-semibold leading-tight md:text-7xl">
             Practical notes for planning private Egypt travel.
           </h1>
@@ -28,10 +26,10 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-7 md:grid-cols-2">
           {blogArticles.map((article) => (
-            <article key={article.slug} className="overflow-hidden border border-[var(--color-gray-100)] bg-white shadow-sm">
+            <article key={article.slug} className="overflow-hidden border border-[rgb(214_173_84_/_24%)] bg-white/86 shadow-[0_18px_50px_rgb(87_59_22_/_9%)]">
               <Link href={`/blog/${article.slug}`} className="relative block aspect-[16/10] overflow-hidden">
                 <Image
                   src={article.heroImage}
@@ -55,9 +53,9 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
+      <section className="section-dark py-16">
         <div className="container-premium flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <h2 className="max-w-2xl font-serif text-4xl font-semibold text-[var(--color-navy)]">
+          <h2 className="max-w-2xl font-serif text-4xl font-semibold text-white">
             Have a specific Egypt planning question?
           </h2>
           <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">

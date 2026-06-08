@@ -13,19 +13,19 @@ const navItems = [
 
 export function Navbar() {
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-gray-100)] bg-white/94 backdrop-blur">
-      <div className="container-premium flex min-h-20 items-center justify-between gap-6">
+    <header className="sticky top-0 z-40 border-b border-[rgb(214_173_84_/_18%)] bg-[rgba(6,17,31,0.88)] text-white shadow-[0_18px_45px_rgb(0_0_0_/_24%)] backdrop-blur-xl">
+      <div className="container-premium flex min-h-20 flex-wrap items-center justify-between gap-x-6">
         <Link href="/" className="flex flex-col leading-none">
-          <span className="font-serif text-2xl font-semibold text-[var(--color-navy)]">
-            Jack Tours Luxor
+          <span className="font-serif text-2xl font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)]">
+            Jack
           </span>
-          <span className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.24em] text-[var(--color-gold)]">
-            Egypt Private Tours
+          <span className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/72">
+            Tours Luxor
           </span>
         </Link>
-        <nav className="hidden items-center gap-5 text-sm font-semibold text-[var(--color-navy)] lg:flex">
+        <nav className="order-3 -mx-2 flex w-[calc(100%+1rem)] items-center gap-4 overflow-x-auto px-2 pb-3 text-sm font-semibold text-white/78 lg:order-none lg:mx-0 lg:w-auto lg:gap-5 lg:overflow-visible lg:px-0 lg:pb-0">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:text-[var(--color-gold)]">
+            <Link key={item.href} href={item.href} className="transition hover:text-[var(--color-gold-light)]">
               {item.label}
             </Link>
           ))}

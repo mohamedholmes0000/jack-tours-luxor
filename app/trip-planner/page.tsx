@@ -21,13 +21,11 @@ export default function TripPlannerPage() {
           sizes="100vw"
           className="object-cover opacity-55"
         />
-        <div className="absolute inset-0 bg-[rgba(13,27,42,0.66)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06111f] via-[rgba(6,17,31,0.82)] to-[rgba(6,17,31,0.34)]" />
         <div className="container-premium relative py-20 md:py-28">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
-            Trip Planner
-          </p>
+          <p className="eyebrow text-[var(--color-gold-light)]">Trip Planner</p>
           <h1 className="mt-5 max-w-4xl font-serif text-5xl font-semibold leading-tight md:text-7xl">
-            Shape your private Egypt journey in four short steps.
+            Shape your private Egypt journey <span className="italic text-[var(--color-gold-light)]">in four short steps.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78">
             Share dates, destinations, travel style, and contact details. We prepare a clean
@@ -39,7 +37,7 @@ export default function TripPlannerPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-12 md:py-20">
+      <section className="section-ivory py-12 md:py-20">
         <div className="container-premium">
           <TripPlannerForm />
         </div>

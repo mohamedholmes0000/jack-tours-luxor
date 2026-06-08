@@ -48,12 +48,12 @@ export default async function DestinationDetailPage({ params }: DestinationDetai
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-[rgba(13,27,42,0.64)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06111f] via-[rgba(6,17,31,0.76)] to-[rgba(6,17,31,0.2)]" />
         <div className="container-premium relative flex min-h-[62vh] items-end py-16">
           <div className="max-w-3xl">
             <Link
               href="/destinations"
-              className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]"
+              className="eyebrow text-[var(--color-gold-light)]"
             >
               Destinations
             </Link>
@@ -65,18 +65,16 @@ export default async function DestinationDetailPage({ params }: DestinationDetai
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-gold)]">
-              Highlights
-            </p>
+            <p className="eyebrow">Highlights</p>
             <h2 className="mt-4 font-serif text-4xl font-semibold text-[var(--color-navy)]">
               Shape this destination into a private Egypt itinerary.
             </h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {destination.highlights.map((highlight) => (
-                <div key={highlight} className="border border-[var(--color-gray-100)] bg-white p-5">
+                <div key={highlight} className="border border-[rgb(214_173_84_/_24%)] bg-white/86 p-5 shadow-[0_14px_40px_rgb(87_59_22_/_7%)]">
                   <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">
                     {highlight}
                   </p>
@@ -84,11 +82,11 @@ export default async function DestinationDetailPage({ params }: DestinationDetai
               ))}
             </div>
           </div>
-          <aside className="border border-[var(--color-gray-100)] bg-white p-6 shadow-xl lg:self-start">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">
+          <aside className="border border-[rgb(214_173_84_/_28%)] bg-[linear-gradient(180deg,#102a45_0%,#06111f_100%)] p-6 text-white shadow-[0_24px_70px_rgb(0_0_0_/_28%)] lg:self-start">
+            <p className="eyebrow text-[var(--color-gold-light)]">
               Plan {destination.name}
             </p>
-            <p className="mt-4 text-sm leading-7 text-[var(--color-gray-600)]">
+            <p className="mt-4 text-sm leading-7 text-white/68">
               Ask us how to combine {destination.name} with Luxor, Cairo, Aswan, or a Nile cruise.
             </p>
             <div className="mt-6 flex flex-col gap-3">

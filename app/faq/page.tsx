@@ -16,11 +16,9 @@ export default async function FAQPage() {
   return (
     <>
       <JsonLd data={faqPageJsonLd(faqs)} />
-      <section className="bg-[var(--color-navy)] py-20 text-white md:py-28">
-        <div className="container-premium">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
-            FAQ
-          </p>
+      <section className="section-dark pattern-overlay py-20 text-white md:py-28">
+        <div className="container-premium relative">
+          <p className="eyebrow text-[var(--color-gold-light)]">FAQ</p>
           <h1 className="mt-5 max-w-4xl font-serif text-5xl font-semibold leading-tight md:text-7xl">
             Clear answers before you plan Egypt.
           </h1>
@@ -30,7 +28,7 @@ export default async function FAQPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium space-y-12">
           {categories.map((category) => (
             <div key={category}>
@@ -39,7 +37,7 @@ export default async function FAQPage() {
                 {faqs
                   .filter((item) => item.category === category)
                   .map((item, index) => (
-                    <details key={item.question} className="border border-[var(--color-gray-100)] bg-white p-5" open={index === 0}>
+                    <details key={item.question} className="border border-[rgb(214_173_84_/_24%)] bg-white/86 p-5 shadow-[0_12px_34px_rgb(87_59_22_/_7%)]" open={index === 0}>
                       <summary className="cursor-pointer font-serif text-2xl font-semibold text-[var(--color-navy)]">
                         {item.question}
                       </summary>
@@ -52,9 +50,9 @@ export default async function FAQPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-sand)] py-16">
+      <section className="section-dark py-16">
         <div className="container-premium flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <h2 className="max-w-2xl font-serif text-4xl font-semibold text-[var(--color-navy)]">
+          <h2 className="max-w-2xl font-serif text-4xl font-semibold text-white">
             Still choosing the right Egypt plan?
           </h2>
           <div className="flex flex-col gap-3 sm:flex-row">

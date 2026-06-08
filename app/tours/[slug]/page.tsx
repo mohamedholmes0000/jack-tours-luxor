@@ -45,7 +45,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
   return (
     <>
       <JsonLd data={touristTripJsonLd(tour)} />
-      <section className="relative min-h-[68vh] overflow-hidden bg-[var(--color-navy)] text-white">
+      <section className="relative min-h-[72vh] overflow-hidden bg-[var(--color-navy)] text-white">
         <Image
           src={tour.heroImage}
           alt={tour.title}
@@ -54,12 +54,13 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-[rgba(13,27,42,0.62)]" />
-        <div className="container-premium relative flex min-h-[68vh] items-end py-16">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06111f] via-[rgba(6,17,31,0.72)] to-[rgba(6,17,31,0.18)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-transparent to-[rgba(6,17,31,0.18)]" />
+        <div className="container-premium relative flex min-h-[72vh] items-end py-16">
           <div className="max-w-4xl">
             <Link
               href="/tours"
-              className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]"
+              className="eyebrow text-[var(--color-gold-light)]"
             >
               Tours / {tour.category}
             </Link>
@@ -71,19 +72,19 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
         </div>
       </section>
 
-      <section className="bg-white">
-        <div className="container-premium grid gap-px bg-[var(--color-gray-100)] md:grid-cols-4">
+      <section className="section-dark border-y border-[rgb(214_173_84_/_22%)]">
+        <div className="container-premium grid gap-px bg-[rgb(214_173_84_/_22%)] md:grid-cols-4">
           {[
             ["Duration", tour.duration],
             ["Group size", tour.groupSize],
             ["Departure", tour.departurePoint],
             ["Languages", tour.languages.join(", ")],
           ].map(([label, value]) => (
-            <div key={label} className="bg-white p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold)]">
+            <div key={label} className="bg-[rgba(6,17,31,0.9)] p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-light)]">
                 {label}
               </p>
-              <p className="mt-2 font-serif text-2xl font-semibold text-[var(--color-navy)]">
+              <p className="mt-2 font-serif text-2xl font-semibold text-white">
                 {value}
               </p>
             </div>
@@ -91,13 +92,11 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-16">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-gold)]">
-                Overview
-              </p>
+              <p className="eyebrow">Overview</p>
               <p className="mt-5 text-xl leading-9 text-[var(--color-gray-900)]">{tour.overview}</p>
             </div>
 
@@ -105,7 +104,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
               <h2 className="font-serif text-4xl font-semibold text-[var(--color-navy)]">Highlights</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 {tour.highlights.map((highlight) => (
-                  <div key={highlight} className="border border-[var(--color-gray-100)] bg-white p-5">
+                  <div key={highlight} className="border border-[rgb(214_173_84_/_24%)] bg-white/82 p-5 shadow-[0_16px_45px_rgb(87_59_22_/_7%)]">
                     <p className="text-sm font-semibold leading-7 text-[var(--color-gray-900)]">
                       {highlight}
                     </p>
@@ -120,7 +119,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
                 {tour.itinerary.map((item, index) => (
                   <details
                     key={item.title}
-                    className="border border-[var(--color-gray-100)] bg-white p-5"
+                    className="border border-[rgb(214_173_84_/_24%)] bg-white/86 p-5 shadow-[0_16px_45px_rgb(87_59_22_/_7%)]"
                     open={index === 0}
                   >
                     <summary className="cursor-pointer font-serif text-2xl font-semibold text-[var(--color-navy)]">
@@ -139,7 +138,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
                 <h2 className="font-serif text-4xl font-semibold text-[var(--color-navy)]">Included</h2>
                 <ul className="mt-5 space-y-3 text-sm leading-7 text-[var(--color-gray-600)]">
                   {tour.included.map((item) => (
-                    <li key={item}>- {item}</li>
+                    <li key={item} className="border-b border-[rgb(214_173_84_/_16%)] pb-2">{item}</li>
                   ))}
                 </ul>
               </div>
@@ -147,7 +146,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
                 <h2 className="font-serif text-4xl font-semibold text-[var(--color-navy)]">Excluded</h2>
                 <ul className="mt-5 space-y-3 text-sm leading-7 text-[var(--color-gray-600)]">
                   {tour.excluded.map((item) => (
-                    <li key={item}>- {item}</li>
+                    <li key={item} className="border-b border-[rgb(214_173_84_/_16%)] pb-2">{item}</li>
                   ))}
                 </ul>
               </div>
@@ -174,14 +173,14 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
           </div>
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
-            <div className="border border-[var(--color-gray-100)] bg-white p-6 shadow-xl">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">
+            <div className="border border-[rgb(214_173_84_/_28%)] bg-[linear-gradient(180deg,#102a45_0%,#06111f_100%)] p-6 text-white shadow-[0_24px_70px_rgb(0_0_0_/_28%)]">
+              <p className="eyebrow text-[var(--color-gold-light)]">
                 Private inquiry
               </p>
-              <p className="mt-3 font-serif text-3xl font-semibold text-[var(--color-navy)]">
+              <p className="mt-3 font-serif text-3xl font-semibold text-white">
                 {formatPrice(tour)}
               </p>
-              <p className="mt-4 text-sm leading-7 text-[var(--color-gray-600)]">
+              <p className="mt-4 text-sm leading-7 text-white/68">
                 Ask for availability, exact pricing, or a tailored version of this tour.
               </p>
               <div className="mt-6 flex flex-col gap-3">
@@ -197,7 +196,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
                   Plan Similar Trip
                 </Link>
               </div>
-              <div className="mt-6 border-t border-[var(--color-gray-100)] pt-6 text-sm leading-7 text-[var(--color-gray-600)]">
+              <div className="mt-6 border-t border-white/10 pt-6 text-sm leading-7 text-white/62">
                 <p>Response promise: practical guidance, not a generic package reply.</p>
               </div>
             </div>

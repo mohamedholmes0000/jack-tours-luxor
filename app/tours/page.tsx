@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { TourCard } from "@/components/tours/tour-card";
@@ -26,29 +27,36 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
 
   return (
     <>
-      <section className="bg-[var(--color-navy)] py-20 text-white md:py-28">
-        <div className="container-premium">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
-            Private Egypt Tours
-          </p>
+      <section className="relative overflow-hidden bg-[var(--color-navy)] py-20 text-white md:py-32">
+        <Image
+          src="https://images.unsplash.com/photo-1602258409022-1db00d4a9d31?auto=format&fit=crop&w=1800&q=82"
+          alt="Luxor temple at golden hour"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-46"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06111f] via-[rgba(6,17,31,0.82)] to-[rgba(6,17,31,0.35)]" />
+        <div className="container-premium relative">
+          <p className="eyebrow text-[var(--color-gold-light)]">Private Egypt Tours</p>
           <h1 className="mt-5 max-w-4xl font-serif text-5xl font-semibold leading-tight md:text-7xl">
-            Premium tours with a WhatsApp-first planning flow.
+            Handpicked journeys <span className="italic text-[var(--color-gold-light)]">just for you.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/76">
-            Browse the first MVP collection, then ask for availability, refinements, or a private
+            Browse polished starting points, then ask for availability, refinements, or a private
             proposal directly on WhatsApp.
           </p>
         </div>
       </section>
 
-      <section className="bg-white py-8">
+      <section className="section-dark border-y border-[rgb(214_173_84_/_22%)] py-8">
         <div className="container-premium flex gap-3 overflow-x-auto pb-2">
           <Link
             href="/tours"
             className={`shrink-0 border px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] ${
               !activeCategory
                 ? "border-[var(--color-gold)] bg-[var(--color-gold)] text-[var(--color-navy)]"
-                : "border-[var(--color-gray-100)] text-[var(--color-navy)]"
+                : "border-[rgb(214_173_84_/_32%)] text-white"
             }`}
           >
             All
@@ -60,7 +68,7 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
               className={`shrink-0 border px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] ${
                 activeCategory === category
                   ? "border-[var(--color-gold)] bg-[var(--color-gold)] text-[var(--color-navy)]"
-                  : "border-[var(--color-gray-100)] text-[var(--color-navy)]"
+                  : "border-[rgb(214_173_84_/_32%)] text-white"
               }`}
             >
               {category}
@@ -69,14 +77,14 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium">
           <SectionHeading
             eyebrow={activeCategory ?? "All tours"}
             title="Choose a starting point, then tailor the details."
             description="Prices are guide points for inquiry. Final proposals depend on dates, group size, hotel level, and preferred pacing."
           />
-          <div className="mt-12 grid gap-7 lg:grid-cols-3">
+          <div className="mt-12 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
             {visibleTours.map((tour) => (
               <TourCard key={tour.slug} tour={tour} />
             ))}
@@ -84,13 +92,11 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
         </div>
       </section>
 
-      <section className="bg-[var(--color-sand)] py-16">
+      <section className="section-dark pattern-overlay py-16">
         <div className="container-premium flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-gold)]">
-              Need advice?
-            </p>
-            <h2 className="mt-3 font-serif text-4xl font-semibold text-[var(--color-navy)]">
+          <div className="relative">
+            <p className="eyebrow text-[var(--color-gold-light)]">Need advice?</p>
+            <h2 className="mt-3 font-serif text-4xl font-semibold text-white">
               Ask us which tour fits your dates.
             </h2>
           </div>

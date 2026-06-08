@@ -26,7 +26,7 @@ const trustItems = [
 export default function AboutPage() {
   return (
     <>
-      <section className="relative min-h-[62vh] overflow-hidden bg-[var(--color-navy)] text-white">
+      <section className="relative min-h-[66vh] overflow-hidden bg-[var(--color-navy)] text-white">
         <Image
           src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1800&q=82"
           alt="Egyptian temple columns in warm light"
@@ -35,27 +35,25 @@ export default function AboutPage() {
           sizes="100vw"
           className="object-cover opacity-65"
         />
-        <div className="absolute inset-0 bg-[rgba(13,27,42,0.62)]" />
-        <div className="container-premium relative flex min-h-[62vh] items-end py-16">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06111f] via-[rgba(6,17,31,0.76)] to-[rgba(6,17,31,0.2)]" />
+        <div className="container-premium relative flex min-h-[66vh] items-end py-16">
           <div className="max-w-4xl">
-            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
-              About Jack Tours Luxor
-            </p>
+            <p className="eyebrow text-[var(--color-gold-light)]">About Jack Tours Luxor</p>
             <h1 className="mt-5 font-serif text-5xl font-semibold leading-tight md:text-7xl">
-              Luxor-born expertise, built for international travelers.
+              Luxor-born expertise, <span className="italic text-[var(--color-gold-light)]">built for international travelers.</span>
             </h1>
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <SectionHeading
             eyebrow="Company story"
             title="A local travel partner for travelers who want Egypt handled beautifully."
             description="Jack Tours Luxor was shaped around a simple idea: private Egypt travel should feel personal, polished, and grounded in local knowledge. From Luxor day tours to multi-city itineraries, the team focuses on practical planning, trusted people, and responsive support."
           />
-          <div className="border border-[var(--color-gray-100)] bg-[var(--color-gray-50)] p-8">
+          <div className="border border-[rgb(214_173_84_/_26%)] bg-white/78 p-8 shadow-[0_24px_70px_rgb(87_59_22_/_12%)]">
             <p className="font-serif text-3xl font-semibold leading-tight text-[var(--color-navy)]">
               The goal is not to sell every possible package. It is to help each traveler choose the
               right route, the right guide, and the right pace.
@@ -64,21 +62,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-sand)] py-16 md:py-24">
+      <section className="section-dark py-16 md:py-24">
         <div className="container-premium">
-          <SectionHeading eyebrow="Mission and values" title="Premium travel standards with Egyptian warmth." />
-          <div className="mt-10 grid gap-px bg-[var(--color-sand-dark)] md:grid-cols-3">
+          <div className="[&_h2]:text-white [&_p]:text-white/70">
+            <SectionHeading eyebrow="Mission and values" title="Premium travel standards with Egyptian warmth." />
+          </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
             {values.map(([title, text]) => (
-              <div key={title} className="bg-white p-7">
-                <h2 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">{title}</h2>
-                <p className="mt-4 text-sm leading-7 text-[var(--color-gray-600)]">{text}</p>
+              <div key={title} className="border border-[rgb(214_173_84_/_24%)] bg-white/[0.06] p-7">
+                <h2 className="font-serif text-3xl font-semibold text-white">{title}</h2>
+                <p className="mt-4 text-sm leading-7 text-white/68">{text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-12 lg:grid-cols-2">
           <div>
             <SectionHeading
@@ -88,19 +88,17 @@ export default function AboutPage() {
             />
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {trustItems.map((item) => (
-                <div key={item} className="border border-[var(--color-gray-100)] bg-white p-5 text-sm font-semibold leading-7 text-[var(--color-gray-900)]">
+                <div key={item} className="border border-[rgb(214_173_84_/_24%)] bg-white/82 p-5 text-sm font-semibold leading-7 text-[var(--color-gray-900)]">
                   {item}
                 </div>
               ))}
             </div>
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-gold)]">
-              Team placeholder
-            </p>
+            <p className="eyebrow">Local delivery</p>
             <div className="mt-4 grid gap-5">
               {["Operations lead", "Private guide network", "Guest support"].map((role) => (
-                <div key={role} className="border border-[var(--color-gray-100)] bg-white p-6">
+                <div key={role} className="border border-[rgb(214_173_84_/_24%)] bg-white/82 p-6 shadow-[0_16px_45px_rgb(87_59_22_/_7%)]">
                   <h3 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">{role}</h3>
                   <p className="mt-3 text-sm leading-7 text-[var(--color-gray-600)]">
                     Profile details will be added in the CMS phase while the MVP keeps the public
@@ -113,12 +111,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-navy)] py-16 text-white md:py-24">
+      <section className="section-dark pattern-overlay py-16 text-white md:py-24">
         <div className="container-premium grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-center">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
-              License, safety, professionalism
-            </p>
+            <p className="eyebrow text-[var(--color-gold-light)]">License, safety, professionalism</p>
             <h2 className="mt-4 font-serif text-4xl font-semibold md:text-5xl">
               Built around clear arrangements and responsible local delivery.
             </h2>

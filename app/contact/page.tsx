@@ -12,20 +12,18 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <section className="bg-[var(--color-navy)] py-20 text-white md:py-28">
-        <div className="container-premium grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+      <section className="section-dark pattern-overlay py-20 text-white md:py-28">
+        <div className="container-premium relative grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-end">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
-              Contact
-            </p>
+            <p className="eyebrow text-[var(--color-gold-light)]">Contact</p>
             <h1 className="mt-5 max-w-4xl font-serif text-5xl font-semibold leading-tight md:text-7xl">
-              Ask a local Luxor team for practical Egypt travel guidance.
+              Ask a local Luxor team for <span className="italic text-[var(--color-gold-light)]">practical Egypt travel guidance.</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/76">
               Send a short message and continue the conversation on WhatsApp for the fastest reply.
             </p>
           </div>
-          <div className="border border-white/12 bg-white/[0.06] p-6">
+          <div className="border border-[rgb(214_173_84_/_28%)] bg-white/[0.06] p-6 shadow-[0_24px_70px_rgb(0_0_0_/_24%)]">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
               Direct support
             </p>
@@ -41,12 +39,10 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-gray-50)] py-16 md:py-24">
+      <section className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-gold)]">
-              Website message
-            </p>
+            <p className="eyebrow">Website message</p>
             <h2 className="mt-4 font-serif text-4xl font-semibold leading-tight text-[var(--color-navy)] md:text-5xl">
               Tell us what you need, then send it to WhatsApp.
             </h2>
@@ -54,7 +50,7 @@ export default function ContactPage() {
               No email automation yet in this MVP slice. The form validates your details and builds
               a readable WhatsApp message for sales follow-up.
             </p>
-            <div className="relative mt-8 min-h-72 overflow-hidden">
+            <div className="relative mt-8 min-h-72 overflow-hidden shadow-[0_24px_70px_rgb(87_59_22_/_14%)]">
               <Image
                 src="https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1200&q=82"
                 alt="Ancient Egyptian columns"
