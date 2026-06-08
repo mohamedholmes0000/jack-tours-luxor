@@ -16,7 +16,7 @@ export default function DestinationsPage() {
     <>
       <section className="relative overflow-hidden bg-[var(--color-navy)] py-20 text-white md:py-32">
         <Image
-          src="https://images.unsplash.com/photo-1571229709351-8dd880e08b43?auto=format&fit=crop&w=1800&q=82"
+          src="https://images.unsplash.com/photo-1539768942893-daf53e448371?auto=format&fit=crop&w=1800&q=82"
           alt="Nile river near Aswan"
           fill
           priority

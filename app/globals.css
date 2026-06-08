@@ -160,6 +160,87 @@ a {
   .btn-primary,
   .btn-secondary,
   .btn-ghost {
+    font-size: 0.68rem;
     letter-spacing: 0.08em;
+    min-height: 40px;
+    padding: 0.72rem 0.9rem;
+    width: 100%;
+  }
+
+  .eyebrow {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+  }
+
+  .public-site {
+    padding-bottom: 4.25rem;
+  }
+
+  .public-site > section {
+    padding-block: 3rem !important;
+  }
+
+  .public-site > section:first-child {
+    min-height: auto !important;
+    padding-block: 3.4rem !important;
+  }
+
+  .public-site > section:first-child > .container-premium {
+    min-height: auto !important;
+  }
+
+  .public-site h1 {
+    font-size: clamp(2.12rem, 10vw, 2.85rem) !important;
+    line-height: 1.02 !important;
+  }
+
+  .public-site h2 {
+    font-size: clamp(1.8rem, 8vw, 2.35rem) !important;
+    line-height: 1.06 !important;
+  }
+
+  .public-site h3 {
+    font-size: clamp(1.45rem, 7vw, 2rem) !important;
+  }
+
+  .public-site p {
+    line-height: 1.65;
+  }
+
+  .public-site .grid {
+    row-gap: 1.1rem;
+  }
+
+  .public-site article,
+  .public-site figure,
+  .public-site details {
+    box-shadow: 0 14px 34px rgb(0 0 0 / 14%);
+  }
+
+  .public-site article .p-6,
+  .public-site .p-7,
+  .public-site .p-8 {
+    padding: 1.1rem !important;
+  }
+
+  .public-site .min-h-96 {
+    min-height: 18rem !important;
+  }
+
+  .public-site .min-h-80 {
+    min-height: 17rem !important;
+  }
+
+  .public-site .aspect-\[4\/3\] {
+    aspect-ratio: 16 / 10 !important;
+  }
+
+  .public-site .aspect-\[4\/5\] {
+    aspect-ratio: 4 / 3 !important;
+  }
+
+  footer .container-premium {
+    gap: 1.5rem;
+    padding-block: 2rem;
   }
 }
