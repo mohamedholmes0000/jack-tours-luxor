@@ -152,6 +152,16 @@ a {
   transform: translateY(-1px);
 }
 
+/* Hide the global FloatingWhatsApp chip on mobile when a page provides
+   its own persistent mobile CTA bar (marked with data-mobile-cta="true").
+   The marker is a descendant of <main class="public-site">; the chip is
+   the next sibling <a> of <main>. */
+@media (max-width: 767px) {
+  .public-site:has([data-mobile-cta="true"]) ~ a[aria-label*="WhatsApp"] {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .container-premium {
     width: min(100% - 1.25rem, 1180px);
