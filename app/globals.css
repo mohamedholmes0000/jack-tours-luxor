@@ -152,15 +152,86 @@ a {
   transform: translateY(-1px);
 }
 
-/* Hide the global FloatingWhatsApp chip on mobile when a page provides
-   its own persistent mobile CTA bar (marked with data-mobile-cta="true").
-   The marker is a descendant of <main class="public-site">; the chip is
-   the next sibling <a> of <main>. */
-@media (max-width: 767px) {
-  .public-site:has([data-mobile-cta="true"]) ~ a[aria-label*="WhatsApp"] {
-    display: none;
+/* Hide the global FloatingWhatsApp chip on the homepage at all viewports
+   (the homepage provides its own persistent CTA on mobile + its own final
+   CTA section on desktop). Marker = [data-mobile-cta="true"] inside
+   <main class="public-site">. Chip is the next sibling <a> of <main>. */
+.public-site:has([data-mobile-cta="true"]) ~ a[aria-label*="WhatsApp"] {
+  display: none;
+}
+
+/* Editorial Cartouche — cinematic motion + magazine flourishes. */
+
+@keyframes ken-burns {
+  0%   { transform: scale(1) translate3d(0, 0, 0); }
+  100% { transform: scale(1.08) translate3d(-1.4%, 1.2%, 0); }
+}
+.ken-burns {
+  animation: ken-burns 28s ease-in-out infinite alternate;
+  transform-origin: 50% 60%;
+  will-change: transform;
+}
+
+@keyframes marquee-x {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.marquee-track {
+  animation: marquee-x 64s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Browsers with scroll-driven animations (Chrome/Edge/Opera) drive this
+   by viewport position. Browsers without it fall back to the 0.001s
+   duration so content is visible immediately — no hidden content. */
+.reveal-up {
+  animation: reveal-up 0.001s linear both;
+  animation-timeline: view();
+  animation-range: entry 5% cover 30%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns, .marquee-track, .reveal-up { animation: none !important; }
+}
+
+/* Drop cap for the brand-story paragraph (desktop only — proportional
+   awkwardness on small screens). */
+@media (min-width: 640px) {
+  .drop-cap::first-letter {
+    color: var(--color-gold-dark);
+    float: left;
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-size: 4.4em;
+    font-weight: 500;
+    line-height: 0.82;
+    margin: 0.06em 0.12em 0 -0.06em;
   }
 }
+
+/* Editorial pause — a wholly empty section with one centered line. */
+.cartouche-pause {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 56vh;
+  padding-block: 5rem;
+  text-align: center;
+}
+@media (max-width: 640px) {
+  .cartouche-pause { min-height: 42vh; padding-block: 3.5rem; }
+}
+
+/* Tiny scroll cue used in the hero corner. */
+@keyframes scroll-cue {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+.scroll-cue { animation: scroll-cue 2.4s ease-in-out infinite; }
 
 @media (max-width: 640px) {
   .container-premium {
