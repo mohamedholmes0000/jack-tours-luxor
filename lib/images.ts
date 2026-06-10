@@ -1,6 +1,6 @@
 export const DEFAULT_SAFE_IMAGE = "/photos/karnak.jpg";
 
-export const trustedRemoteImageHosts = ["images.unsplash.com"] as const;
+export const trustedRemoteImageHosts = ["images.unsplash.com", "i.ibb.co"] as const;
 
 const trustedRemoteImageHostSet = new Set<string>(trustedRemoteImageHosts);
 const safeLocalImagePrefixes = ["/photos/", "/images/"];
