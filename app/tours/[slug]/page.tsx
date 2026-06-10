@@ -40,7 +40,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
     notFound();
   }
 
-  const whatsappMessage = `Hello Jack Tours Luxor, I am interested in ${tour.title}. Can you send me details and availability?`;
+  const whatsappMessage = `Hello Jack Egypt Tour, I am interested in ${tour.title}. Can you send me details and availability?`;
 
   return (
     <>

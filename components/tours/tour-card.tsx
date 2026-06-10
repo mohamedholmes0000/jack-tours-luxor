@@ -4,7 +4,7 @@ import { formatPrice, type Tour } from "@/lib/content";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function TourCard({ tour }: { tour: Tour }) {
-  const whatsappMessage = `Hello Jack Tours Luxor, I am interested in ${tour.title}. Can you send me details and availability?`;
+  const whatsappMessage = `Hello Jack Egypt Tour, I am interested in ${tour.title}. Can you send me details and availability?`;
 
   return (
     <article className="group overflow-hidden border border-[rgb(214_173_84_/_28%)] bg-[linear-gradient(180deg,#102a45_0%,#06111f_100%)] text-white shadow-[0_22px_60px_rgb(0_0_0_/_28%)] transition duration-300 hover:-translate-y-1">

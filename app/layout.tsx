@@ -18,8 +18,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jacktoursluxor.com"
 
 export const metadata: Metadata = {
   title: {
-    default: "Jack Tours Luxor | Luxury Egypt Private Tours",
-    template: "%s | Jack Tours Luxor",
+    default: "Jack Egypt Tour | Luxury Egypt Private Tours",
+    template: "%s | Jack Egypt Tour",
   },
   description:
     "Private tailor-made Egypt journeys, Luxor day tours, Nile cruises, and DMC services curated by local experts.",
@@ -33,14 +33,14 @@ export const metadata: Metadata = {
     "Luxor day tours",
   ],
   openGraph: {
-    title: "Jack Tours Luxor | Luxury Egypt Private Tours",
+    title: "Jack Egypt Tour | Luxury Egypt Private Tours",
     description:
       "Private tailor-made Egypt journeys, Luxor day tours, Nile cruises, and DMC services curated by local experts.",
     url: siteUrl,
-    siteName: "Jack Tours Luxor",
+    siteName: "Jack Egypt Tour",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1539768942893-daf53e448371?auto=format&fit=crop&w=1200&q=82",
+        url: "/photos/karnak.jpg",
         width: 1200,
         height: 630,
       },

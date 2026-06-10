@@ -5,24 +5,19 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 // ============================================================================
 // Editorial Cartouche homepage — mobile-first, photography-led, magazine grammar.
-// All imagery is placeholder Unsplash (Luxor, Karnak, Valley of the Kings,
-// Hatshepsut, Nile, Aswan, Abu Simbel, Red Sea). Swap when real shoots arrive.
+// All imagery is sourced from Wikimedia Commons and stored locally in
+// public/photos/ (downloaded 2026-06). Swap when real shoots arrive.
 // ============================================================================
 
-const heroImage =
-  "https://images.unsplash.com/photo-1602258409022-1db00d4a9d31?auto=format&fit=crop&w=2400&q=85";
+const heroImage = "/photos/karnak.jpg";
 
-const brandStoryImage =
-  "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1800&q=85";
+const brandStoryImage = "/photos/hatshepsut.jpg";
 
-const statsImage =
-  "https://images.unsplash.com/photo-1577401239170-897942555fb3?auto=format&fit=crop&w=2200&q=85";
+const statsImage = "/photos/felucca.jpg";
 
-const testimonialImage =
-  "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=2200&q=85";
+const testimonialImage = "/photos/hatshepsut.jpg";
 
-const finalCtaImage =
-  "https://images.unsplash.com/photo-1571229709351-8dd880e08b43?auto=format&fit=crop&w=2200&q=85";
+const finalCtaImage = "/photos/felucca.jpg";
 
 const trustLine = [
   "Licensed operator",
@@ -36,44 +31,37 @@ const destinationsMarquee = [
   {
     name: "Luxor",
     label: "West Bank · East Bank",
-    image:
-      "https://images.unsplash.com/photo-1602258409022-1db00d4a9d31?auto=format&fit=crop&w=1100&q=82",
+    image: "/photos/luxor-temple.jpg",
   },
   {
     name: "Karnak",
     label: "Largest temple complex",
-    image:
-      "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1100&q=82",
+    image: "/photos/karnak.jpg",
   },
   {
     name: "Valley of the Kings",
     label: "Royal Theban necropolis",
-    image:
-      "https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=1100&q=82",
+    image: "/photos/valley-of-kings.jpg",
   },
   {
     name: "Nile",
     label: "Luxor → Aswan",
-    image:
-      "https://images.unsplash.com/photo-1571229709351-8dd880e08b43?auto=format&fit=crop&w=1100&q=82",
+    image: "/photos/nile.jpg",
   },
   {
     name: "Aswan",
     label: "Nubian south",
-    image:
-      "https://images.unsplash.com/photo-1600369672770-985fd30004eb?auto=format&fit=crop&w=1100&q=82",
+    image: "/photos/aswan.jpg",
   },
   {
     name: "Abu Simbel",
     label: "Ramesses II",
-    image:
-      "https://images.unsplash.com/photo-1539768942893-daf53e448371?auto=format&fit=crop&w=1100&q=82",
+    image: "/photos/abu-simbel.jpg",
   },
   {
     name: "Red Sea",
     label: "Coastal finale",
-    image:
-      "https://images.unsplash.com/photo-1578922746465-3a80a228f223?auto=format&fit=crop&w=1100&q=82",
+    image: "/photos/red-sea.jpg",
   },
 ];
 
@@ -280,7 +268,7 @@ export function Homepage() {
           <figure className="reveal-up relative aspect-[4/5] w-full overflow-hidden shadow-[0_28px_80px_rgb(87_59_22_/_20%)] sm:aspect-[3/4] lg:aspect-auto lg:min-h-[36rem]">
             <Image
               src={brandStoryImage}
-              alt="Karnak temple hypostyle hall in warm afternoon light"
+              alt="Hatshepsut mortuary temple in warm afternoon light"
               fill
               sizes="(min-width: 1024px) 55vw, 100vw"
               className="object-cover"
@@ -303,10 +291,13 @@ export function Homepage() {
               trusted guides, on WhatsApp time. Everything else is negotiable.
             </p>
             <div className="mt-8 h-px w-20 bg-[var(--color-gold)]" />
-            <p className="mt-5 text-sm font-bold uppercase tracking-[0.22em] text-[var(--color-navy)]">
-              Jack Egypt Tour
-              <span className="ml-2 font-medium text-[var(--color-gray-600)]">
-                / Luxor, Upper Egypt
+            {/* Stack on mobile to avoid an awkward mid-phrase wrap caused by
+                uppercase + 0.22em tracking in a narrow column; inline on sm+. */}
+            <p className="mt-5 flex flex-col gap-1 text-sm font-bold uppercase tracking-[0.22em] text-[var(--color-navy)] sm:flex-row sm:items-baseline sm:gap-2">
+              <span>Jack Egypt Tour</span>
+              <span className="font-medium text-[var(--color-gray-600)]">
+                <span aria-hidden className="mr-1 hidden sm:inline">/</span>
+                Luxor, Upper Egypt
               </span>
             </p>
           </div>
@@ -472,7 +463,7 @@ export function Homepage() {
         <div className="absolute inset-0">
           <Image
             src={statsImage}
-            alt="Felucca sail at dusk on the Nile near Aswan"
+            alt="Felucca on the Nile in late-afternoon light"
             fill
             sizes="100vw"
             className="object-cover opacity-70"
@@ -577,7 +568,7 @@ export function Homepage() {
           aria-hidden
           className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.65)] to-[rgba(6,17,31,0.25)]"
         />
-        <div className="container-premium relative flex min-h-[72vh] flex-col justify-end py-16 sm:min-h-[80vh] sm:py-20 md:py-28">
+        <div className="container-premium relative flex min-h-[72vh] flex-col justify-end pt-16 pb-32 sm:min-h-[80vh] sm:py-20 md:py-28">
           <div className="reveal-up max-w-2xl">
             <p className="eyebrow text-[var(--color-gold-light)]">
               Start with WhatsApp

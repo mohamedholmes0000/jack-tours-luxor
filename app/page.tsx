@@ -5,7 +5,7 @@ import { JsonLd, organizationJsonLd } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Luxury Egypt Private Tours & DMC Services",
   description:
-    "Discover private Luxor tours, Nile cruises, tailor-made Egypt itineraries, and DMC support from Jack Tours Luxor.",
+    "Discover private Luxor tours, Nile cruises, tailor-made Egypt itineraries, and DMC support from Jack Egypt Tour.",
 };
 
 export default function Home() {

@@ -35,7 +35,7 @@ export default async function DestinationDetailPage({ params }: DestinationDetai
     notFound();
   }
 
-  const message = `Hello Jack Tours Luxor, I am interested in planning time in ${destination.name}. Can you help me with a private itinerary?`;
+  const message = `Hello Jack Egypt Tour, I am interested in planning time in ${destination.name}. Can you help me with a private itinerary?`;
 
   return (
     <>

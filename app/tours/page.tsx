@@ -10,7 +10,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Private Egypt Tours",
   description:
-    "Browse private Luxor tours, Nile cruises, luxury Egypt tours, and tailor-made itineraries from Jack Tours Luxor.",
+    "Browse private Luxor tours, Nile cruises, luxury Egypt tours, and tailor-made itineraries from Jack Egypt Tour.",
 };
 
 type ToursPageProps = {
@@ -29,7 +29,7 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
     <>
       <section className="relative overflow-hidden bg-[var(--color-navy)] py-20 text-white md:py-32">
         <Image
-          src="https://images.unsplash.com/photo-1602258409022-1db00d4a9d31?auto=format&fit=crop&w=1800&q=82"
+          src="/photos/karnak.jpg"
           alt="Luxor temple at golden hour"
           fill
           priority

@@ -8,7 +8,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Egypt Destinations",
   description:
-    "Explore Luxor, Cairo, Aswan, Hurghada, and Alexandria with private Egypt travel planning from Jack Tours Luxor.",
+    "Explore Luxor, Cairo, Aswan, Hurghada, and Alexandria with private Egypt travel planning from Jack Egypt Tour.",
 };
 
 export default function DestinationsPage() {
@@ -16,7 +16,7 @@ export default function DestinationsPage() {
     <>
       <section className="relative overflow-hidden bg-[var(--color-navy)] py-20 text-white md:py-32">
         <Image
-          src="https://images.unsplash.com/photo-1539768942893-daf53e448371?auto=format&fit=crop&w=1800&q=82"
+          src="/photos/abu-simbel.jpg"
           alt="Nile river near Aswan"
           fill
           priority
@@ -30,7 +30,7 @@ export default function DestinationsPage() {
             Discover Egypt <span className="italic text-[var(--color-gold-light)]">from Luxor outward.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/76">
-            Start with the essential places and let Jack Tours Luxor shape the route around your
+            Start with the essential places and let Jack Egypt Tour shape the route around your
             dates, hotel style, and travel pace.
           </p>
         </div>

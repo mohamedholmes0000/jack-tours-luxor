@@ -1,7 +1,7 @@
 import { createElement } from "react";
 
 export const defaultSeo = {
-  title: "Jack Tours Luxor | Luxury Egypt Private Tours",
+  title: "Jack Egypt Tour | Luxury Egypt Private Tours",
   description:
     "Private tailor-made Egypt journeys, Luxor day tours, Nile cruises, and DMC services curated by local experts.",
   keywords: [
@@ -22,7 +22,7 @@ export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    name: "Jack Tours Luxor",
+    name: "Jack Egypt Tour",
     url: siteUrl,
     areaServed: ["Luxor", "Cairo", "Aswan", "Egypt"],
     address: {
@@ -75,7 +75,7 @@ export function touristTripJsonLd(tour: {
       : undefined,
     provider: {
       "@type": "TravelAgency",
-      name: "Jack Tours Luxor",
+      name: "Jack Egypt Tour",
     },
   };
 }
@@ -97,7 +97,7 @@ export function blogPostingJsonLd(article: {
     url: `${siteUrl}/blog/${article.slug}`,
     publisher: {
       "@type": "TravelAgency",
-      name: "Jack Tours Luxor",
+      name: "Jack Egypt Tour",
     },
   };
 }

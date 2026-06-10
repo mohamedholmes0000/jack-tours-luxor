@@ -6,7 +6,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Contact Jack Tours Luxor for private Luxor tours, Egypt itineraries, Nile cruises, and DMC services.",
+    "Contact Jack Egypt Tour for private Luxor tours, Egypt itineraries, Nile cruises, and DMC services.",
 };
 
 export default function ContactPage() {
@@ -52,7 +52,7 @@ export default function ContactPage() {
             </p>
             <div className="relative mt-8 min-h-72 overflow-hidden shadow-[0_24px_70px_rgb(87_59_22_/_14%)]">
               <Image
-                src="https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1200&q=82"
+                src="/photos/hatshepsut.jpg"
                 alt="Ancient Egyptian columns"
                 fill
                 sizes="(min-width: 1024px) 40vw, 100vw"

@@ -86,11 +86,11 @@ export const tours: Tour[] = [
       },
     ],
     heroImage:
-      "https://images.unsplash.com/photo-1602258409022-1db00d4a9d31?auto=format&fit=crop&w=1800&q=82",
+      "/photos/karnak.jpg",
     images: [
-      "https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1563974318767-a4de855d7b43?auto=format&fit=crop&w=900&q=80",
+      "/photos/valley-of-kings.jpg",
+      "/photos/hatshepsut.jpg",
+      "/photos/luxor-temple.jpg",
     ],
     featured: true,
   },
@@ -100,7 +100,7 @@ export const tours: Tour[] = [
     category: "Nile Cruises",
     shortDescription: "A compact Nile cruise experience between Luxor and Aswan.",
     overview:
-      "A graceful short Nile journey pairing temple visits with unhurried river time. Jack Tours Luxor coordinates cruise selection, transfers, guiding, and on-the-ground support so the route feels seamless.",
+      "A graceful short Nile journey pairing temple visits with unhurried river time. Jack Egypt Tour coordinates cruise selection, transfers, guiding, and on-the-ground support so the route feels seamless.",
     highlights: [
       "Curated Nile cruise planning",
       "Luxor and Aswan landmark visits",
@@ -130,11 +130,11 @@ export const tours: Tour[] = [
       },
     ],
     heroImage:
-      "https://images.unsplash.com/photo-1571229709351-8dd880e08b43?auto=format&fit=crop&w=1800&q=82",
+      "/photos/felucca.jpg",
     images: [
-      "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1603201236596-eb1a63eb0ede?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1600369672770-985fd30004eb?auto=format&fit=crop&w=900&q=80",
+      "/photos/nile.jpg",
+      "/photos/alexandria.jpg",
+      "/photos/aswan.jpg",
     ],
     featured: true,
   },
@@ -174,11 +174,11 @@ export const tours: Tour[] = [
       },
     ],
     heroImage:
-      "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1800&q=82",
+      "/photos/pyramids.jpg",
     images: [
-      "https://images.unsplash.com/photo-1572252009286-268acec5ca0a?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1539768942893-daf53e448371?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1590736969955-71cc94901144?auto=format&fit=crop&w=900&q=80",
+      "/photos/pyramids.jpg",
+      "/photos/abu-simbel.jpg",
+      "/photos/luxor-temple.jpg",
     ],
     featured: true,
   },
@@ -218,11 +218,11 @@ export const tours: Tour[] = [
       },
     ],
     heroImage:
-      "https://images.unsplash.com/photo-1527907429279-9b09a9fca35d?auto=format&fit=crop&w=1800&q=82",
+      "/photos/hatshepsut.jpg",
     images: [
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1553913861-c0fddf2619ee?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=900&q=80",
+      "/photos/valley-of-kings.jpg",
+      "/photos/luxor-temple.jpg",
+      "/photos/hatshepsut.jpg",
     ],
     featured: true,
   },
@@ -232,7 +232,7 @@ export const tours: Tour[] = [
     category: "Custom Egypt Tours",
     shortDescription: "A flexible private journey designed around your dates, pace, and interests.",
     overview:
-      "Share your dates, travel style, preferred hotels, and dream stops. Jack Tours Luxor turns the brief into a practical, elegant Egypt itinerary with WhatsApp-first planning from a local team.",
+      "Share your dates, travel style, preferred hotels, and dream stops. Jack Egypt Tour turns the brief into a practical, elegant Egypt itinerary with WhatsApp-first planning from a local team.",
     highlights: [
       "Built around your dates and priorities",
       "Luxor-based local planning",
@@ -262,11 +262,11 @@ export const tours: Tour[] = [
       },
     ],
     heroImage:
-      "https://images.unsplash.com/photo-1577401239170-897942555fb3?auto=format&fit=crop&w=1800&q=82",
+      "/photos/felucca.jpg",
     images: [
-      "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=900&q=80",
+      "/photos/karnak.jpg",
+      "/photos/aswan.jpg",
+      "/photos/nile.jpg",
     ],
     featured: true,
   },
@@ -277,10 +277,10 @@ export const destinations: Destination[] = [
     slug: "luxor",
     name: "Luxor",
     overview:
-      "The home base of Jack Tours Luxor, where temples, tombs, river light, and private Egyptologist-led touring come together with rare depth.",
+      "The home base of Jack Egypt Tour, where temples, tombs, river light, and private Egyptologist-led touring come together with rare depth.",
     highlights: ["Valley of the Kings", "Karnak Temple", "Luxor Temple", "West Bank villages"],
     heroImage:
-      "https://images.unsplash.com/photo-1602258409022-1db00d4a9d31?auto=format&fit=crop&w=1600&q=82",
+      "/photos/karnak.jpg",
   },
   {
     slug: "cairo",
@@ -289,7 +289,7 @@ export const destinations: Destination[] = [
       "Egypt's grand opening chapter: pyramids, museums, Islamic Cairo, and modern city energy shaped into a private, polished itinerary.",
     highlights: ["Giza Pyramids", "Grand Egyptian Museum", "Islamic Cairo", "Khan el-Khalili"],
     heroImage:
-      "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1600&q=82",
+      "/photos/pyramids.jpg",
   },
   {
     slug: "aswan",
@@ -298,7 +298,7 @@ export const destinations: Destination[] = [
       "A softer Nile rhythm with Nubian culture, island landscapes, and graceful temple visits that pair beautifully with Luxor.",
     highlights: ["Philae Temple", "Nubian village", "Nile islands", "Abu Simbel extensions"],
     heroImage:
-      "https://images.unsplash.com/photo-1571229709351-8dd880e08b43?auto=format&fit=crop&w=1600&q=82",
+      "/photos/felucca.jpg",
   },
   {
     slug: "hurghada",
@@ -307,7 +307,7 @@ export const destinations: Destination[] = [
       "A Red Sea extension for travelers who want beach time, diving, or a restful finish after temples and Nile touring.",
     highlights: ["Red Sea resorts", "Diving and snorkeling", "Family stays", "Luxor extensions"],
     heroImage:
-      "https://images.unsplash.com/photo-1578922746465-3a80a228f223?auto=format&fit=crop&w=1600&q=82",
+      "/photos/hurghada.jpg",
   },
   {
     slug: "alexandria",
@@ -316,7 +316,7 @@ export const destinations: Destination[] = [
       "Mediterranean Egypt with coastal atmosphere, Greco-Roman history, and a distinct rhythm from Cairo and Upper Egypt.",
     highlights: ["Mediterranean coast", "Bibliotheca Alexandrina", "Catacombs", "Coastal dining"],
     heroImage:
-      "https://images.unsplash.com/photo-1603201236596-eb1a63eb0ede?auto=format&fit=crop&w=1600&q=82",
+      "/photos/alexandria.jpg",
   },
 ];
 
@@ -387,7 +387,7 @@ export const faqs: FAQItem[] = [
     category: "Custom Trips",
     question: "Can travel agents and tour operators work with you?",
     answer:
-      "Yes. Jack Tours Luxor can support selected B2B requests for local services, groups, and destination management basics without a full portal in this MVP.",
+      "Yes. Jack Egypt Tour can support selected B2B requests for local services, groups, and destination management basics without a full portal in this MVP.",
   },
 ];
 
@@ -395,42 +395,42 @@ export const galleryImages: GalleryImage[] = [
   {
     category: "Luxor",
     alt: "Karnak Temple columns in Luxor",
-    url: "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1000&q=82",
+    url: "/photos/hatshepsut.jpg",
   },
   {
     category: "Luxor",
     alt: "Ancient Egyptian temple at golden hour",
-    url: "https://images.unsplash.com/photo-1602258409022-1db00d4a9d31?auto=format&fit=crop&w=1000&q=82",
+    url: "/photos/karnak.jpg",
   },
   {
     category: "Nile Cruise",
     alt: "Nile river view from a cruise journey",
-    url: "https://images.unsplash.com/photo-1571229709351-8dd880e08b43?auto=format&fit=crop&w=1000&q=82",
+    url: "/photos/felucca.jpg",
   },
   {
     category: "Nile Cruise",
     alt: "River landscape in Upper Egypt",
-    url: "https://images.unsplash.com/photo-1600369672770-985fd30004eb?auto=format&fit=crop&w=1000&q=82",
+    url: "/photos/aswan.jpg",
   },
   {
     category: "Cairo",
     alt: "Giza pyramids near Cairo",
-    url: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1000&q=82",
+    url: "/photos/pyramids.jpg",
   },
   {
     category: "Cairo",
     alt: "Egyptian pyramids and desert",
-    url: "https://images.unsplash.com/photo-1572252009286-268acec5ca0a?auto=format&fit=crop&w=1000&q=82",
+    url: "/photos/pyramids.jpg",
   },
   {
     category: "Experiences",
     alt: "Hot air balloon experience above desert landscape",
-    url: "https://images.unsplash.com/photo-1527907429279-9b09a9fca35d?auto=format&fit=crop&w=1000&q=82",
+    url: "/photos/hatshepsut.jpg",
   },
   {
     category: "Experiences",
     alt: "Egypt travel experience in warm light",
-    url: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1000&q=82",
+    url: "/photos/hatshepsut.jpg",
   },
 ];
 
@@ -443,7 +443,7 @@ export const blogArticles: BlogArticle[] = [
     publishedAt: "2026-01-12",
     readTime: "4 min read",
     heroImage:
-      "https://images.unsplash.com/photo-1602258409022-1db00d4a9d31?auto=format&fit=crop&w=1600&q=82",
+      "/photos/karnak.jpg",
     sections: [
       {
         heading: "The most comfortable months",
@@ -454,7 +454,7 @@ export const blogArticles: BlogArticle[] = [
         body: "Summer requires an early start, shaded breaks, and realistic expectations. A private guide and driver help reduce waiting, unnecessary walking, and heat exposure.",
       },
       {
-        heading: "How Jack Tours Luxor plans timing",
+        heading: "How Jack Egypt Tour plans timing",
         body: "We recommend pickup times around your hotel, cruise schedule, and priority sites rather than forcing every traveler into the same fixed template.",
       },
     ],
@@ -467,7 +467,7 @@ export const blogArticles: BlogArticle[] = [
     publishedAt: "2026-01-18",
     readTime: "5 min read",
     heroImage:
-      "https://images.unsplash.com/photo-1577401239170-897942555fb3?auto=format&fit=crop&w=1600&q=82",
+      "/photos/felucca.jpg",
     sections: [
       {
         heading: "Four to five days",
@@ -491,7 +491,7 @@ export const blogArticles: BlogArticle[] = [
     publishedAt: "2026-01-25",
     readTime: "4 min read",
     heroImage:
-      "https://images.unsplash.com/photo-1563974318767-a4de855d7b43?auto=format&fit=crop&w=1600&q=82",
+      "/photos/luxor-temple.jpg",
     sections: [
       {
         heading: "Private tours give better pacing",
@@ -515,7 +515,7 @@ export const blogArticles: BlogArticle[] = [
     publishedAt: "2026-02-02",
     readTime: "6 min read",
     heroImage:
-      "https://images.unsplash.com/photo-1539768942893-daf53e448371?auto=format&fit=crop&w=1600&q=82",
+      "/photos/abu-simbel.jpg",
     sections: [
       {
         heading: "Do fewer places better",

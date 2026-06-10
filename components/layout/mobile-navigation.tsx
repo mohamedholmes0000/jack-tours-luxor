@@ -73,7 +73,7 @@ export function MobileNavigation() {
                 Jack
               </p>
               <p className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/64">
-                Tours Luxor
+                Egypt Tour
               </p>
             </div>
             <button

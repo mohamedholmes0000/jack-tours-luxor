@@ -7,7 +7,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Egypt Travel Gallery",
   description:
-    "Browse a premium gallery of Luxor, Nile cruise, Cairo, and private Egypt travel experiences from Jack Tours Luxor.",
+    "Browse a premium gallery of Luxor, Nile cruise, Cairo, and private Egypt travel experiences from Jack Egypt Tour.",
 };
 
 type GalleryPageProps = {

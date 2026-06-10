@@ -6,7 +6,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Trip Planner",
   description:
-    "Plan a private Egypt trip with Jack Tours Luxor using a short WhatsApp-led trip planner.",
+    "Plan a private Egypt trip with Jack Egypt Tour using a short WhatsApp-led trip planner.",
 };
 
 export default function TripPlannerPage() {
@@ -14,7 +14,7 @@ export default function TripPlannerPage() {
     <>
       <section className="relative overflow-hidden bg-[var(--color-navy)] text-white">
         <Image
-          src="https://images.unsplash.com/photo-1572252009286-268acec5ca0a?auto=format&fit=crop&w=1800&q=82"
+          src="/photos/pyramids.jpg"
           alt="Egyptian pyramids at sunset"
           fill
           priority

@@ -7,7 +7,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Egypt Travel Blog",
   description:
-    "Practical Egypt travel articles from Jack Tours Luxor about Luxor, private tours, itinerary planning, and first-time travel.",
+    "Practical Egypt travel articles from Jack Egypt Tour about Luxor, private tours, itinerary planning, and first-time travel.",
 };
 
 export default async function BlogPage() {

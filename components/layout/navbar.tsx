@@ -21,7 +21,7 @@ export function Navbar() {
             Jack
           </span>
           <span className="mt-1 text-[0.56rem] font-bold uppercase tracking-[0.24em] text-white/72 lg:text-[0.62rem] lg:tracking-[0.28em]">
-            Tours Luxor
+            Egypt Tour
           </span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm font-semibold text-white/78 lg:flex">
@@ -31,14 +31,20 @@ export function Navbar() {
             </Link>
           ))}
         </nav>
-        <a
-          className="btn-primary hidden lg:inline-flex"
-          href={buildWhatsAppUrl()}
-          target="_blank"
-          rel="noreferrer"
-        >
-          WhatsApp
-        </a>
+        {/* Wrapper carries the responsive hide. .btn-primary in globals.css
+            sets display:inline-flex and (because it's defined after Tailwind
+            utilities) overrides Tailwind's .hidden when both classes sit on
+            the same element. A separate wrapper avoids that collision. */}
+        <div className="hidden lg:block">
+          <a
+            className="btn-primary"
+            href={buildWhatsAppUrl()}
+            target="_blank"
+            rel="noreferrer"
+          >
+            WhatsApp
+          </a>
+        </div>
         <MobileNavigation />
       </div>
     </header>

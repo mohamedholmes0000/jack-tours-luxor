@@ -1,5 +1,5 @@
 const DEFAULT_MESSAGE =
-  "Hello Jack Tours Luxor, I am interested in planning a trip to Egypt.";
+  "Hello Jack Egypt Tour, I am interested in planning a trip to Egypt.";
 
 export type TripPlannerMessageInput = {
   arrivalDate: string;
@@ -51,7 +51,7 @@ function line(label: string, value?: string | number | string[]) {
 
 export function buildTripPlannerMessage(input: TripPlannerMessageInput): string {
   return [
-    "Hello Jack Tours Luxor, I would like help planning a private Egypt trip.",
+    "Hello Jack Egypt Tour, I would like help planning a private Egypt trip.",
     "",
     line("Name", input.name),
     line("Email", input.email),
@@ -74,7 +74,7 @@ export function buildTripPlannerMessage(input: TripPlannerMessageInput): string 
 
 export function buildTourInquiryMessage(input: TourInquiryMessageInput): string {
   return [
-    "Hello Jack Tours Luxor, I would like to inquire about a private tour.",
+    "Hello Jack Egypt Tour, I would like to inquire about a private tour.",
     "",
     line("Tour", input.tourTitle),
     line("Preferred date", input.preferredDate),
@@ -91,7 +91,7 @@ export function buildTourInquiryMessage(input: TourInquiryMessageInput): string 
 
 export function buildContactMessage(input: ContactMessageInput): string {
   return [
-    "Hello Jack Tours Luxor, I am contacting you from the website.",
+    "Hello Jack Egypt Tour, I am contacting you from the website.",
     "",
     line("Name", input.name),
     line("Email", input.email),

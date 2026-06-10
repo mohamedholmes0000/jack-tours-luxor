@@ -5,9 +5,9 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
-  title: "About Jack Tours Luxor",
+  title: "About Jack Egypt Tour",
   description:
-    "Learn about Jack Tours Luxor, a Luxor-based Egypt travel agency and DMC focused on private tours and international service standards.",
+    "Learn about Jack Egypt Tour, a Luxor-based Egypt travel agency and DMC focused on private tours and international service standards.",
 };
 
 const values = [
@@ -28,7 +28,7 @@ export default function AboutPage() {
     <>
       <section className="relative min-h-[66vh] overflow-hidden bg-[var(--color-navy)] text-white">
         <Image
-          src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1800&q=82"
+          src="/photos/hatshepsut.jpg"
           alt="Egyptian temple columns in warm light"
           fill
           priority
@@ -38,7 +38,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#06111f] via-[rgba(6,17,31,0.76)] to-[rgba(6,17,31,0.2)]" />
         <div className="container-premium relative flex min-h-[66vh] items-end py-16">
           <div className="max-w-4xl">
-            <p className="eyebrow text-[var(--color-gold-light)]">About Jack Tours Luxor</p>
+            <p className="eyebrow text-[var(--color-gold-light)]">About Jack Egypt Tour</p>
             <h1 className="mt-5 font-serif text-5xl font-semibold leading-tight md:text-7xl">
               Luxor-born expertise, <span className="italic text-[var(--color-gold-light)]">built for international travelers.</span>
             </h1>
@@ -51,7 +51,7 @@ export default function AboutPage() {
           <SectionHeading
             eyebrow="Company story"
             title="A local travel partner for travelers who want Egypt handled beautifully."
-            description="Jack Tours Luxor was shaped around a simple idea: private Egypt travel should feel personal, polished, and grounded in local knowledge. From Luxor day tours to multi-city itineraries, the team focuses on practical planning, trusted people, and responsive support."
+            description="Jack Egypt Tour was shaped around a simple idea: private Egypt travel should feel personal, polished, and grounded in local knowledge. From Luxor day tours to multi-city itineraries, the team focuses on practical planning, trusted people, and responsive support."
           />
           <div className="border border-[rgb(214_173_84_/_26%)] bg-white/78 p-8 shadow-[0_24px_70px_rgb(87_59_22_/_12%)]">
             <p className="font-serif text-3xl font-semibold leading-tight text-[var(--color-navy)]">

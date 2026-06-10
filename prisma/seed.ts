@@ -66,7 +66,7 @@ async function main() {
         priceFrom: 180,
         included: ["Private guide", "Air-conditioned vehicle", "Pickup and drop-off"],
         excluded: ["Entrance fees", "Meals unless listed", "Personal expenses"],
-        itinerary: [{ title: "Curated experience", description: "A tailored itinerary managed by the Jack Tours Luxor team." }],
+        itinerary: [{ title: "Curated experience", description: "A tailored itinerary managed by the Jack Egypt Tour team." }],
         images: [],
         published: true,
         featured: true,
@@ -93,7 +93,7 @@ async function main() {
   const testimonials = [
     ["Amelia Carter", "United Kingdom", "The Luxor day tour felt personal, calm, and beautifully organized from start to finish."],
     ["Marco Bellini", "Italy", "Fast WhatsApp replies, a superb guide, and a Nile cruise plan that matched our pace perfectly."],
-    ["Sofia Martinez", "Spain", "Jack Tours Luxor made Egypt feel effortless. Every transfer and temple visit was handled with care."],
+    ["Sofia Martinez", "Spain", "Jack Egypt Tour made Egypt feel effortless. Every transfer and temple visit was handled with care."],
   ];
 
   for (const [name, nationality, text] of testimonials) {
@@ -130,12 +130,12 @@ async function main() {
   }
 
   const settings = {
-    companyName: "Jack Tours Luxor",
+    companyName: "Jack Egypt Tour",
     phone: "+20XXXXXXXXXX",
     whatsappNumber: "+20XXXXXXXXXX",
     email: "admin@jacktoursluxor.com",
     address: "Luxor, Egypt",
-    defaultMetaTitle: "Jack Tours Luxor | Luxury Egypt Private Tours",
+    defaultMetaTitle: "Jack Egypt Tour | Luxury Egypt Private Tours",
     defaultMetaDescription: "Private tailor-made Egypt tours and DMC services from Luxor-based experts.",
     heroHeadline: "Discover Egypt Beyond Expectations",
     heroSubheadline: "Private tailor-made journeys through Egypt, curated by Luxor-based local experts.",
