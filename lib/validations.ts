@@ -1,9 +1,18 @@
 import { z } from "zod";
+import { isAllowedAdminImageSrc } from "@/lib/images";
 
 const phoneLike = z
   .string()
   .trim()
   .min(6, "Add a WhatsApp number or phone we can reply to.");
+
+const adminImageSource = z
+  .string()
+  .trim()
+  .refine(
+    isAllowedAdminImageSrc,
+    "Use an https image URL from a trusted host or a local /photos/ or /images/ path.",
+  );
 
 export const inquirySchema = z.object({
   name: z.string().min(2),
@@ -102,7 +111,7 @@ export const adminFaqSchema = z.object({
 });
 
 export const adminGalleryImageSchema = z.object({
-  url: z.string().trim().url("Use a valid image URL."),
+  url: adminImageSource,
   alt: z.string().trim().min(3, "Add alt text."),
   category: z.string().trim().min(2, "Add a category."),
   relatedTourSlug: z.string().trim().optional(),

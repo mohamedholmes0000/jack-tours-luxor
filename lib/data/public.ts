@@ -10,6 +10,7 @@ import {
   type Tour,
 } from "@/lib/content";
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
+import { safeImageSrc } from "@/lib/images";
 
 function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number]): Tour {
   return {
@@ -30,8 +31,10 @@ function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number])
     itinerary: Array.isArray(tour.itinerary)
       ? (tour.itinerary as Array<{ title: string; description: string }>)
       : [],
-    heroImage: tour.heroImage ?? tours[0].heroImage,
-    images: tour.images,
+    heroImage: safeImageSrc(tour.heroImage, tours[0].heroImage),
+    images: tour.images.length
+      ? tour.images.map((image) => safeImageSrc(image, tours[0].heroImage))
+      : [safeImageSrc(tour.heroImage, tours[0].heroImage)],
     featured: tour.featured,
   };
 }
@@ -44,7 +47,7 @@ function mapDestination(
     name: destination.name,
     overview: destination.overview,
     highlights: destination.highlights,
-    heroImage: destination.heroImage ?? destinations[0].heroImage,
+    heroImage: safeImageSrc(destination.heroImage, destinations[0].heroImage),
   };
 }
 
@@ -60,7 +63,7 @@ function mapBlogPost(post: Awaited<ReturnType<typeof prisma.blogPost.findMany>>[
     excerpt: post.excerpt,
     publishedAt: post.createdAt.toISOString().slice(0, 10),
     readTime: "4 min read",
-    heroImage: post.heroImage ?? blogArticles[0].heroImage,
+    heroImage: safeImageSrc(post.heroImage, blogArticles[0].heroImage),
     sections: contentText
       ? [{ heading: post.title, body: contentText }]
       : content.length
@@ -130,10 +133,10 @@ export async function getGalleryImagesSafe(): Promise<GalleryImage[]> {
       const images = await prisma.galleryImage.findMany({ orderBy: { order: "asc" } });
       return images.length
         ? images.map((image) => ({
-            url: image.url,
+            url: safeImageSrc(image.url, galleryImages[0].url),
             alt: image.alt,
-          category: (image.category ?? "Experiences") as GalleryImage["category"],
-        }))
+            category: (image.category ?? "Experiences") as GalleryImage["category"],
+          }))
         : galleryImages;
     },
     galleryImages,
