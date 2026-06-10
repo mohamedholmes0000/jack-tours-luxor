@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -16,6 +17,11 @@ const navItems = [
 
 export function MobileNavigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  function isActive(href: string) {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -87,16 +93,29 @@ export function MobileNavigation() {
           </div>
 
           <nav className="mt-9 flex flex-col gap-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={closeMenu}
-                className="border-b border-white/10 py-3 font-serif text-2xl font-semibold text-white transition hover:text-[var(--color-gold-light)]"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  onClick={closeMenu}
+                  className={`group relative border-b border-white/10 py-3 font-serif text-2xl font-semibold text-white transition hover:text-[var(--color-gold-light)] ${
+                    active ? "text-[var(--color-gold-light)]" : ""
+                  }`}
+                >
+                  {item.label}
+                  <span
+                    aria-hidden
+                    className={`absolute bottom-2 left-0 h-px w-16 origin-left bg-[var(--color-gold)] transition duration-300 ease-out group-hover:scale-x-100 ${
+                      active ? "scale-x-100 opacity-100" : "scale-x-0 opacity-50"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
           </nav>
 
           <a

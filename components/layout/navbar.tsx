@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MobileNavigation } from "@/components/layout/mobile-navigation";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -13,6 +16,12 @@ const navItems = [
 ];
 
 export function Navbar() {
+  const pathname = usePathname();
+
+  function isActive(href: string) {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-[rgb(214_173_84_/_18%)] bg-[rgba(6,17,31,0.94)] text-white shadow-[0_18px_45px_rgb(0_0_0_/_24%)] lg:backdrop-blur-xl">
       <div className="container-premium flex min-h-16 items-center justify-between gap-4 lg:min-h-20">
@@ -25,11 +34,28 @@ export function Navbar() {
           </span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm font-semibold text-white/78 lg:flex">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className="transition hover:text-[var(--color-gold-light)]">
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`group relative pb-1 transition hover:text-[var(--color-gold-light)] ${
+                  active ? "text-[var(--color-gold-light)]" : ""
+                }`}
+              >
+                {item.label}
+                <span
+                  aria-hidden
+                  className={`absolute bottom-0 left-0 h-px w-full origin-center bg-[var(--color-gold)] transition duration-300 ease-out group-hover:scale-x-100 ${
+                    active ? "scale-x-100 opacity-100" : "scale-x-0 opacity-50"
+                  }`}
+                />
+              </Link>
+            );
+          })}
         </nav>
         {/* Wrapper carries the responsive hide. .btn-primary in globals.css
             sets display:inline-flex and (because it's defined after Tailwind
