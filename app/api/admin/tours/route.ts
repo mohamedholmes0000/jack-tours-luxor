@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { revalidateTourPublicPaths } from "@/lib/admin/tour-revalidation";
 import { prisma } from "@/lib/data/safe-db";
 import { hasConfiguredDatabase } from "@/lib/data/safe-db";
 import { adminTourSchema } from "@/lib/validations";
@@ -46,6 +47,8 @@ export async function POST(request: Request) {
         priceCurrency: "USD",
       },
     });
+
+    revalidateTourPublicPaths(tour.slug);
 
     return NextResponse.json({ ok: true, id: tour.id });
   } catch (error) {

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatPrice, tours, type Tour } from "@/lib/content";
+import { formatPrice, type Tour } from "@/lib/content";
+import { getToursSafe } from "@/lib/data/public";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 // ============================================================================
@@ -163,8 +164,9 @@ function JourneyCard({ tour, eager = false }: { tour: Tour; eager?: boolean }) {
 
 // ============================================================================
 
-export function Homepage() {
-  const featuredTours = tours.filter((tour) => tour.featured).slice(0, 3);
+export async function Homepage() {
+  const safeTours = await getToursSafe();
+  const featuredTours = safeTours.filter((tour) => tour.featured).slice(0, 3);
   const marqueeItems = [...destinationsMarquee, ...destinationsMarquee];
 
   return (

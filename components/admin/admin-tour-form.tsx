@@ -85,11 +85,11 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
       const result = (await response.json()) as { ok: boolean; message?: string; id?: string };
 
       if (!response.ok || !result.ok) {
-        setError(result.message ?? "Unable to save tour.");
+        setError(result.message ?? "Save failed. Public pages were not updated.");
         return;
       }
 
-      setMessage("Tour saved.");
+      setMessage("Saved successfully. Public pages updated.");
       router.refresh();
 
       if (mode === "create" && result.id) {
@@ -97,7 +97,7 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
       }
     } catch (saveError) {
       console.warn(saveError);
-      setError("Unable to reach the admin API.");
+      setError("Save failed. Unable to reach the admin API.");
     } finally {
       setIsSaving(false);
     }
@@ -137,6 +137,7 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
 
   function renderTextArray(label: string, name: "images" | "highlights" | "included" | "excluded", placeholder: string) {
     const currentValues = textArrays[name].length ? textArrays[name] : [""];
+    const errorMessage = errors[name]?.message;
 
     function commit(nextValues: string[]) {
       const usableValues = nextValues.length ? nextValues : [""];
@@ -169,6 +170,11 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
             Add
           </button>
         </div>
+        {name === "images" ? (
+          <p className="mt-2 text-xs leading-5 text-[var(--color-gray-600)]">
+            Use a trusted image URL or a local /photos/... or /images/... path.
+          </p>
+        ) : null}
         <div className="mt-3 grid gap-3">
           {currentValues.map((value, index) => (
             <div key={`${name}-${index}`} className="flex gap-2">
@@ -184,6 +190,9 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
             </div>
           ))}
         </div>
+        {typeof errorMessage === "string" ? (
+          <p className="mt-2 text-sm text-red-700">{errorMessage}</p>
+        ) : null}
       </div>
     );
   }
@@ -232,7 +241,7 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
 
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">
-          {renderTextArray("Gallery image URLs", "images", "https://...")}
+          {renderTextArray("Gallery image URLs", "images", "https://images.unsplash.com/... or /photos/karnak.jpg")}
         </div>
         <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">
           {renderTextArray("Highlights", "highlights", "Private guide")}

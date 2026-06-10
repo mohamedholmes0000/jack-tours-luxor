@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { revalidateTourPublicPaths } from "@/lib/admin/tour-revalidation";
 import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
 import { adminTourSchema } from "@/lib/validations";
 
@@ -13,12 +14,11 @@ async function requireAdmin() {
   return Boolean(session);
 }
 
-async function findTourId(id: string) {
-  const tour = await prisma.tour.findFirst({
+async function findTourForRevalidation(id: string) {
+  return prisma.tour.findFirst({
     where: { OR: [{ id }, { slug: id }] },
-    select: { id: true },
+    select: { id: true, slug: true },
   });
-  return tour?.id;
 }
 
 export async function PUT(request: Request, { params }: TourApiProps) {
@@ -45,14 +45,14 @@ export async function PUT(request: Request, { params }: TourApiProps) {
   }
 
   try {
-    const tourId = await findTourId(id);
+    const existingTour = await findTourForRevalidation(id);
 
-    if (!tourId) {
+    if (!existingTour) {
       return NextResponse.json({ ok: false, message: "Tour not found." }, { status: 404 });
     }
 
-    await prisma.tour.update({
-      where: { id: tourId },
+    const updatedTour = await prisma.tour.update({
+      where: { id: existingTour.id },
       data: {
         ...parsed.data,
         priceFrom: parsed.data.priceFrom || null,
@@ -62,9 +62,13 @@ export async function PUT(request: Request, { params }: TourApiProps) {
         metaDescription: parsed.data.metaDescription || null,
         itinerary: parsed.data.itinerary,
       },
+      select: { id: true, slug: true },
     });
 
-    return NextResponse.json({ ok: true, id: tourId });
+    revalidateTourPublicPaths(existingTour.slug);
+    revalidateTourPublicPaths(updatedTour.slug);
+
+    return NextResponse.json({ ok: true, id: updatedTour.id });
   } catch (error) {
     console.error("Failed to update tour", error);
     return NextResponse.json({ ok: false, message: "Unable to update tour." }, { status: 500 });
@@ -85,13 +89,15 @@ export async function DELETE(_request: Request, { params }: TourApiProps) {
 
   try {
     const { id } = await params;
-    const tourId = await findTourId(id);
+    const existingTour = await findTourForRevalidation(id);
 
-    if (!tourId) {
+    if (!existingTour) {
       return NextResponse.json({ ok: false, message: "Tour not found." }, { status: 404 });
     }
 
-    await prisma.tour.delete({ where: { id: tourId } });
+    await prisma.tour.delete({ where: { id: existingTour.id } });
+    revalidateTourPublicPaths(existingTour.slug);
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Failed to delete tour", error);

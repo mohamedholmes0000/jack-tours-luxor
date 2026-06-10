@@ -94,7 +94,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
 
       <section className="section-ivory py-16 md:py-24">
         <div className="container-premium grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="space-y-16">
+          <div className="min-w-0 space-y-16">
             <div>
               <p className="eyebrow">Overview</p>
               <p className="mt-5 text-xl leading-9 text-[var(--color-gray-900)]">{tour.overview}</p>
@@ -153,19 +153,39 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
             </div>
 
             <div>
-              <h2 className="font-serif text-4xl font-semibold text-[var(--color-navy)]">Gallery</h2>
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="eyebrow">Tour gallery</p>
+                  <h2 className="mt-3 font-serif text-4xl font-semibold text-[var(--color-navy)]">In the frame</h2>
+                </div>
+                <p className="hidden text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold)] sm:block">
+                  Swipe
+                </p>
+              </div>
+              <div className="relative mt-6 overflow-hidden border border-[rgb(214_173_84_/_24%)] bg-[var(--color-navy)] py-4 shadow-[0_22px_60px_rgb(87_59_22_/_12%)]">
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-[var(--color-navy)] to-transparent" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-[var(--color-navy)] to-transparent" />
+                <div className="flex w-full min-w-0 max-w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-2">
                 {tour.images.map((image, index) => (
-                  <div key={image} className="relative aspect-[4/3] overflow-hidden bg-[var(--color-gray-100)]">
+                  <figure
+                    key={`${image}-${index}`}
+                    className="group relative aspect-[4/3] w-[min(82vw,30rem)] shrink-0 snap-center overflow-hidden border border-[rgb(214_173_84_/_24%)] bg-[var(--color-gray-100)] sm:w-[26rem] lg:w-[30rem]"
+                  >
                     <Image
                       src={image}
                       alt={`${tour.title} gallery image ${index + 1}`}
                       fill
-                      sizes="(min-width: 768px) 30vw, 100vw"
-                      className="object-cover"
+                      sizes="(min-width: 1024px) 30rem, (min-width: 640px) 26rem, 82vw"
+                      className="object-cover transition duration-500 group-hover:scale-105"
                     />
-                  </div>
+                    <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#06111f] to-transparent p-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-light)]">
+                        Image {index + 1}
+                      </p>
+                    </figcaption>
+                  </figure>
                 ))}
+                </div>
               </div>
             </div>
 

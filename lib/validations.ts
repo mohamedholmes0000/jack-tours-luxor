@@ -14,6 +14,9 @@ const adminImageSource = z
     "Use an https image URL from a trusted host or a local /photos/ or /images/ path.",
   );
 
+const optionalAdminImageSource = adminImageSource.optional().or(z.literal(""));
+const adminImageListItem = adminImageSource.or(z.literal(""));
+
 export const inquirySchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
@@ -67,8 +70,8 @@ export const adminTourSchema = z.object({
   groupSize: z.string().trim().min(1, "Add group size."),
   departurePoint: z.string().trim().optional(),
   priceFrom: z.number().min(0).optional(),
-  heroImage: z.string().trim().url("Use a valid image URL.").optional().or(z.literal("")),
-  images: z.array(z.string().trim().url("Use valid gallery image URLs.").or(z.literal(""))),
+  heroImage: optionalAdminImageSource,
+  images: z.array(adminImageListItem),
   highlights: z.array(z.string().trim().min(1)).min(1, "Add at least one highlight."),
   included: z.array(z.string().trim()),
   excluded: z.array(z.string().trim()),
@@ -96,7 +99,7 @@ export const adminBlogPostSchema = z.object({
   contentText: z.string().trim().min(20, "Add article content."),
   category: z.string().trim().min(2, "Add a category."),
   tags: z.array(z.string().trim()),
-  heroImage: z.string().trim().url("Use a valid image URL.").optional().or(z.literal("")),
+  heroImage: optionalAdminImageSource,
   published: z.boolean(),
   metaTitle: z.string().trim().optional(),
   metaDescription: z.string().trim().optional(),
