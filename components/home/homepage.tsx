@@ -27,6 +27,17 @@ const trustLine = [
   "24/7 WhatsApp",
 ];
 
+// Sprint 1 — hero conversion chips. Each links into the existing /tours page
+// with the matching category filter where one exists; "Red Sea Escapes" falls
+// back to the unfiltered tours index (no DB category matches it yet).
+const heroCategories: ReadonlyArray<{ label: string; href: string }> = [
+  { label: "Day Tours", href: "/tours?category=Day%20Tours" },
+  { label: "Nile Cruises", href: "/tours?category=Nile%20Cruises" },
+  { label: "Multi-Day Tours", href: "/tours?category=Multi-Day%20Packages" },
+  { label: "Private Egypt Trips", href: "/tours?category=Custom%20Egypt%20Tours" },
+  { label: "Red Sea Escapes", href: "/tours" },
+];
+
 const destinationsMarquee = [
   {
     name: "Luxor",
@@ -194,13 +205,13 @@ export function Homepage() {
               </span>
             </h1>
             <p className="mt-5 max-w-md text-base leading-7 text-white/82 sm:mt-7 sm:text-lg sm:leading-8 lg:max-w-lg">
-              A Luxor-based team arranging private routes through Karnak, the
-              Valley of the Kings, the Nile, Aswan, Abu Simbel, and the Red
-              Sea.
+              Luxury private Egypt tours — day trips, Nile cruises, and
+              tailor-made multi-day packages, quietly arranged by a Luxor-based
+              team.
             </p>
             <div className="mt-7 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
-              <Link className="btn-primary" href="/trip-planner">
-                Plan my trip
+              <Link className="btn-primary" href="/tours">
+                Explore tours
               </Link>
               <a
                 className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85"
@@ -212,6 +223,28 @@ export function Homepage() {
                 Or message on WhatsApp
               </a>
             </div>
+
+            {/* Sprint 1 — elegant category chip row directly below the CTAs.
+                Mobile: horizontal snap-scroll (no wrap, no clipping).
+                Desktop: same chips wrap naturally. Each chip is a real link
+                into /tours with a category filter where one exists. */}
+            <nav
+              aria-label="Tour categories"
+              className="mt-6 mb-20 sm:mt-8 sm:mb-0 -mx-[var(--container-edge,1.25rem)] sm:mx-0"
+            >
+              <ul className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-[var(--container-edge,1.25rem)] pb-1 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0">
+                {heroCategories.map((cat) => (
+                  <li key={cat.label} className="shrink-0 snap-start">
+                    <Link
+                      href={cat.href}
+                      className="inline-flex items-center rounded-sm border border-[rgb(214_173_84_/_38%)] bg-[rgba(214,173,84,0.06)] px-3 py-2 text-[0.6rem] font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)] backdrop-blur-[2px] transition hover:border-[var(--color-gold-light)] hover:bg-[rgba(214,173,84,0.16)] hover:text-white sm:px-4 sm:text-[0.66rem]"
+                    >
+                      {cat.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
           {/* Tiny scroll cue, desktop-only — corner detail. */}
@@ -257,6 +290,37 @@ export function Homepage() {
               It is a slow reveal.
             </span>
           </p>
+        </div>
+      </section>
+
+      {/* ============================================================
+          8 · FEATURED JOURNEYS — tall photographic cards.
+          (Sprint 2: moved up here so tours appear within 1-2 mobile
+          scrolls. Comment number left at "8" to preserve original
+          numbering; visual order is what matters.)
+      ============================================================ */}
+      <section className="bg-[var(--color-ivory)] pt-16 pb-20 sm:pt-20 sm:pb-24 md:pt-24 md:pb-32">
+        <div className="container-premium">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="reveal-up max-w-xl">
+              <p className="eyebrow">Featured journeys</p>
+              <h2 className="mt-4 font-serif text-[2rem] font-semibold leading-[1.06] text-[var(--color-navy)] sm:text-[2.6rem] md:text-[3rem] lg:text-[3.4rem]">
+                Polished private experiences,
+                <span className="block italic text-[var(--color-gold-dark)]">
+                  ready to tailor.
+                </span>
+              </h2>
+            </div>
+            <Link className="btn-secondary self-start sm:self-auto" href="/tours">
+              View all tours
+            </Link>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+            {featuredTours.map((tour, idx) => (
+              <JourneyCard key={tour.slug} tour={tour} eager={idx === 0} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -425,34 +489,6 @@ export function Homepage() {
               </li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      {/* ============================================================
-          8 · FEATURED JOURNEYS — tall photographic cards.
-      ============================================================ */}
-      <section className="bg-[var(--color-ivory)] pb-20 sm:pb-24 md:pb-32">
-        <div className="container-premium">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="reveal-up max-w-xl">
-              <p className="eyebrow">Featured journeys</p>
-              <h2 className="mt-4 font-serif text-[2rem] font-semibold leading-[1.06] text-[var(--color-navy)] sm:text-[2.6rem] md:text-[3rem] lg:text-[3.4rem]">
-                Polished private experiences,
-                <span className="block italic text-[var(--color-gold-dark)]">
-                  ready to tailor.
-                </span>
-              </h2>
-            </div>
-            <Link className="btn-secondary self-start sm:self-auto" href="/tours">
-              View all tours
-            </Link>
-          </div>
-
-          <div className="mt-10 grid gap-5 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-            {featuredTours.map((tour, idx) => (
-              <JourneyCard key={tour.slug} tour={tour} eager={idx === 0} />
-            ))}
-          </div>
         </div>
       </section>
 
