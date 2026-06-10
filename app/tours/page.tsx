@@ -101,7 +101,7 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
             </h2>
           </div>
           <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
-            WhatsApp Jack Tours
+            WhatsApp Jack Egypt Tour
           </a>
         </div>
       </section>

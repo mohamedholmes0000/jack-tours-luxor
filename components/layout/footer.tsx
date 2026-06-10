@@ -3,7 +3,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function Footer() {
   return (
-    <footer className="section-dark pattern-overlay overflow-hidden border-t border-[rgb(214_173_84_/_24%)] text-white">
+    <footer className="section-dark pattern-overlay overflow-hidden border-t border-[rgb(214_173_84_/_24%)] pb-20 text-white sm:pb-0">
       <div className="container-premium grid gap-10 py-12 md:grid-cols-[1.3fr_0.7fr_0.7fr]">
         <div className="relative">
           <p className="font-serif text-4xl font-semibold text-[var(--color-gold-light)]">Jack Egypt Tour</p>
@@ -39,7 +39,7 @@ export function Footer() {
           <div className="mt-4 space-y-3 text-sm text-white/70">
             <p>Luxor, Egypt</p>
             <p>24/7 WhatsApp support</p>
-            <p>admin@jacktoursluxor.com</p>
+            <p>info@jackegypttour.com</p>
           </div>
         </div>
       </div>

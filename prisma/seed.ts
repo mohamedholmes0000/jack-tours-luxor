@@ -9,11 +9,11 @@ async function main() {
 
   await prisma.adminUser.upsert({
     where: { email: "admin@jacktoursluxor.com" },
-    update: { password, name: "Jack Tours Admin" },
+    update: { password, name: "Jack Egypt Tour Admin" },
     create: {
       email: "admin@jacktoursluxor.com",
       password,
-      name: "Jack Tours Admin",
+      name: "Jack Egypt Tour Admin",
     },
   });
 
@@ -133,7 +133,7 @@ async function main() {
     companyName: "Jack Egypt Tour",
     phone: "+20XXXXXXXXXX",
     whatsappNumber: "+20XXXXXXXXXX",
-    email: "admin@jacktoursluxor.com",
+    email: "info@jackegypttour.com",
     address: "Luxor, Egypt",
     defaultMetaTitle: "Jack Egypt Tour | Luxury Egypt Private Tours",
     defaultMetaDescription: "Private tailor-made Egypt tours and DMC services from Luxor-based experts.",

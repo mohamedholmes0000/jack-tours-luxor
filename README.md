@@ -27,6 +27,14 @@ NEXT_PUBLIC_WHATSAPP_NUMBER="+20XXXXXXXXXX"
 ```
 
 `NEXTAUTH_SECRET` is required for admin sessions in production. Generate a strong value before deploying.
+It is also required in local development because the admin middleware protects `/admin/*`
+routes with NextAuth JWT sessions. Set the same variable in Vercel before using the Admin CMS.
+
+Generate a strong local value with:
+
+```bash
+openssl rand -base64 32
+```
 
 4. Run the development server:
 
@@ -90,7 +98,7 @@ Admin API routes are protected by session/auth.
 ## Environment Variables
 
 - `DATABASE_URL`: PostgreSQL connection string. Use Neon or another managed PostgreSQL provider for deployment.
-- `NEXTAUTH_SECRET`: required secret for NextAuth sessions.
+- `NEXTAUTH_SECRET`: required locally and on Vercel for NextAuth admin sessions and protected admin routes.
 - `NEXTAUTH_URL`: deployed app URL, for example `https://example.com`.
 - `NEXT_PUBLIC_SITE_URL`: public canonical site URL used by metadata, robots, and sitemap.
 - `NEXT_PUBLIC_WHATSAPP_NUMBER`: WhatsApp number used by public CTAs.
@@ -110,7 +118,7 @@ Hostinger shared hosting is not ideal for running this full Next.js app directly
 ## Production Checklist
 
 1. Create a Neon PostgreSQL database.
-2. Set all environment variables in Vercel.
+2. Set all environment variables in Vercel, including `NEXTAUTH_SECRET`.
 3. Run Prisma migration against the production database:
 
 ```bash

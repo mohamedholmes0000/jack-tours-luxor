@@ -21,7 +21,7 @@ export function AdminSidebar() {
     <aside className="border-r border-[var(--color-gray-100)] bg-white p-5 lg:min-h-screen">
       <Link href="/admin" className="block">
         <span className="font-serif text-2xl font-semibold text-[var(--color-navy)]">
-          Jack Tours
+          Jack Egypt Tour
         </span>
         <span className="mt-1 block text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">
           Admin CMS

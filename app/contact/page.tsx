@@ -30,7 +30,7 @@ export default function ContactPage() {
             <div className="mt-5 space-y-3 text-sm leading-7 text-white/76">
               <p>Luxor, Egypt</p>
               <p>24/7 WhatsApp response path</p>
-              <p>admin@jacktoursluxor.com</p>
+              <p>info@jackegypttour.com</p>
             </div>
             <a className="btn-primary mt-6" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
               WhatsApp Now

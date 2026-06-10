@@ -324,4 +324,8 @@ a {
     gap: 1.5rem;
     padding-block: 2rem;
   }
+
+  footer {
+    padding-bottom: 4.25rem;
+  }
 }

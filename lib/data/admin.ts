@@ -312,15 +312,15 @@ export async function getAdminGalleryImages() {
 }
 
 const defaultSettings: AdminSettingsValues = {
-  companyName: "Jack Tours Luxor",
+  companyName: "Jack Egypt Tour",
   phone: "+20XXXXXXXXXX",
   whatsappNumber: "+20XXXXXXXXXX",
-  email: "admin@jacktoursluxor.com",
+  email: "info@jackegypttour.com",
   address: "Luxor, Egypt",
   facebookUrl: "",
   instagramUrl: "",
   tripAdvisorUrl: "",
-  defaultSeoTitle: "Jack Tours Luxor | Luxury Egypt Private Tours",
+  defaultSeoTitle: "Jack Egypt Tour | Luxury Egypt Private Tours",
   defaultSeoDescription: "Private tailor-made Egypt tours and DMC services from Luxor-based experts.",
 };
 

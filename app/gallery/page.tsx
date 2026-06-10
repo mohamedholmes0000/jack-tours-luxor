@@ -85,7 +85,7 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
             Want a private Egypt itinerary around these places?
           </h2>
           <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
-            WhatsApp Jack Tours
+            WhatsApp Jack Egypt Tour
           </a>
         </div>
       </section>
