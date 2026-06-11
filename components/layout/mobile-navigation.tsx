@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { type PointerEvent, type TouchEvent, useEffect, useState } from "react";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const navItems = [
@@ -37,21 +37,35 @@ export function MobileNavigation() {
     setIsOpen(false);
   }
 
+  function openMenu() {
+    setIsOpen(true);
+  }
+
+  function openMenuFromPointer(event: PointerEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    openMenu();
+  }
+
+  function openMenuFromTouch(event: TouchEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    openMenu();
+  }
+
   return (
     <div className="flex items-center gap-2 lg:hidden">
-      <a
-        className="inline-flex min-h-9 items-center justify-center rounded-full border border-[rgb(214_173_84_/_36%)] bg-[rgba(214,173,84,0.14)] px-3 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-[var(--color-gold-light)]"
-        href={buildWhatsAppUrl()}
-        target="_blank"
-        rel="noreferrer"
+      <Link
+        className="inline-flex min-h-9 items-center justify-center rounded-full border border-[rgb(214_173_84_/_36%)] bg-[rgba(214,173,84,0.14)] px-3 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-[var(--color-gold-light)]"
+        href="/trip-planner"
       >
-        WhatsApp
-      </a>
+        Book Now
+      </Link>
       <button
         type="button"
         aria-label="Open navigation menu"
         aria-expanded={isOpen}
-        onClick={() => setIsOpen(true)}
+        onClick={openMenu}
+        onPointerUp={openMenuFromPointer}
+        onTouchEnd={openMenuFromTouch}
         className="inline-flex size-10 flex-col items-center justify-center gap-1 rounded-full border border-[rgb(214_173_84_/_38%)] bg-white/[0.06] text-[var(--color-gold-light)] shadow-[0_12px_28px_rgb(0_0_0_/_24%)]"
       >
         <span className="h-px w-4 bg-current" />
@@ -60,7 +74,7 @@ export function MobileNavigation() {
       </button>
 
       <div
-        className={`fixed inset-0 z-50 overflow-hidden bg-[#030912]/62 backdrop-blur-[2px] transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[90] overflow-hidden bg-[#030912]/62 backdrop-blur-[2px] transition-opacity duration-300 ${
           isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
         aria-hidden={!isOpen}

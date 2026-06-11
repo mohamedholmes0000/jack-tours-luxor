@@ -223,7 +223,7 @@ a {
   text-align: center;
 }
 @media (max-width: 640px) {
-  .cartouche-pause { min-height: 42vh; padding-block: 3.5rem; }
+  .cartouche-pause { min-height: 30vh; padding-block: 2.75rem; }
 }
 
 /* Tiny scroll cue used in the hero corner. */

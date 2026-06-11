@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { DestinationCarousel } from "@/components/home/destination-carousel";
 import { formatPrice, type Tour } from "@/lib/content";
 import { getToursSafe } from "@/lib/data/public";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -20,23 +21,51 @@ const testimonialImage = "/photos/hatshepsut.jpg";
 
 const finalCtaImage = "/photos/felucca.jpg";
 
-const trustLine = [
-  "Licensed operator",
-  "TripAdvisor 5.0",
-  "Google 5.0",
-  "Luxor local team",
-  "24/7 WhatsApp",
+const microTrustLine = [
+  "Local Egypt Travel Experts",
+  "Private Tailor-Made Tours",
+  "WhatsApp Support 24/7",
 ];
 
 // Sprint 1 — hero conversion chips. Each links into the existing /tours page
 // with the matching category filter where one exists; "Red Sea Escapes" falls
 // back to the unfiltered tours index (no DB category matches it yet).
-const heroCategories: ReadonlyArray<{ label: string; href: string }> = [
-  { label: "Day Tours", href: "/tours?category=Day%20Tours" },
-  { label: "Nile Cruises", href: "/tours?category=Nile%20Cruises" },
-  { label: "Multi-Day Tours", href: "/tours?category=Multi-Day%20Packages" },
-  { label: "Private Egypt Trips", href: "/tours?category=Custom%20Egypt%20Tours" },
-  { label: "Red Sea Escapes", href: "/tours" },
+const tourCategoryCards: ReadonlyArray<{
+  label: string;
+  href: string;
+  image: string;
+  note: string;
+}> = [
+  {
+    label: "Day Tours",
+    href: "/tours?category=Day%20Tours",
+    image: "/photos/karnak.jpg",
+    note: "Luxor, temples, private guiding",
+  },
+  {
+    label: "Nile Cruises",
+    href: "/tours?category=Nile%20Cruises",
+    image: "/photos/nile.jpg",
+    note: "Slow river days to Aswan",
+  },
+  {
+    label: "Multi-Day Tours",
+    href: "/tours?category=Multi-Day%20Packages",
+    image: "/photos/pyramids.jpg",
+    note: "Cairo, Luxor, Aswan routes",
+  },
+  {
+    label: "Luxury Tours",
+    href: "/tours?category=Luxury%20Tours",
+    image: "/photos/hatshepsut.jpg",
+    note: "Refined pacing and details",
+  },
+  {
+    label: "Custom Tours",
+    href: "/tours?category=Custom%20Egypt%20Tours",
+    image: "/photos/felucca.jpg",
+    note: "Built around your dates",
+  },
 ];
 
 const destinationsMarquee = [
@@ -167,7 +196,6 @@ function JourneyCard({ tour, eager = false }: { tour: Tour; eager?: boolean }) {
 export async function Homepage() {
   const safeTours = await getToursSafe();
   const featuredTours = safeTours.filter((tour) => tour.featured).slice(0, 3);
-  const marqueeItems = [...destinationsMarquee, ...destinationsMarquee];
 
   return (
     <div data-mobile-cta="true">
@@ -189,64 +217,61 @@ export async function Homepage() {
         {/* Bottom-only legibility scrim — keep the photo breathing. */}
         <div
           aria-hidden
-          className="absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.55)] to-transparent sm:h-[55%]"
+          className="absolute inset-x-0 bottom-0 h-[78%] bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.76)] to-transparent sm:h-[55%] sm:via-[rgba(6,17,31,0.55)]"
         />
         {/* Top eyebrow strip — tiny, restrained. */}
-        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[rgba(6,17,31,0.55)] to-transparent sm:h-20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(6,17,31,0.78)] via-[rgba(6,17,31,0.34)] to-[rgba(6,17,31,0.12)]" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[rgba(6,17,31,0.78)] to-transparent sm:h-20" />
 
-        <div className="container-premium relative flex min-h-[92vh] flex-col justify-between pb-12 pt-7 sm:min-h-[95vh] sm:pb-16 sm:pt-9 lg:min-h-[100vh] lg:pb-24 lg:pt-12">
+        <div className="container-premium relative flex min-h-[88vh] flex-col justify-between pb-10 pt-7 sm:min-h-[95vh] sm:pb-16 sm:pt-9 lg:min-h-[100vh] lg:pb-24 lg:pt-12">
           <p className="eyebrow text-[var(--color-gold-light)]">
             Private Egypt · est. Luxor
           </p>
 
-          <div className="max-w-[20rem] sm:max-w-md lg:max-w-3xl">
-            <h1 className="font-serif font-semibold leading-[0.92] text-white text-[clamp(3rem,12.5vw,9.5rem)]">
-              Egypt,
+          <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
+            <h1 className="font-serif font-semibold leading-[0.94] text-white text-[clamp(2.8rem,11vw,9.5rem)]">
+              Egypt, privately
               <span className="block italic text-[var(--color-gold-light)]">
-                unhurried.
+                composed.
               </span>
             </h1>
-            <p className="mt-5 max-w-md text-base leading-7 text-white/82 sm:mt-7 sm:text-lg sm:leading-8 lg:max-w-lg">
+            <p className="hidden">
               Luxury private Egypt tours — day trips, Nile cruises, and
               tailor-made multi-day packages, quietly arranged by a Luxor-based
               team.
             </p>
-            <div className="mt-7 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
-              <Link className="btn-primary" href="/tours">
-                Explore tours
+            <p className="mt-4 max-w-md text-[0.98rem] leading-7 text-white/86 sm:mt-7 sm:text-lg sm:leading-8 lg:max-w-lg">
+              Tailor-made Egypt journeys with private guides, elegant pacing,
+              and calm planning from a Luxor-based team.
+            </p>
+            <div className="mt-6 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
+              <Link className="btn-primary" href="/trip-planner">
+                Plan My Egypt Journey
               </Link>
               <a
-                className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85"
+                className="group hidden items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85 sm:inline-flex"
                 href={buildWhatsAppUrl()}
                 target="_blank"
                 rel="noreferrer"
               >
                 <span className="h-px w-8 bg-[var(--color-gold-light)] transition-all duration-300 group-hover:w-12" />
-                Or message on WhatsApp
+                Or message us on WhatsApp
               </a>
             </div>
 
-            {/* Sprint 1 — elegant category chip row directly below the CTAs.
-                Mobile: horizontal snap-scroll (no wrap, no clipping).
-                Desktop: same chips wrap naturally. Each chip is a real link
-                into /tours with a category filter where one exists. */}
-            <nav
-              aria-label="Tour categories"
-              className="mt-6 mb-20 sm:mt-8 sm:mb-0 -mx-[var(--container-edge,1.25rem)] sm:mx-0"
-            >
-              <ul className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-[var(--container-edge,1.25rem)] pb-1 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0">
-                {heroCategories.map((cat) => (
-                  <li key={cat.label} className="shrink-0 snap-start">
-                    <Link
-                      href={cat.href}
-                      className="inline-flex items-center rounded-sm border border-[rgb(214_173_84_/_38%)] bg-[rgba(214,173,84,0.06)] px-3 py-2 text-[0.6rem] font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)] backdrop-blur-[2px] transition hover:border-[var(--color-gold-light)] hover:bg-[rgba(214,173,84,0.16)] hover:text-white sm:px-4 sm:text-[0.66rem]"
-                    >
-                      {cat.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            {/* Compact reassurance row directly below the CTAs. */}
+            <ul className="mt-5 flex flex-col gap-2 border-l border-[rgb(240_204_122_/_40%)] pl-4 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-white/76 sm:mt-7 sm:flex-row sm:flex-wrap sm:border-l-0 sm:pl-0">
+              {microTrustLine.map((item, index) => (
+                <li key={item} className="flex items-center gap-2">
+                  {index ? (
+                    <span aria-hidden className="hidden text-[var(--color-gold-light)] sm:inline">
+                      /
+                    </span>
+                  ) : null}
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Tiny scroll cue, desktop-only — corner detail. */}
@@ -258,25 +283,52 @@ export async function Homepage() {
       </section>
 
       {/* ============================================================
-          2 · RESTRAINED TRUST LINE — single quiet line, navy on ivory.
+          2 · MOBILE TOUR STYLES — image-backed swipe cards.
       ============================================================ */}
-      <section className="border-y border-[rgb(214_173_84_/_24%)] bg-[var(--color-ivory)]">
+      <section className="border-y border-[rgb(214_173_84_/_24%)] bg-[var(--color-navy)] py-7 text-white sm:bg-[var(--color-ivory)] sm:py-5 sm:text-[var(--color-navy)]">
         <div className="container-premium">
-          <ul className="flex snap-x snap-mandatory items-center gap-x-8 overflow-x-auto py-4 text-[0.62rem] font-bold uppercase tracking-[0.24em] text-[var(--color-gray-600)] sm:justify-center sm:py-5">
-            {trustLine.map((item, idx) => (
-              <li
-                key={item}
-                className="flex shrink-0 snap-start items-center gap-x-8"
+          <div className="mb-4 flex items-end justify-between gap-4 sm:hidden">
+            <div>
+              <p className="eyebrow text-[var(--color-gold-light)]">
+                Choose your style
+              </p>
+              <h2 className="mt-2 font-serif text-2xl font-semibold text-white">
+                Private Egypt, your way.
+              </h2>
+            </div>
+            <Link
+              href="/tours"
+              className="shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-[var(--color-gold-light)]"
+            >
+              All tours
+            </Link>
+          </div>
+          <div className="-mx-[var(--container-edge,1.25rem)] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[var(--container-edge,1.25rem)] pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-3 sm:overflow-visible sm:px-0">
+            {tourCategoryCards.map((category) => (
+              <Link
+                key={category.label}
+                href={category.href}
+                className="group relative h-44 w-[74vw] max-w-[18rem] shrink-0 snap-start overflow-hidden border border-[rgb(214_173_84_/_28%)] bg-[var(--color-navy)] shadow-[0_18px_42px_rgb(0_0_0_/_24%)] sm:h-auto sm:w-auto sm:bg-transparent sm:px-4 sm:py-3 sm:shadow-none"
               >
-                <span className="whitespace-nowrap">{item}</span>
-                {idx < trustLine.length - 1 ? (
-                  <span aria-hidden className="text-[var(--color-gold)]">
-                    ✦
+                <Image
+                  src={category.image}
+                  alt={category.label}
+                  fill
+                  sizes="(min-width: 640px) 12rem, 74vw"
+                  className="object-cover transition duration-500 group-hover:scale-105 sm:hidden"
+                />
+                <span className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.22)] to-transparent sm:hidden" />
+                <span className="absolute inset-x-0 bottom-0 p-4 sm:static sm:p-0">
+                  <span className="block text-[0.62rem] font-bold uppercase tracking-[0.2em] text-[var(--color-gold-light)] sm:text-[var(--color-gold-dark)]">
+                    {category.label}
                   </span>
-                ) : null}
-              </li>
+                  <span className="mt-2 block max-w-44 text-xs leading-5 text-white/76 sm:hidden">
+                    {category.note}
+                  </span>
+                </span>
+              </Link>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
@@ -397,39 +449,7 @@ export async function Homepage() {
           </div>
         </div>
 
-        <div
-          className="mt-10 overflow-hidden sm:mt-14"
-          aria-label="Destinations marquee"
-        >
-          <div className="marquee-track flex w-max gap-4 sm:gap-6">
-            {marqueeItems.map((item, idx) => (
-              <figure
-                key={`${item.name}-${idx}`}
-                className="relative h-[16rem] w-[14rem] shrink-0 overflow-hidden sm:h-[22rem] sm:w-[18rem] md:h-[26rem] md:w-[21rem]"
-              >
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  sizes="(min-width: 768px) 21rem, (min-width: 640px) 18rem, 14rem"
-                  className="object-cover"
-                />
-                <div
-                  aria-hidden
-                  className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-transparent to-transparent"
-                />
-                <figcaption className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                  <p className="font-serif text-2xl font-semibold leading-none text-white sm:text-3xl">
-                    {item.name}
-                  </p>
-                  <p className="mt-2 text-[0.6rem] font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
-                    {item.label}
-                  </p>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
+        <DestinationCarousel items={destinationsMarquee} />
       </section>
 
       {/* ============================================================
@@ -648,7 +668,7 @@ export async function Homepage() {
          marker + a :has() rule in globals.css).
       ============================================================ */}
       <div
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[rgb(214_173_84_/_30%)] bg-[rgba(6,17,31,0.96)] backdrop-blur md:hidden"
+        className="hidden"
         style={{
           paddingBottom: "calc(0.6rem + env(safe-area-inset-bottom, 0px))",
         }}
