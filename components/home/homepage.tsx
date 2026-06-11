@@ -246,7 +246,8 @@ export async function Homepage() {
             </p>
             <div className="mt-6 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
               <Link className="btn-primary" href="/trip-planner">
-                Plan My Egypt Journey
+                <span className="sm:hidden">Plan My Journey</span>
+                <span className="hidden sm:inline">Plan My Egypt Journey</span>
               </Link>
               <a
                 className="group hidden items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85 sm:inline-flex"
@@ -255,20 +256,20 @@ export async function Homepage() {
                 rel="noreferrer"
               >
                 <span className="h-px w-8 bg-[var(--color-gold-light)] transition-all duration-300 group-hover:w-12" />
-                Or message us on WhatsApp
+                Or Book Now
               </a>
             </div>
 
             {/* Compact reassurance row directly below the CTAs. */}
             <ul className="mt-5 flex flex-col gap-2 border-l border-[rgb(240_204_122_/_40%)] pl-4 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-white/76 sm:mt-7 sm:flex-row sm:flex-wrap sm:border-l-0 sm:pl-0">
               {microTrustLine.map((item, index) => (
-                <li key={item} className="flex items-center gap-2">
-                  {index ? (
+                <li key={item} className="flex items-center gap-2 whitespace-nowrap">
+                  <span>{item}</span>
+                  {index < microTrustLine.length - 1 ? (
                     <span aria-hidden className="hidden text-[var(--color-gold-light)] sm:inline">
                       /
                     </span>
                   ) : null}
-                  <span>{item}</span>
                 </li>
               ))}
             </ul>
@@ -303,7 +304,7 @@ export async function Homepage() {
               All tours
             </Link>
           </div>
-          <div className="-mx-[var(--container-edge,1.25rem)] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[var(--container-edge,1.25rem)] pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-3 sm:overflow-visible sm:px-0">
+          <div className="no-scrollbar -mx-[var(--container-edge,1.25rem)] flex snap-x snap-mandatory flex-nowrap gap-3 overflow-x-auto px-[var(--container-edge,1.25rem)] pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-3 sm:overflow-visible sm:px-0">
             {tourCategoryCards.map((category) => (
               <Link
                 key={category.label}
@@ -335,7 +336,7 @@ export async function Homepage() {
       {/* ============================================================
           3 · EDITORIAL PAUSE — pure ivory wall, one serif sentence.
       ============================================================ */}
-      <section className="cartouche-pause bg-[var(--color-ivory)]">
+      <section className="cartouche-pause homepage-note-pause bg-[var(--color-ivory)]">
         <div className="container-premium reveal-up">
           <p className="eyebrow text-[var(--color-gold-dark)]">A note</p>
           <p className="mt-6 font-serif text-[2rem] font-medium leading-[1.18] text-[var(--color-navy)] sm:text-[3rem] md:text-[3.6rem] lg:text-[4.4rem]">
@@ -629,7 +630,7 @@ export async function Homepage() {
         <div className="container-premium relative flex min-h-[72vh] flex-col justify-end pt-16 pb-32 sm:min-h-[80vh] sm:py-20 md:py-28">
           <div className="reveal-up max-w-2xl">
             <p className="eyebrow text-[var(--color-gold-light)]">
-              Start with WhatsApp
+              Start your booking
             </p>
             <h2 className="mt-4 font-serif text-[2.4rem] font-semibold leading-[1.02] sm:text-[3.4rem] md:text-[4.8rem] lg:text-[6rem]">
               Ready when
@@ -648,7 +649,7 @@ export async function Homepage() {
                 target="_blank"
                 rel="noreferrer"
               >
-                WhatsApp us now
+                Book Now
               </a>
               <Link
                 className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85"
@@ -684,7 +685,7 @@ export async function Homepage() {
               aria-hidden
               className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-gold-light)]"
             />
-            Plan via WhatsApp
+            Book Now
           </span>
           <span aria-hidden className="text-[var(--color-gold-light)]">
             →

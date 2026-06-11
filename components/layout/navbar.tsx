@@ -68,7 +68,7 @@ export function Navbar() {
             target="_blank"
             rel="noreferrer"
           >
-            WhatsApp
+            Book Now
           </a>
         </div>
         <MobileNavigation />

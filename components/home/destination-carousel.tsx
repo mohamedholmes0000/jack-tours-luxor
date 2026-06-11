@@ -90,7 +90,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
   return (
     <div
       ref={trackRef}
-      className="-mx-[var(--container-edge,1.25rem)] mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-[var(--container-edge,1.25rem)] pb-3 sm:mx-0 sm:mt-10 sm:gap-6 sm:px-0"
+      className="no-scrollbar -mx-[var(--container-edge,1.25rem)] mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-[var(--container-edge,1.25rem)] pb-3 sm:mx-0 sm:mt-10 sm:gap-6 sm:px-0"
       aria-label="Destinations carousel"
       onPointerDown={pauseThenResume}
       onWheel={pauseThenResume}

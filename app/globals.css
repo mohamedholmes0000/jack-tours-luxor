@@ -160,6 +160,15 @@ a {
   display: none;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Editorial Cartouche — cinematic motion + magazine flourishes. */
 
 @keyframes ken-burns {
@@ -224,6 +233,13 @@ a {
 }
 @media (max-width: 640px) {
   .cartouche-pause { min-height: 30vh; padding-block: 2.75rem; }
+}
+
+@media (min-width: 641px) {
+  .homepage-note-pause {
+    min-height: 36vh;
+    padding-block: 3.5rem;
+  }
 }
 
 /* Tiny scroll cue used in the hero corner. */

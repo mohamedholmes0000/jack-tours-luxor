@@ -17,7 +17,7 @@ export function Footer() {
             target="_blank"
             rel="noreferrer"
           >
-            Start on WhatsApp
+            Book Now
           </a>
         </div>
         <div className="relative">

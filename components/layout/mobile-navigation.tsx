@@ -53,12 +53,14 @@ export function MobileNavigation() {
 
   return (
     <div className="flex items-center gap-2 lg:hidden">
-      <Link
-        className="inline-flex min-h-9 items-center justify-center rounded-full border border-[rgb(214_173_84_/_36%)] bg-[rgba(214,173,84,0.14)] px-3 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-[var(--color-gold-light)]"
-        href="/trip-planner"
+      <a
+        className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-[var(--color-gold-light)] to-[var(--color-gold)] px-3 py-2 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-[var(--color-navy)] shadow-[0_12px_28px_rgb(214_173_84_/_22%)]"
+        href={buildWhatsAppUrl()}
+        target="_blank"
+        rel="noreferrer"
       >
         Book Now
-      </Link>
+      </a>
       <button
         type="button"
         aria-label="Open navigation menu"
@@ -139,7 +141,7 @@ export function MobileNavigation() {
             rel="noreferrer"
             onClick={closeMenu}
           >
-            Start on WhatsApp
+            Book Now
           </a>
         </aside>
       </div>
