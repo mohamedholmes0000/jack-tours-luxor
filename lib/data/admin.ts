@@ -1,8 +1,8 @@
 import { blogArticles, destinations, tours } from "@/lib/content";
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
+import { getPublicSettings } from "@/lib/data/settings";
 import type {
   AdminBlogPostValues,
-  AdminSettingsValues,
   AdminTourValues,
 } from "@/lib/validations";
 
@@ -311,28 +311,6 @@ export async function getAdminGalleryImages() {
   );
 }
 
-const defaultSettings: AdminSettingsValues = {
-  companyName: "Jack Egypt Tour",
-  phone: "+20XXXXXXXXXX",
-  whatsappNumber: "+20XXXXXXXXXX",
-  email: "info@jackegypttour.com",
-  address: "Luxor, Egypt",
-  facebookUrl: "",
-  instagramUrl: "",
-  tripAdvisorUrl: "",
-  defaultSeoTitle: "Jack Egypt Tour | Luxury Egypt Private Tours",
-  defaultSeoDescription: "Private tailor-made Egypt tours and DMC services from Luxor-based experts.",
-};
-
 export async function getAdminSettings() {
-  return tryDatabase(
-    async () => {
-      const rows = await prisma.siteSetting.findMany();
-      return rows.reduce<AdminSettingsValues>(
-        (settings, row) => ({ ...settings, [row.key]: row.value }),
-        defaultSettings,
-      );
-    },
-    defaultSettings,
-  );
+  return getPublicSettings();
 }

@@ -66,18 +66,71 @@ export default async function DestinationDetailPage({ params }: DestinationDetai
       </section>
 
       <section className="section-ivory py-16 md:py-24">
-        <div className="container-premium grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="container-premium">
+          <div className="grid gap-8 border-b border-[rgb(214_173_84_/_22%)] pb-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start">
+            <div>
+              <p className="eyebrow">Destination character</p>
+              <h2 className="mt-4 font-serif text-4xl font-semibold leading-tight text-[var(--color-navy)] md:text-5xl">
+                What makes {destination.name} worth slowing down for.
+              </h2>
+              <p className="mt-6 max-w-4xl text-base leading-8 text-[var(--color-gray-600)] md:text-lg md:leading-9">
+                {destination.description}
+              </p>
+            </div>
+            <p className="mb-3 text-[0.66rem] font-bold uppercase tracking-[0.22em] text-[var(--color-gold-dark)]">
+              At a Glance
+            </p>
+            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+              {[
+                ["Best Time to Visit", destination.bestTime],
+                ["Suggested Duration", destination.duration],
+                ["Region", destination.region],
+              ].map(([label, value]) => (
+                <div
+                  key={label}
+                  className="border border-[rgb(214_173_84_/_26%)] bg-white/82 p-4 shadow-[0_14px_40px_rgb(87_59_22_/_7%)]"
+                >
+                  <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">
+                    {label}
+                  </p>
+                  <p className="mt-2 font-serif text-2xl font-semibold text-[var(--color-navy)]">
+                    {value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="container-premium mt-14 grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div>
             <p className="eyebrow">Highlights</p>
             <h2 className="mt-4 font-serif text-4xl font-semibold text-[var(--color-navy)]">
               Shape this destination into a private Egypt itinerary.
             </h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <div className="mt-8 grid gap-5 sm:grid-cols-2">
               {destination.highlights.map((highlight) => (
-                <div key={highlight} className="border border-[rgb(214_173_84_/_24%)] bg-white/86 p-5 shadow-[0_14px_40px_rgb(87_59_22_/_7%)]">
-                  <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">
-                    {highlight}
-                  </p>
+                <div
+                  key={highlight.title}
+                  className="group overflow-hidden border border-[rgb(214_173_84_/_24%)] bg-white/86 shadow-[0_14px_40px_rgb(87_59_22_/_7%)] transition duration-300 hover:-translate-y-1 hover:border-[rgb(214_173_84_/_44%)]"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={highlight.image}
+                      alt={highlight.title}
+                      fill
+                      sizes="(min-width: 640px) 50vw, 100vw"
+                      className="object-cover transition duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">
+                      {highlight.title}
+                    </p>
+                    <p className="mt-3 text-sm leading-7 text-[var(--color-gray-600)]">
+                      {highlight.description}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>

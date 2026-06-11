@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { GalleryLightbox } from "@/components/gallery/gallery-lightbox";
 import { getGalleryImagesSafe } from "@/lib/data/public";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -32,7 +32,7 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
             Egypt, framed for private travel.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/76">
-            A clean MVP image grid for Luxor, Nile journeys, Cairo, and travel experiences.
+            Private moments, ancient places, and Nile light — captured across Egypt.
           </p>
         </div>
       </section>
@@ -43,10 +43,10 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
             <Link
               key={category}
               href={category === "All" ? "/gallery" : `/gallery?category=${encodeURIComponent(category)}`}
-              className={`shrink-0 border px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] ${
+              className={`shrink-0 rounded-full border px-5 py-2 text-xs font-bold uppercase tracking-widest transition duration-300 ${
                 active === category
                   ? "border-[var(--color-gold)] bg-[var(--color-gold)] text-[var(--color-navy)]"
-                  : "border-[rgb(214_173_84_/_32%)] text-white"
+                  : "border-[rgb(214_173_84_/_30%)] bg-[var(--color-ivory)] text-[var(--color-navy)] hover:border-[var(--color-gold)] hover:bg-white"
               }`}
             >
               {category}
@@ -56,34 +56,19 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
       </section>
 
       <section className="section-ivory py-16 md:py-24">
-        <div className="container-premium grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {visibleImages.map((image, index) => (
-            <figure
-              key={image.url}
-              className={`group overflow-hidden border border-[rgb(214_173_84_/_20%)] bg-white shadow-[0_16px_45px_rgb(87_59_22_/_8%)] ${index % 5 === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
-            >
-              <div className="relative aspect-[4/5] overflow-hidden">
-                <Image
-                  src={image.url}
-                  alt={image.alt}
-                  fill
-                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                />
-              </div>
-              <figcaption className="p-4 text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-gold)]">
-                {image.category}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        <GalleryLightbox images={visibleImages} />
       </section>
 
       <section className="section-dark py-16">
         <div className="container-premium flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <h2 className="max-w-2xl font-serif text-4xl font-semibold text-white">
-            Want a private Egypt itinerary around these places?
-          </h2>
+          <div>
+            <h2 className="max-w-2xl font-serif text-4xl font-semibold text-white">
+              Want a private Egypt itinerary around these places?
+            </h2>
+            <p className="mt-4 max-w-xl text-base leading-7 text-white/70">
+              Tell us which destinations caught your eye — we&apos;ll build the route.
+            </p>
+          </div>
           <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
             WhatsApp Jack Egypt Tour
           </a>

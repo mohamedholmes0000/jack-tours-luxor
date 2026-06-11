@@ -42,11 +42,30 @@ function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number])
 function mapDestination(
   destination: Awaited<ReturnType<typeof prisma.destination.findMany>>[number],
 ): Destination {
+  const fallbackDestination =
+    destinations.find((item) => item.slug === destination.slug) ?? destinations[0];
+
   return {
     slug: destination.slug,
     name: destination.name,
     overview: destination.overview,
-    highlights: destination.highlights,
+    description: fallbackDestination.description,
+    bestTime: fallbackDestination.bestTime,
+    duration: fallbackDestination.duration,
+    region: fallbackDestination.region,
+    coverImage: safeImageSrc(destination.heroImage, fallbackDestination.coverImage),
+    highlights: destination.highlights.length
+      ? destination.highlights.map((title, index) => {
+          const fallbackHighlight =
+            fallbackDestination.highlights[index] ?? fallbackDestination.highlights[0];
+
+          return {
+            title,
+            image: fallbackHighlight.image,
+            description: fallbackHighlight.description,
+          };
+        })
+      : fallbackDestination.highlights,
     heroImage: safeImageSrc(destination.heroImage, destinations[0].heroImage),
   };
 }
@@ -135,6 +154,11 @@ export async function getGalleryImagesSafe(): Promise<GalleryImage[]> {
         ? images.map((image) => ({
             url: safeImageSrc(image.url, galleryImages[0].url),
             alt: image.alt,
+            title: image.alt,
+            description:
+              image.category === "Experiences"
+                ? "A private Egypt travel moment from the gallery."
+                : `A ${image.category ?? "Egypt"} gallery image from Jack Egypt Tour.`,
             category: (image.category ?? "Experiences") as GalleryImage["category"],
           }))
         : galleryImages;

@@ -132,6 +132,20 @@ export const adminSettingsSchema = z.object({
   tripAdvisorUrl: z.string().trim().url().optional().or(z.literal("")),
   defaultSeoTitle: z.string().trim().optional(),
   defaultSeoDescription: z.string().trim().optional(),
+  homepageHeroEyebrow: z.string().trim().optional(),
+  homepageHeroHeadline: z.string().trim().optional(),
+  homepageHeroHeadlineAccent: z.string().trim().optional(),
+  homepageHeroSubheadline: z.string().trim().optional(),
+  homepageHeroPrimaryCtaLabel: z.string().trim().optional(),
+  homepageHeroPrimaryCtaHref: z
+    .string()
+    .trim()
+    .refine((value) => !value || value.startsWith("/"), "Use a local path starting with /.")
+    .optional(),
+  homepageHeroImage: optionalAdminImageSource,
+  homepageTrustItem1: z.string().trim().optional(),
+  homepageTrustItem2: z.string().trim().optional(),
+  homepageTrustItem3: z.string().trim().optional(),
 });
 
 export type TripPlannerValues = z.infer<typeof tripPlannerSchema>;

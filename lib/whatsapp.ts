@@ -33,12 +33,16 @@ export type ContactMessageInput = {
   message: string;
 };
 
-export function buildWhatsAppUrl(message = DEFAULT_MESSAGE): string {
-  const configuredNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
+export function buildWhatsAppUrlForNumber(message = DEFAULT_MESSAGE, number?: string): string {
+  const configuredNumber = number ?? process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
   const phone = configuredNumber.replace(/[^\d]/g, "");
   const text = encodeURIComponent(message);
 
   return phone ? `https://wa.me/${phone}?text=${text}` : `https://wa.me/?text=${text}`;
+}
+
+export function buildWhatsAppUrl(message = DEFAULT_MESSAGE): string {
+  return buildWhatsAppUrlForNumber(message);
 }
 
 function line(label: string, value?: string | number | string[]) {
@@ -49,27 +53,38 @@ function line(label: string, value?: string | number | string[]) {
   return value ? `${label}: ${value}` : "";
 }
 
+function tripPlannerLine(label: string, value?: string | number | string[]) {
+  let displayValue = "—";
+
+  if (Array.isArray(value)) {
+    displayValue = value.length ? value.join(", ") : "—";
+  } else if (value !== undefined && value !== null && String(value).trim()) {
+    displayValue = String(value);
+  }
+
+  return `- ${label}: ${displayValue}`;
+}
+
 export function buildTripPlannerMessage(input: TripPlannerMessageInput): string {
   return [
-    "Hello Jack Egypt Tour, I would like help planning a private Egypt trip.",
+    "Hello Jack Egypt Tour,",
+    "I'd like to plan a trip. Here are my details:",
     "",
-    line("Name", input.name),
-    line("Email", input.email),
-    line("WhatsApp", input.whatsapp),
-    line("Nationality", input.nationality),
-    line("Arrival", input.arrivalDate),
-    line("Departure", input.departureDate),
-    line("Travelers", input.travelers),
-    line("Destinations", input.destinations),
-    line("Interests", input.interests),
-    line("Budget range", input.budgetRange),
-    line("Hotel preference", input.hotelCategory),
-    line("Special requests", input.specialRequests),
+    tripPlannerLine("Arrival date", input.arrivalDate),
+    tripPlannerLine("Departure date", input.departureDate),
+    tripPlannerLine("Travelers", input.travelers),
+    tripPlannerLine("Nationality", input.nationality),
+    tripPlannerLine("Destinations", input.destinations),
+    tripPlannerLine("Interests", input.interests),
+    tripPlannerLine("Budget range", input.budgetRange),
+    tripPlannerLine("Hotel preference", input.hotelCategory),
+    tripPlannerLine("Special requests", input.specialRequests),
+    tripPlannerLine("Name", input.name),
+    tripPlannerLine("Email", input.email),
+    tripPlannerLine("WhatsApp", input.whatsapp),
     "",
-    "Please send availability and a suggested itinerary.",
-  ]
-    .filter(Boolean)
-    .join("\n");
+    "Looking forward to your reply.",
+  ].join("\n");
 }
 
 export function buildTourInquiryMessage(input: TourInquiryMessageInput): string {

@@ -23,7 +23,16 @@ export type Destination = {
   slug: string;
   name: string;
   overview: string;
-  highlights: string[];
+  description: string;
+  bestTime: string;
+  duration: string;
+  region: string;
+  coverImage: string;
+  highlights: Array<{
+    title: string;
+    image: string;
+    description: string;
+  }>;
   heroImage: string;
 };
 
@@ -36,6 +45,8 @@ export type FAQItem = {
 export type GalleryImage = {
   url: string;
   alt: string;
+  title: string;
+  description: string;
   category: "Luxor" | "Nile Cruise" | "Cairo" | "Experiences";
 };
 
@@ -278,7 +289,38 @@ export const destinations: Destination[] = [
     name: "Luxor",
     overview:
       "The home base of Jack Egypt Tour, where temples, tombs, river light, and private Egyptologist-led touring come together with rare depth.",
-    highlights: ["Valley of the Kings", "Karnak Temple", "Luxor Temple", "West Bank villages"],
+    description:
+      "Luxor is the open-air heart of ancient Egypt, where daily life moves beside temples, tombs, and the Nile. The city gives travelers rare access to both monumental history and quiet local rhythm, from sunrise balloon views to golden afternoons at Karnak. It is the natural base for private Egyptologist-led touring because the great sites are close, layered, and best experienced with time to pause.",
+    bestTime: "October to April",
+    duration: "2-4 days",
+    region: "Upper Egypt",
+    coverImage: "/photos/luxor-temple.jpg",
+    highlights: [
+      {
+        title: "Valley of the Kings",
+        image: "/photos/valley-of-kings.jpg",
+        description:
+          "Explore royal tombs cut deep into the Theban mountains, including beautifully preserved chambers shaped for eternity.",
+      },
+      {
+        title: "Karnak Temple",
+        image: "/photos/karnak.jpg",
+        description:
+          "Walk through vast courts, pylons, and the Great Hypostyle Hall, one of Egypt's most atmospheric temple spaces.",
+      },
+      {
+        title: "Luxor Temple",
+        image: "/photos/luxor-temple.jpg",
+        description:
+          "See the city glow around a riverside temple that connects ancient ceremony with modern Luxor life.",
+      },
+      {
+        title: "West Bank villages",
+        image: "/photos/hatshepsut.jpg",
+        description:
+          "Balance the major monuments with quieter roads, local villages, and desert-edge views across the west bank.",
+      },
+    ],
     heroImage:
       "/photos/karnak.jpg",
   },
@@ -287,7 +329,38 @@ export const destinations: Destination[] = [
     name: "Cairo",
     overview:
       "Egypt's grand opening chapter: pyramids, museums, Islamic Cairo, and modern city energy shaped into a private, polished itinerary.",
-    highlights: ["Giza Pyramids", "Grand Egyptian Museum", "Islamic Cairo", "Khan el-Khalili"],
+    description:
+      "Cairo is where ancient grandeur and contemporary Egypt meet at full volume. The pyramids anchor the city's story, while museums, medieval lanes, mosques, markets, and Nile views reveal a capital with many layers. For travelers, Cairo works best as a carefully paced private experience that turns a vast city into a clear, elegant introduction to Egypt.",
+    bestTime: "October to April",
+    duration: "2-3 days",
+    region: "Lower Egypt",
+    coverImage: "/photos/pyramids.jpg",
+    highlights: [
+      {
+        title: "Giza Pyramids",
+        image: "/photos/pyramids.jpg",
+        description:
+          "Stand beside Egypt's most iconic monuments with time for viewpoints, context, and unhurried photography.",
+      },
+      {
+        title: "Grand Egyptian Museum",
+        image: "/photos/pyramids.jpg",
+        description:
+          "Follow the story of ancient Egypt through a world-class collection near the Giza plateau.",
+      },
+      {
+        title: "Islamic Cairo",
+        image: "/photos/alexandria.jpg",
+        description:
+          "Move through historic streets, mosques, and gates where medieval Cairo still feels vivid and lived-in.",
+      },
+      {
+        title: "Khan el-Khalili",
+        image: "/photos/pyramids.jpg",
+        description:
+          "Add a lively market stop for brass, textiles, coffee houses, and the atmosphere of old Cairo.",
+      },
+    ],
     heroImage:
       "/photos/pyramids.jpg",
   },
@@ -296,7 +369,38 @@ export const destinations: Destination[] = [
     name: "Aswan",
     overview:
       "A softer Nile rhythm with Nubian culture, island landscapes, and graceful temple visits that pair beautifully with Luxor.",
-    highlights: ["Philae Temple", "Nubian village", "Nile islands", "Abu Simbel extensions"],
+    description:
+      "Aswan has a gentler rhythm than Egypt's larger cities, shaped by granite islands, feluccas, Nubian color, and wide Nile light. Its temples and villages feel especially rewarding when the day is planned around the river, not rushed from stop to stop. For travelers continuing from Luxor, Aswan adds softness, scenery, and a deeper sense of southern Egypt.",
+    bestTime: "October to March",
+    duration: "2-3 days",
+    region: "Southern Egypt",
+    coverImage: "/photos/aswan.jpg",
+    highlights: [
+      {
+        title: "Philae Temple",
+        image: "/photos/aswan.jpg",
+        description:
+          "Reach the island sanctuary by boat and explore one of Egypt's most elegant late temples.",
+      },
+      {
+        title: "Nubian village",
+        image: "/photos/nile.jpg",
+        description:
+          "Meet the color, hospitality, and riverside culture that make Aswan distinct from the rest of Egypt.",
+      },
+      {
+        title: "Nile islands",
+        image: "/photos/felucca.jpg",
+        description:
+          "Slow the pace with felucca sailing, botanical views, and quiet stretches of the river.",
+      },
+      {
+        title: "Abu Simbel extensions",
+        image: "/photos/abu-simbel.jpg",
+        description:
+          "Add a dramatic journey south to the colossal temples of Ramesses II near Lake Nasser.",
+      },
+    ],
     heroImage:
       "/photos/felucca.jpg",
   },
@@ -305,7 +409,38 @@ export const destinations: Destination[] = [
     name: "Hurghada",
     overview:
       "A Red Sea extension for travelers who want beach time, diving, or a restful finish after temples and Nile touring.",
-    highlights: ["Red Sea resorts", "Diving and snorkeling", "Family stays", "Luxor extensions"],
+    description:
+      "Hurghada brings the Red Sea into an Egypt itinerary with clear water, easy resort comfort, and a slower coastal tempo. It is a useful finale after temple-heavy touring, especially for families or travelers who want diving, snorkeling, and rest. From Luxor, it can be planned as a simple transfer extension without losing the private, coordinated feel of the journey.",
+    bestTime: "March to June, September to November",
+    duration: "2-5 days",
+    region: "Red Sea Coast",
+    coverImage: "/photos/hurghada.jpg",
+    highlights: [
+      {
+        title: "Red Sea resorts",
+        image: "/photos/hurghada.jpg",
+        description:
+          "Choose a relaxed coastal base with beach time, pools, and easy access to marine activities.",
+      },
+      {
+        title: "Diving and snorkeling",
+        image: "/photos/red-sea.jpg",
+        description:
+          "Discover reefs, clear water, and boat trips suited to both beginners and experienced divers.",
+      },
+      {
+        title: "Family stays",
+        image: "/photos/hurghada.jpg",
+        description:
+          "Add a comfortable pause with space, swimming, and a lighter rhythm after cultural touring.",
+      },
+      {
+        title: "Luxor extensions",
+        image: "/photos/karnak.jpg",
+        description:
+          "Connect the Red Sea with Luxor temples and tombs through a private overland transfer.",
+      },
+    ],
     heroImage:
       "/photos/hurghada.jpg",
   },
@@ -314,7 +449,38 @@ export const destinations: Destination[] = [
     name: "Alexandria",
     overview:
       "Mediterranean Egypt with coastal atmosphere, Greco-Roman history, and a distinct rhythm from Cairo and Upper Egypt.",
-    highlights: ["Mediterranean coast", "Bibliotheca Alexandrina", "Catacombs", "Coastal dining"],
+    description:
+      "Alexandria offers a different face of Egypt, looking toward the Mediterranean rather than the desert or Nile. Its Greco-Roman layers, sea air, libraries, catacombs, and coastal dining make it a rewarding contrast to Cairo and Upper Egypt. The city works especially well as a private day or overnight extension when travelers want history with a breezier rhythm.",
+    bestTime: "March to May, September to November",
+    duration: "1-2 days",
+    region: "Mediterranean Coast",
+    coverImage: "/photos/alexandria.jpg",
+    highlights: [
+      {
+        title: "Mediterranean coast",
+        image: "/photos/alexandria.jpg",
+        description:
+          "Take in sea views, corniche atmosphere, and a coastal mood unlike anywhere else in Egypt.",
+      },
+      {
+        title: "Bibliotheca Alexandrina",
+        image: "/photos/alexandria.jpg",
+        description:
+          "Visit the modern library and cultural complex inspired by Alexandria's ancient reputation for knowledge.",
+      },
+      {
+        title: "Catacombs",
+        image: "/photos/alexandria.jpg",
+        description:
+          "Descend into Greco-Roman burial chambers that blend Egyptian, Greek, and Roman imagery.",
+      },
+      {
+        title: "Coastal dining",
+        image: "/photos/red-sea.jpg",
+        description:
+          "Finish with seafood and Mediterranean views for a softer ending to a history-filled day.",
+      },
+    ],
     heroImage:
       "/photos/alexandria.jpg",
   },
@@ -394,42 +560,66 @@ export const faqs: FAQItem[] = [
 export const galleryImages: GalleryImage[] = [
   {
     category: "Luxor",
-    alt: "Karnak Temple columns in Luxor",
+    alt: "Aerial view of the Mortuary Temple of Hatshepsut at Deir el-Bahari, West Bank, Luxor",
+    title: "Temple of Hatshepsut, Deir el-Bahari",
+    description:
+      "A terraced West Bank landmark framed by desert cliffs, one of Luxor's most recognizable ancient silhouettes.",
     url: "/photos/hatshepsut.jpg",
   },
   {
     category: "Luxor",
-    alt: "Ancient Egyptian temple at golden hour",
+    alt: "Great Hypostyle Hall columns at Karnak Temple, Luxor",
+    title: "Karnak Temple Hypostyle Hall",
+    description:
+      "Massive columns and temple scale inside Karnak, where Luxor's ceremonial architecture feels at its most powerful.",
     url: "/photos/karnak.jpg",
   },
   {
     category: "Nile Cruise",
-    alt: "Nile river view from a cruise journey",
+    alt: "A traditional felucca sailing on the Nile in Upper Egypt",
+    title: "Felucca on the Nile",
+    description:
+      "Traditional sailing on the Nile, a quieter way to feel the rhythm of Upper Egypt between temple days.",
     url: "/photos/felucca.jpg",
   },
   {
     category: "Nile Cruise",
-    alt: "River landscape in Upper Egypt",
+    alt: "View across the Nile River in Egypt",
+    title: "Nile River View",
+    description:
+      "A broad Nile view from Egypt. Exact location should be confirmed against the original source file.",
     url: "/photos/aswan.jpg",
   },
   {
     category: "Cairo",
-    alt: "Giza pyramids near Cairo",
+    alt: "The Pyramids of Giza on the Giza Plateau near Cairo",
+    title: "Giza Plateau",
+    description:
+      "The classic Cairo opening: the Pyramids of Giza rising from the desert plateau at the edge of the city.",
     url: "/photos/pyramids.jpg",
   },
   {
     category: "Cairo",
-    alt: "Egyptian pyramids and desert",
+    alt: "The Great Pyramids of Giza in the desert near Cairo",
+    title: "Pyramids of Giza",
+    description:
+      "A second Giza pyramid view. This duplicates the Cairo subject and should be replaced when a distinct Cairo image is available.",
     url: "/photos/pyramids.jpg",
   },
   {
     category: "Experiences",
-    alt: "Hot air balloon experience above desert landscape",
+    alt: "Aerial view of the Temple of Hatshepsut, West Bank, Luxor",
+    title: "Deir el-Bahari from Above",
+    description:
+      "An elevated view over Deir el-Bahari and the West Bank cliffs. This is a temple image, not a hot-air balloon scene.",
     url: "/photos/hatshepsut.jpg",
   },
   {
     category: "Experiences",
-    alt: "Egypt travel experience in warm light",
+    alt: "Temple of Hatshepsut at golden hour, West Bank, Luxor",
+    title: "Golden Hour in Luxor",
+    description:
+      "Warm light across the Temple of Hatshepsut. This is another Deir el-Bahari view and should be replaced with a distinct experience image when available.",
     url: "/photos/hatshepsut.jpg",
   },
 ];

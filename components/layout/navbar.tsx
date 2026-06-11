@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MobileNavigation } from "@/components/layout/mobile-navigation";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import type { AdminSettingsValues } from "@/lib/validations";
 
 const navItems = [
   { href: "/tours", label: "Tours" },
@@ -15,8 +15,18 @@ const navItems = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Navbar() {
+function getBrandParts(companyName: string) {
+  const [firstWord, ...rest] = companyName.trim().split(/\s+/);
+
+  return {
+    firstLine: firstWord || "Jack",
+    secondLine: rest.join(" ") || "Egypt Tour",
+  };
+}
+
+export function Navbar({ settings }: { settings: AdminSettingsValues }) {
   const pathname = usePathname();
+  const brand = getBrandParts(settings.companyName);
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -27,10 +37,10 @@ export function Navbar() {
       <div className="container-premium flex min-h-16 items-center justify-between gap-4 lg:min-h-20">
         <Link href="/" className="flex flex-col leading-none">
           <span className="font-serif text-[1.35rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)] lg:text-2xl">
-            Jack
+            {brand.firstLine}
           </span>
           <span className="mt-1 text-[0.56rem] font-bold uppercase tracking-[0.24em] text-white/72 lg:text-[0.62rem] lg:tracking-[0.28em]">
-            Egypt Tour
+            {brand.secondLine}
           </span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm font-semibold text-white/78 lg:flex">
@@ -62,16 +72,14 @@ export function Navbar() {
             utilities) overrides Tailwind's .hidden when both classes sit on
             the same element. A separate wrapper avoids that collision. */}
         <div className="hidden lg:block">
-          <a
+          <Link
             className="btn-primary"
-            href={buildWhatsAppUrl()}
-            target="_blank"
-            rel="noreferrer"
+            href="/trip-planner"
           >
             Book Now
-          </a>
+          </Link>
         </div>
-        <MobileNavigation />
+        <MobileNavigation settings={settings} />
       </div>
     </header>
   );

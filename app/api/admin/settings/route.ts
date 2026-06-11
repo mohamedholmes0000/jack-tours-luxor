@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/api/admin-guard";
 import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
@@ -9,5 +10,10 @@ export async function PUT(request: Request) {
   if (!parsed.success) return NextResponse.json({ ok: false, message: "Invalid settings." }, { status: 400 });
   if (!hasConfiguredDatabase()) return NextResponse.json({ ok: false, message: "Database is not configured. Settings were not saved." }, { status: 503 });
   await Promise.all(Object.entries(parsed.data).map(([key, value]) => prisma.siteSetting.upsert({ where: { key }, update: { value: value ?? "" }, create: { key, value: value ?? "" } })));
+  revalidatePath("/", "layout");
+  revalidatePath("/");
+  revalidatePath("/contact");
+  revalidatePath("/trip-planner");
+  revalidatePath("/tours");
   return NextResponse.json({ ok: true });
 }

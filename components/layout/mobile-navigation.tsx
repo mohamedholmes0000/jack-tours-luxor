@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type PointerEvent, type TouchEvent, useEffect, useState } from "react";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import type { AdminSettingsValues } from "@/lib/validations";
 
 const navItems = [
   { href: "/tours", label: "Tours" },
@@ -15,9 +15,19 @@ const navItems = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function MobileNavigation() {
+function getBrandParts(companyName: string) {
+  const [firstWord, ...rest] = companyName.trim().split(/\s+/);
+
+  return {
+    firstLine: firstWord || "Jack",
+    secondLine: rest.join(" ") || "Egypt Tour",
+  };
+}
+
+export function MobileNavigation({ settings }: { settings: AdminSettingsValues }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const brand = getBrandParts(settings.companyName);
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -53,14 +63,12 @@ export function MobileNavigation() {
 
   return (
     <div className="flex items-center gap-2 lg:hidden">
-      <a
+      <Link
         className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-[var(--color-gold-light)] to-[var(--color-gold)] px-3 py-2 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-[var(--color-navy)] shadow-[0_12px_28px_rgb(214_173_84_/_22%)]"
-        href={buildWhatsAppUrl()}
-        target="_blank"
-        rel="noreferrer"
+        href="/trip-planner"
       >
         Book Now
-      </a>
+      </Link>
       <button
         type="button"
         aria-label="Open navigation menu"
@@ -92,10 +100,10 @@ export function MobileNavigation() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="font-serif text-3xl font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)]">
-                Jack
+                {brand.firstLine}
               </p>
               <p className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/64">
-                Egypt Tour
+                {brand.secondLine}
               </p>
             </div>
             <button
@@ -134,15 +142,13 @@ export function MobileNavigation() {
             })}
           </nav>
 
-          <a
+          <Link
             className="btn-primary mt-auto w-full"
-            href={buildWhatsAppUrl()}
-            target="_blank"
-            rel="noreferrer"
+            href="/trip-planner"
             onClick={closeMenu}
           >
             Book Now
-          </a>
+          </Link>
         </aside>
       </div>
     </div>

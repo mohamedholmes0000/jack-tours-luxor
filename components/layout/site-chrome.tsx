@@ -4,8 +4,15 @@ import { usePathname } from "next/navigation";
 import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import type { AdminSettingsValues } from "@/lib/validations";
 
-export function SiteChrome({ children }: { children: React.ReactNode }) {
+export function SiteChrome({
+  children,
+  settings,
+}: {
+  children: React.ReactNode;
+  settings: AdminSettingsValues;
+}) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith("/admin");
 
@@ -15,10 +22,10 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Navbar />
+      <Navbar settings={settings} />
       <main className="public-site flex-1">{children}</main>
-      <Footer />
-      <FloatingWhatsApp />
+      <Footer settings={settings} />
+      <FloatingWhatsApp settings={settings} />
     </>
   );
 }

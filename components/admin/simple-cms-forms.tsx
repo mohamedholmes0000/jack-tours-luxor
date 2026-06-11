@@ -233,6 +233,9 @@ export function SettingsForm({ initialValues }: { initialValues: AdminSettingsVa
   const fields: Array<[keyof AdminSettingsValues, string]> = [
     ["companyName", "Company name"], ["phone", "Phone"], ["whatsappNumber", "WhatsApp number"], ["email", "Email"], ["address", "Address"],
     ["facebookUrl", "Facebook URL"], ["instagramUrl", "Instagram URL"], ["tripAdvisorUrl", "TripAdvisor URL"], ["defaultSeoTitle", "Default SEO title"], ["defaultSeoDescription", "Default SEO description"],
+    ["homepageHeroEyebrow", "Homepage hero eyebrow"], ["homepageHeroHeadline", "Homepage hero headline"], ["homepageHeroHeadlineAccent", "Homepage hero accent"], ["homepageHeroSubheadline", "Homepage hero subheadline"],
+    ["homepageHeroPrimaryCtaLabel", "Homepage hero CTA label"], ["homepageHeroPrimaryCtaHref", "Homepage hero CTA href"], ["homepageHeroImage", "Homepage hero image"],
+    ["homepageTrustItem1", "Homepage trust item 1"], ["homepageTrustItem2", "Homepage trust item 2"], ["homepageTrustItem3", "Homepage trust item 3"],
   ];
   return (
     <form className="grid gap-4 border border-[var(--color-gray-100)] bg-white p-5 md:grid-cols-2" onSubmit={form.handleSubmit(submit)}>

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { TripPlannerForm } from "@/components/forms/trip-planner-form";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { getPublicSettings } from "@/lib/data/settings";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Trip Planner",
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
     "Plan a private Egypt trip with Jack Egypt Tour using a short WhatsApp-led trip planner.",
 };
 
-export default function TripPlannerPage() {
+export default async function TripPlannerPage() {
+  const settings = await getPublicSettings();
+
   return (
     <>
       <section className="relative overflow-hidden bg-[var(--color-navy)] text-white">
@@ -31,7 +34,12 @@ export default function TripPlannerPage() {
             Share dates, destinations, travel style, and contact details. We prepare a clean
             WhatsApp brief so the Luxor team can reply quickly.
           </p>
-          <a className="btn-ghost mt-8" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
+          <a
+            className="btn-ghost mt-8"
+            href={buildWhatsAppUrlForNumber(undefined, settings.whatsappNumber)}
+            target="_blank"
+            rel="noreferrer"
+          >
             Prefer direct WhatsApp?
           </a>
         </div>
@@ -39,7 +47,7 @@ export default function TripPlannerPage() {
 
       <section className="section-ivory py-12 md:py-20">
         <div className="container-premium">
-          <TripPlannerForm />
+          <TripPlannerForm whatsappNumber={settings.whatsappNumber} />
         </div>
       </section>
     </>

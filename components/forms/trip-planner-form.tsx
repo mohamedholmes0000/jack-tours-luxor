@@ -6,14 +6,14 @@ import { useForm } from "react-hook-form";
 import { FormField, inputClassName, textareaClassName } from "@/components/forms/form-field";
 import { destinations } from "@/lib/content";
 import { TripPlannerValues, tripPlannerSchema } from "@/lib/validations";
-import { buildTripPlannerMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildTripPlannerMessage, buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 const steps = ["Dates & travelers", "Destinations & interests", "Budget & hotel", "Contact"];
 const interestOptions = ["Ancient sites", "Nile cruise", "Luxury", "Family trip", "Adventure", "Cultural experience"];
 const budgetOptions = ["Under USD 1,000", "USD 1,000-2,500", "USD 2,500-5,000", "USD 5,000+"];
 const hotelOptions = ["Comfort 3-4 star", "Premium 4-5 star", "Luxury 5 star", "Not sure yet"];
 
-export function TripPlannerForm() {
+export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string }) {
   const [step, setStep] = useState(0);
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
@@ -51,7 +51,7 @@ export function TripPlannerForm() {
   async function onSubmit(values: TripPlannerValues) {
     setIsSending(true);
     const message = buildTripPlannerMessage(values);
-    const url = buildWhatsAppUrl(message);
+    const url = buildWhatsAppUrlForNumber(message, whatsappNumber);
     const inquiryPayload = {
       type: "TRIP_PLANNER",
       status: "NEW",
@@ -102,7 +102,7 @@ export function TripPlannerForm() {
       {successUrl ? (
         <div className="mt-10 border border-[rgb(214_173_84_/_26%)] bg-[var(--color-sand)] p-6">
           <h2 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">
-            Your trip brief is ready for WhatsApp.
+            Opening WhatsApp...
           </h2>
           <p className="mt-3 text-sm leading-7 text-[var(--color-gray-600)]">
             We opened WhatsApp with a clean planning message. If it did not open, use the button

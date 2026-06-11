@@ -3,7 +3,8 @@ import Link from "next/link";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
 import { formatPrice, type Tour } from "@/lib/content";
 import { getToursSafe } from "@/lib/data/public";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { getPublicSettings } from "@/lib/data/settings";
+import { safeImageSrc } from "@/lib/images";
 
 // ============================================================================
 // Editorial Cartouche homepage — mobile-first, photography-led, magazine grammar.
@@ -11,7 +12,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 // public/photos/ (downloaded 2026-06). Swap when real shoots arrive.
 // ============================================================================
 
-const heroImage = "/photos/karnak.jpg";
+const fallbackHeroImage = "/photos/karnak.jpg";
 
 const brandStoryImage = "/photos/hatshepsut.jpg";
 
@@ -20,12 +21,6 @@ const statsImage = "/photos/felucca.jpg";
 const testimonialImage = "/photos/hatshepsut.jpg";
 
 const finalCtaImage = "/photos/felucca.jpg";
-
-const microTrustLine = [
-  "Local Egypt Travel Experts",
-  "Private Tailor-Made Tours",
-  "WhatsApp Support 24/7",
-];
 
 // Sprint 1 — hero conversion chips. Each links into the existing /tours page
 // with the matching category filter where one exists; "Red Sea Escapes" falls
@@ -73,36 +68,50 @@ const destinationsMarquee = [
     name: "Luxor",
     label: "West Bank · East Bank",
     image: "/photos/luxor-temple.jpg",
+    href: "/destinations/luxor",
+    description: "Temples, tombs, and Nile light from the west bank to Karnak.",
   },
   {
     name: "Karnak",
     label: "Largest temple complex",
     image: "/photos/karnak.jpg",
+    href: "/destinations/luxor",
+    description: "A vast temple world of pylons, courts, and sacred columns.",
   },
   {
     name: "Valley of the Kings",
     label: "Royal Theban necropolis",
     image: "/photos/valley-of-kings.jpg",
+    href: "/destinations/luxor",
+    description: "Royal tombs cut into the Theban cliffs for Egypt's pharaohs.",
   },
   {
     name: "Nile",
     label: "Luxor → Aswan",
     image: "/photos/nile.jpg",
+    href: "/destinations/aswan",
+    description: "Slow river days linking Luxor, Edfu, Kom Ombo, and Aswan.",
   },
   {
     name: "Aswan",
     label: "Nubian south",
     image: "/photos/aswan.jpg",
+    href: "/destinations/aswan",
+    description: "Nubian color, island temples, feluccas, and soft southern light.",
   },
   {
     name: "Abu Simbel",
     label: "Ramesses II",
     image: "/photos/abu-simbel.jpg",
+    href: "/destinations/aswan",
+    description: "A dramatic southern extension to the temples of Ramesses II.",
   },
   {
     name: "Red Sea",
     label: "Coastal finale",
     image: "/photos/red-sea.jpg",
+    href: "/destinations/hurghada",
+    description: "A coastal finale for reefs, rest, and clear Red Sea water.",
   },
 ];
 
@@ -194,8 +203,20 @@ function JourneyCard({ tour, eager = false }: { tour: Tour; eager?: boolean }) {
 // ============================================================================
 
 export async function Homepage() {
-  const safeTours = await getToursSafe();
+  const [safeTours, settings] = await Promise.all([
+    getToursSafe(),
+    getPublicSettings(),
+  ]);
   const featuredTours = safeTours.filter((tour) => tour.featured).slice(0, 3);
+  const heroImage = safeImageSrc(settings.homepageHeroImage, fallbackHeroImage);
+  const heroCtaLabel =
+    settings.homepageHeroPrimaryCtaLabel || "Plan My Egypt Journey";
+  const heroCtaHref = settings.homepageHeroPrimaryCtaHref || "/trip-planner";
+  const microTrustLine = [
+    settings.homepageTrustItem1,
+    settings.homepageTrustItem2,
+    settings.homepageTrustItem3,
+  ].filter(Boolean);
 
   return (
     <div data-mobile-cta="true">
@@ -225,14 +246,17 @@ export async function Homepage() {
 
         <div className="container-premium relative flex min-h-[88vh] flex-col justify-between pb-10 pt-7 sm:min-h-[95vh] sm:pb-16 sm:pt-9 lg:min-h-[100vh] lg:pb-24 lg:pt-12">
           <p className="eyebrow text-[var(--color-gold-light)]">
+            {settings.homepageHeroEyebrow}
+          </p>
+          <p className="hidden">
             Private Egypt · est. Luxor
           </p>
 
           <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
             <h1 className="font-serif font-semibold leading-[0.94] text-white text-[clamp(2.8rem,11vw,9.5rem)]">
-              Egypt, privately
+              {settings.homepageHeroHeadline}
               <span className="block italic text-[var(--color-gold-light)]">
-                composed.
+                {settings.homepageHeroHeadlineAccent}
               </span>
             </h1>
             <p className="hidden">
@@ -241,23 +265,19 @@ export async function Homepage() {
               team.
             </p>
             <p className="mt-4 max-w-md text-[0.98rem] leading-7 text-white/86 sm:mt-7 sm:text-lg sm:leading-8 lg:max-w-lg">
-              Tailor-made Egypt journeys with private guides, elegant pacing,
-              and calm planning from a Luxor-based team.
+              {settings.homepageHeroSubheadline}
             </p>
             <div className="mt-6 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
-              <Link className="btn-primary" href="/trip-planner">
-                <span className="sm:hidden">Plan My Journey</span>
-                <span className="hidden sm:inline">Plan My Egypt Journey</span>
+              <Link className="btn-primary" href={heroCtaHref}>
+                <span>{heroCtaLabel}</span>
               </Link>
-              <a
+              <Link
                 className="group hidden items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85 sm:inline-flex"
-                href={buildWhatsAppUrl()}
-                target="_blank"
-                rel="noreferrer"
+                href={heroCtaHref}
               >
                 <span className="h-px w-8 bg-[var(--color-gold-light)] transition-all duration-300 group-hover:w-12" />
                 Or Book Now
-              </a>
+              </Link>
             </div>
 
             {/* Compact reassurance row directly below the CTAs. */}
@@ -643,14 +663,12 @@ export async function Homepage() {
               Luxor team will reply with a calm, considered plan.
             </p>
             <div className="mt-7 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
-              <a
+              <Link
                 className="btn-primary"
-                href={buildWhatsAppUrl()}
-                target="_blank"
-                rel="noreferrer"
+                href="/trip-planner"
               >
                 Book Now
-              </a>
+              </Link>
               <Link
                 className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85"
                 href="/trip-planner"
@@ -675,9 +693,7 @@ export async function Homepage() {
         }}
       >
         <a
-          href={buildWhatsAppUrl()}
-          target="_blank"
-          rel="noreferrer"
+          href="/trip-planner"
           className="mx-3 my-2 flex h-11 items-center justify-between gap-3 rounded-sm border border-[rgb(214_173_84_/_30%)] bg-transparent px-4 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-white"
         >
           <span className="flex items-center gap-2">
