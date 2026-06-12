@@ -30,15 +30,6 @@ function CloseIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function UserIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none">
-      <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-      <path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z" stroke="currentColor" strokeWidth="1.7" />
-    </svg>
-  );
-}
-
 function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor" }) {
   if (label === "Instagram") {
     return (
@@ -68,22 +59,12 @@ function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor"
   );
 }
 
-function getBrandParts(companyName: string) {
-  const [firstWord, ...rest] = companyName.trim().split(/\s+/);
-
-  return {
-    firstLine: firstWord || "Jack",
-    secondLine: rest.join(" ") || "Egypt Tour",
-  };
-}
-
 export function MobileNavigation({ settings }: { settings: AdminSettingsValues }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const brand = getBrandParts(settings.companyName);
   const phone = settings.phone || "(+20) XXX XXX XXXX";
   const phoneHref = phone.replace(/[^\d+]/g, "");
-  const email = settings.email || "info@jackegypttour.com";
+  const email = settings.email || "admin@jacktoursluxor.com";
   const socialLinks = [
     { href: settings.facebookUrl || "#", label: "Facebook" as const },
     { href: settings.instagramUrl || "#", label: "Instagram" as const },
@@ -113,8 +94,8 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
   }
 
   return (
-    <div className="site-main-header border-b transition-all duration-200 ease-in-out lg:hidden">
-      <div className="container-premium grid h-16 grid-cols-[1fr_auto_1fr] items-center">
+    <div className="site-main-header border-b transition-all duration-200 ease-in-out md:hidden">
+      <div className="container-premium grid h-14 grid-cols-[1fr_auto_1fr] items-center">
         <button
           type="button"
           aria-label="Open navigation menu"
@@ -127,18 +108,18 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
 
         <Link href="/" className="flex flex-col items-center justify-center leading-none" onClick={closeMenu}>
           <span className="font-serif text-[1.08rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]">
-            {brand.firstLine}
+            JACK
           </span>
           <span className="mt-1 text-[0.5rem] font-bold uppercase tracking-[0.22em] text-[var(--color-navy)]/68">
-            {brand.secondLine}
+            TOURS LUXOR
           </span>
         </Link>
 
         <Link
-          className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-[var(--color-gold-light)] to-[var(--color-gold)] px-3 py-2 text-[0.58rem] font-bold uppercase tracking-[0.11em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] justify-self-end"
+          className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] px-3 py-2 text-[0.58rem] font-bold uppercase tracking-[0.08em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] transition hover:bg-[var(--color-gold-light)] justify-self-end"
           href="/trip-planner"
         >
-          Book Now
+          BOOK NOW
         </Link>
       </div>
 
@@ -155,10 +136,10 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="font-serif text-3xl font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)]">
-                {brand.firstLine}
+                JACK
               </p>
               <p className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/64">
-                {brand.secondLine}
+                TOURS LUXOR
               </p>
             </div>
             <button
@@ -189,14 +170,6 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
                 </Link>
               );
             })}
-            <Link
-              href="/admin"
-              onClick={closeMenu}
-              className="flex min-h-14 items-center gap-3 border-b border-white/10 text-lg font-normal uppercase tracking-[0.08em] text-white transition hover:text-[var(--color-gold-light)]"
-            >
-              <UserIcon className="size-5" />
-              Admin
-            </Link>
           </nav>
 
           <div className="mt-auto border-t border-white/10 pt-6 text-sm text-white/66">

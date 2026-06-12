@@ -68,21 +68,11 @@ function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor"
   );
 }
 
-function getBrandParts(companyName: string) {
-  const [firstWord, ...rest] = companyName.trim().split(/\s+/);
-
-  return {
-    firstLine: firstWord || "Jack",
-    secondLine: rest.join(" ") || "Egypt Tour",
-  };
-}
-
 export function Navbar({ settings }: { settings: AdminSettingsValues }) {
   const pathname = usePathname();
   const [isNavStuck, setIsNavStuck] = useState(false);
-  const brand = getBrandParts(settings.companyName);
   const phone = settings.phone || "(+20) XXX XXX XXXX";
-  const email = settings.email || "info@jackegypttour.com";
+  const email = settings.email || "admin@jacktoursluxor.com";
   const socialLinks = [
     { href: settings.facebookUrl || "#", label: "Facebook" as const },
     { href: settings.instagramUrl || "#", label: "Instagram" as const },
@@ -108,7 +98,7 @@ export function Navbar({ settings }: { settings: AdminSettingsValues }) {
 
   return (
     <>
-      <div className="site-header-utility hidden border-b border-white/10 lg:block">
+      <div className="site-header-utility hidden border-b border-white/10 md:block">
         <div className="container-premium flex h-9 items-center justify-between text-xs font-normal text-white/60">
           <div className="flex items-center gap-3">
             <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-flex items-center gap-2 transition hover:text-[var(--color-gold-light)]">
@@ -138,18 +128,18 @@ export function Navbar({ settings }: { settings: AdminSettingsValues }) {
         </div>
       </div>
 
-      <header className={`site-main-header hidden border-b transition-all duration-200 ease-in-out lg:block ${isNavStuck ? "header-stuck" : ""}`}>
-        <div className="container-premium grid h-[70px] grid-cols-[1fr_auto_1fr] items-center gap-8">
+      <header className={`site-main-header hidden border-b transition-all duration-200 ease-in-out md:block ${isNavStuck ? "header-stuck" : ""}`}>
+        <div className="container-premium grid h-[70px] grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8">
           <Link href="/" className="flex flex-col leading-none">
             <span className="font-serif text-2xl font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]">
-              {brand.firstLine}
+              JACK
             </span>
             <span className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-[var(--color-navy)]/68">
-              {brand.secondLine}
+              TOURS LUXOR
             </span>
           </Link>
 
-          <nav className="flex items-center gap-12 text-[0.82rem] font-medium uppercase tracking-[0.08em] text-[var(--color-navy)]">
+          <nav className="flex items-center gap-6 text-[0.76rem] font-medium uppercase tracking-[0.08em] text-[var(--color-navy)] lg:gap-12 lg:text-[0.82rem]">
           {navItems.map((item) => {
             const active = isActive(item.href);
 
@@ -158,7 +148,7 @@ export function Navbar({ settings }: { settings: AdminSettingsValues }) {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`desktop-nav-link transition duration-200 hover:text-[var(--color-gold)] ${
+                className={`transition duration-200 hover:text-[var(--color-gold)] ${
                   active ? "active text-[var(--color-gold-dark)]" : ""
                 }`}
               >
@@ -176,8 +166,11 @@ export function Navbar({ settings }: { settings: AdminSettingsValues }) {
             >
               <UserIcon className="size-5" />
             </Link>
-            <Link className="btn-primary" href="/trip-planner">
-              Book Now
+            <Link
+              className="inline-flex min-h-10 items-center justify-center rounded-md bg-[var(--color-gold)] px-4 py-2.5 text-[0.78rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] lg:px-6 lg:text-[0.8rem]"
+              href="/trip-planner"
+            >
+              BOOK NOW
             </Link>
           </div>
         </div>

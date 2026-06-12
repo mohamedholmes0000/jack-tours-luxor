@@ -44,7 +44,18 @@ h4,
 h5,
 h6 {
   font-family: var(--font-jost), Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2 {
   font-weight: 700;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
 }
 
 a {
@@ -103,7 +114,7 @@ a {
 .eyebrow {
   color: var(--color-gold);
   font-size: 0.7rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.24em;
   text-transform: uppercase;
 }
@@ -136,37 +147,8 @@ a {
   transition: box-shadow 200ms ease, border-color 200ms ease;
 }
 
-.site-main-header.header-stuck,
-.site-main-header:is(:hover, :focus-within) {
+.site-main-header.header-stuck {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.desktop-nav-link {
-  position: relative;
-}
-
-.desktop-nav-link::after {
-  background: var(--color-gold);
-  bottom: -0.55rem;
-  content: "";
-  height: 1px;
-  left: 0;
-  opacity: 0;
-  position: absolute;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 300ms ease, opacity 300ms ease;
-  width: 100%;
-}
-
-.desktop-nav-link:hover::after {
-  opacity: 0.5;
-  transform: scaleX(1);
-}
-
-.desktop-nav-link.active::after {
-  opacity: 1;
-  transform: scaleX(1);
 }
 
 .gallery-liquid-card {
@@ -310,7 +292,7 @@ a {
   border-radius: 4px;
   display: inline-flex;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 500;
   justify-content: center;
   letter-spacing: 0.12em;
   min-height: 44px;
@@ -414,7 +396,7 @@ a {
   .drop-cap::first-letter {
     color: var(--color-gold-dark);
     float: left;
-    font-family: var(--font-accent-serif), Georgia, serif;
+    font-family: var(--font-jost), Arial, Helvetica, sans-serif;
     font-size: 4.4em;
     font-weight: 500;
     line-height: 0.82;
@@ -482,7 +464,7 @@ a {
   }
 
   .public-site > section {
-    padding-block: 3rem !important;
+    padding-block: 3.5rem !important;
   }
 
   .public-site > section:first-child {
@@ -492,6 +474,15 @@ a {
 
   .public-site > section:first-child > .container-premium {
     min-height: auto !important;
+  }
+
+  .public-site > section[data-home-hero="true"] {
+    min-height: calc(100svh - 3.5rem) !important;
+    padding-block: 0 !important;
+  }
+
+  .public-site > section[data-home-hero="true"] > .container-premium {
+    min-height: calc(100svh - 3.5rem) !important;
   }
 
   .public-site h1 {
