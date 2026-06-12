@@ -18,26 +18,34 @@ async function main() {
   });
 
   const destinations = [
-    ["luxor", "Luxor", "Heart of Ancient Egypt", "/photos/luxor-temple.jpg", "Temples, tombs, and private Egyptologist-led journeys through ancient Thebes."],
-    ["aswan", "Aswan", "Gateway to Nubia", "/photos/aswan.jpg", "Nubian culture, river islands, Philae Temple, and relaxed Nile scenery."],
-    ["cairo", "Cairo", "Pyramids & Beyond", "/photos/pyramids.jpg", "Pyramids, museums, Islamic Cairo, and tailored city experiences."],
-    ["hurghada", "Hurghada", "Red Sea Coast", "/photos/hurghada.jpg", "Red Sea extensions with beach time, diving, and family-friendly resorts."],
-    ["abu-simbel", "Abu Simbel", "Ramesses' Legacy", "/photos/abu-simbel.jpg", "A dramatic southern temple extension near Lake Nasser and the Nubian frontier."],
-    ["red-sea", "Red Sea", "Coral & Coastline", "/photos/red-sea.jpg", "Coastal Egypt for reefs, clear water, and a restful finale after ancient sites."],
-    ["alexandria", "Alexandria", "Mediterranean Heritage", "/photos/alexandria.jpg", "Mediterranean heritage, coastal food, and Greco-Roman landmarks."],
+    { slug: "luxor", name: "Luxor", subtitle: "Heart of Ancient Egypt", region: "Upper Egypt", type: "CITY" as const, heroImage: "/photos/luxor-temple.jpg", overview: "Temples, tombs, and private Egyptologist-led journeys through ancient Thebes." },
+    { slug: "aswan", name: "Aswan", subtitle: "Gateway to Nubia", region: "Upper Egypt", type: "CITY" as const, heroImage: "/photos/aswan.jpg", overview: "Nubian culture, river islands, Philae Temple, and relaxed Nile scenery." },
+    { slug: "cairo", name: "Cairo", subtitle: "Pyramids & Beyond", region: "Lower Egypt", type: "CITY" as const, heroImage: "/photos/pyramids.jpg", overview: "Pyramids, museums, Islamic Cairo, and tailored city experiences." },
+    { slug: "hurghada", name: "Hurghada", subtitle: "Red Sea Coast", region: "Red Sea Coast", type: "COASTAL" as const, heroImage: "/photos/hurghada.jpg", overview: "Red Sea extensions with beach time, diving, and family-friendly resorts." },
+    { slug: "abu-simbel", name: "Abu Simbel", subtitle: "Ramesses' Legacy", region: "Upper Egypt", type: "SITE" as const, heroImage: "/photos/abu-simbel.jpg", overview: "A dramatic southern temple extension near Lake Nasser and the Nubian frontier." },
+    { slug: "red-sea", name: "Red Sea", subtitle: "Coral & Coastline", region: "Red Sea Coast", type: "COASTAL" as const, heroImage: "/photos/red-sea.jpg", overview: "Coastal Egypt for reefs, clear water, and a restful finale after ancient sites." },
+    { slug: "alexandria", name: "Alexandria", subtitle: "Mediterranean Heritage", region: "Lower Egypt", type: "CITY" as const, heroImage: "/photos/alexandria.jpg", overview: "Mediterranean heritage, coastal food, and Greco-Roman landmarks." },
   ];
 
-  for (const [slug, name, subtitle, heroImage, overview] of destinations) {
+  for (const destination of destinations) {
     await prisma.destination.upsert({
-      where: { slug },
-      update: { name, subtitle, heroImage, overview, type: slug === "alexandria" ? "SITE" : "CITY" },
+      where: { slug: destination.slug },
+      update: {
+        name: destination.name,
+        subtitle: destination.subtitle,
+        region: destination.region,
+        heroImage: destination.heroImage,
+        overview: destination.overview,
+        type: destination.type,
+      },
       create: {
-        slug,
-        name,
-        subtitle,
-        heroImage,
-        overview,
-        type: slug === "alexandria" ? "SITE" : "CITY",
+        slug: destination.slug,
+        name: destination.name,
+        subtitle: destination.subtitle,
+        region: destination.region,
+        heroImage: destination.heroImage,
+        overview: destination.overview,
+        type: destination.type,
         highlights: ["Private guiding", "Tailor-made pacing", "Premium local support"],
         published: true,
       },

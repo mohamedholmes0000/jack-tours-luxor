@@ -124,6 +124,24 @@ export const adminGalleryImageSchema = z.object({
   order: z.number().int().min(0),
 });
 
+export const adminDestinationSchema = z.object({
+  name: z.string().trim().min(2, "Add a destination name."),
+  slug: z
+    .string()
+    .trim()
+    .min(3, "Add a slug.")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers, and hyphens."),
+  subtitle: z.string().trim().optional(),
+  region: z.string().trim().min(2, "Add a region."),
+  type: z.enum(["CITY", "SITE", "COASTAL", "RIVER_ROUTE"]),
+  heroImage: optionalAdminImageSource,
+  overview: z.string().trim().min(10, "Add an overview."),
+  highlights: z.array(z.string().trim().min(1)).min(1, "Add at least one highlight."),
+  published: z.boolean(),
+  metaTitle: z.string().trim().optional(),
+  metaDescription: z.string().trim().optional(),
+});
+
 export const adminSettingsSchema = z.object({
   companyName: z.string().trim().min(2),
   phone: z.string().trim().optional(),
@@ -158,4 +176,5 @@ export type AdminTourValues = z.infer<typeof adminTourSchema>;
 export type AdminBlogPostValues = z.infer<typeof adminBlogPostSchema>;
 export type AdminFaqValues = z.infer<typeof adminFaqSchema>;
 export type AdminGalleryImageValues = z.infer<typeof adminGalleryImageSchema>;
+export type AdminDestinationValues = z.infer<typeof adminDestinationSchema>;
 export type AdminSettingsValues = z.infer<typeof adminSettingsSchema>;

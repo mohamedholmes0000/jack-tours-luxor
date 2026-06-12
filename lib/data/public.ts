@@ -16,6 +16,29 @@ import { safeImageSrc } from "@/lib/images";
 
 const cityNames = ["Luxor", "Aswan", "Cairo", "Hurghada", "Abu Simbel", "Red Sea"];
 
+const destinationTypeLabels = {
+  CITY: "City",
+  SITE: "Archaeological Site",
+  COASTAL: "Coastal / Beach",
+  RIVER_ROUTE: "River / Cruise Route",
+} as const;
+
+function destinationTypeLabel(type?: string | null): Destination["type"] {
+  if (
+    type === "City" ||
+    type === "Archaeological Site" ||
+    type === "Coastal / Beach" ||
+    type === "River / Cruise Route"
+  ) {
+    return type;
+  }
+
+  return (
+    destinationTypeLabels[type as keyof typeof destinationTypeLabels] ??
+    "Archaeological Site"
+  );
+}
+
 function inferTourCity(parts: string[]) {
   const haystack = parts.join(" ").toLowerCase();
   return cityNames.find((city) => haystack.includes(city.toLowerCase())) ?? "Luxor";
@@ -70,7 +93,8 @@ function mapDestination(
     description: fallbackDestination.description,
     bestTime: fallbackDestination.bestTime,
     duration: fallbackDestination.duration,
-    region: fallbackDestination.region,
+    region: destination.region ?? fallbackDestination.region,
+    type: destinationTypeLabel(destination.type ?? fallbackDestination.type),
     coverImage: safeImageSrc(destination.heroImage, fallbackDestination.coverImage),
     highlights: destination.highlights.length
       ? destination.highlights.map((title, index) => {
@@ -238,6 +262,33 @@ export async function getDestinationsSafe() {
     },
     destinations,
   );
+}
+
+export type DestinationListingItem = Destination & {
+  tourCount: number;
+};
+
+function normalizeDestinationTerm(value: string) {
+  return value.trim().toLowerCase().replace(/&/g, "and");
+}
+
+function countToursForDestination(destination: Destination, toursList: Tour[]) {
+  const destinationName = normalizeDestinationTerm(destination.name);
+  const destinationSlug = normalizeDestinationTerm(destination.slug.replace(/-/g, " "));
+
+  return toursList.filter((tour) => {
+    const city = normalizeDestinationTerm(tour.city || "");
+    return city === destinationName || city === destinationSlug;
+  }).length;
+}
+
+export async function getDestinationListingSafe() {
+  const [destinationList, toursList] = await Promise.all([getDestinationsSafe(), getToursSafe()]);
+
+  return destinationList.map((destination) => ({
+    ...destination,
+    tourCount: countToursForDestination(destination, toursList),
+  }));
 }
 
 export async function getBlogArticlesSafe() {

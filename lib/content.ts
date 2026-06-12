@@ -30,6 +30,7 @@ export type Destination = {
   bestTime: string;
   duration: string;
   region: string;
+  type: "City" | "Archaeological Site" | "Coastal / Beach" | "River / Cruise Route";
   coverImage: string;
   highlights: Array<{
     title: string;
@@ -372,6 +373,7 @@ export const destinations: Destination[] = [
     bestTime: "October to April",
     duration: "2-4 days",
     region: "Upper Egypt",
+    type: "City",
     coverImage: "/photos/luxor-temple.jpg",
     highlights: [
       {
@@ -412,6 +414,7 @@ export const destinations: Destination[] = [
     bestTime: "October to April",
     duration: "2-3 days",
     region: "Lower Egypt",
+    type: "City",
     coverImage: "/photos/pyramids.jpg",
     highlights: [
       {
@@ -451,7 +454,8 @@ export const destinations: Destination[] = [
       "Aswan has a gentler rhythm than Egypt's larger cities, shaped by granite islands, feluccas, Nubian color, and wide Nile light. Its temples and villages feel especially rewarding when the day is planned around the river, not rushed from stop to stop. For travelers continuing from Luxor, Aswan adds softness, scenery, and a deeper sense of southern Egypt.",
     bestTime: "October to March",
     duration: "2-3 days",
-    region: "Southern Egypt",
+    region: "Upper Egypt",
+    type: "City",
     coverImage: "/photos/aswan.jpg",
     highlights: [
       {
@@ -492,6 +496,7 @@ export const destinations: Destination[] = [
     bestTime: "March to June, September to November",
     duration: "2-5 days",
     region: "Red Sea Coast",
+    type: "Coastal / Beach",
     coverImage: "/photos/hurghada.jpg",
     highlights: [
       {
@@ -523,6 +528,88 @@ export const destinations: Destination[] = [
       "/photos/hurghada.jpg",
   },
   {
+    slug: "abu-simbel",
+    name: "Abu Simbel",
+    overview:
+      "A monumental southern extension where the temples of Ramesses II rise beside Lake Nasser with rare scale and drama.",
+    description:
+      "Abu Simbel is one of Egypt's most powerful destination moments, remote enough to feel like a true journey and monumental enough to reward the effort. The twin temples were carved for Ramesses II and later moved in a modern engineering rescue that adds another layer to the story. For private travelers, Abu Simbel works best as a carefully timed extension from Aswan, with space to absorb both the history and the desert setting.",
+    bestTime: "October to March",
+    duration: "1 day",
+    region: "Upper Egypt",
+    type: "Archaeological Site",
+    coverImage: "/photos/abu-simbel.jpg",
+    highlights: [
+      {
+        title: "Great Temple of Ramesses II",
+        image: "/photos/abu-simbel.jpg",
+        description:
+          "Stand before the colossal seated statues that make Abu Simbel one of Egypt's most unforgettable facades.",
+      },
+      {
+        title: "Temple of Nefertari",
+        image: "/photos/abu-simbel.jpg",
+        description:
+          "Visit the elegant companion temple dedicated to Queen Nefertari and Hathor.",
+      },
+      {
+        title: "Lake Nasser setting",
+        image: "/photos/aswan.jpg",
+        description:
+          "Take in the southern desert light and wide lake views that make the site feel distinct from Luxor and Aswan.",
+      },
+      {
+        title: "Aswan extension",
+        image: "/photos/felucca.jpg",
+        description:
+          "Plan the route as a smooth private extension from Aswan with realistic timing and support.",
+      },
+    ],
+    heroImage:
+      "/photos/abu-simbel.jpg",
+  },
+  {
+    slug: "red-sea",
+    name: "Red Sea",
+    overview:
+      "Clear water, coral reefs, coastal resorts, and a calm finale after Egypt's temples, tombs, and Nile journeys.",
+    description:
+      "The Red Sea adds a lighter, restorative rhythm to an Egypt itinerary. After Cairo, Luxor, or a Nile cruise, the coast gives travelers time for swimming, snorkeling, diving, and resort comfort. It is especially useful for families, couples, and longer trips that need a graceful pause after intensive cultural touring.",
+    bestTime: "March to June, September to November",
+    duration: "2-5 days",
+    region: "Red Sea Coast",
+    type: "Coastal / Beach",
+    coverImage: "/photos/red-sea.jpg",
+    highlights: [
+      {
+        title: "Coral reefs",
+        image: "/photos/red-sea.jpg",
+        description:
+          "Explore clear water and reef life through snorkeling or diving days arranged around your comfort level.",
+      },
+      {
+        title: "Coastal resorts",
+        image: "/photos/hurghada.jpg",
+        description:
+          "Choose a relaxed base for beach time, pools, dining, and slower mornings.",
+      },
+      {
+        title: "Family-friendly pacing",
+        image: "/photos/hurghada.jpg",
+        description:
+          "Balance temples and transfers with downtime that keeps the journey comfortable for every traveler.",
+      },
+      {
+        title: "Luxor connection",
+        image: "/photos/karnak.jpg",
+        description:
+          "Connect the coast to Luxor by private transfer for a simple temple-and-sea combination.",
+      },
+    ],
+    heroImage:
+      "/photos/red-sea.jpg",
+  },
+  {
     slug: "alexandria",
     name: "Alexandria",
     overview:
@@ -531,7 +618,8 @@ export const destinations: Destination[] = [
       "Alexandria offers a different face of Egypt, looking toward the Mediterranean rather than the desert or Nile. Its Greco-Roman layers, sea air, libraries, catacombs, and coastal dining make it a rewarding contrast to Cairo and Upper Egypt. The city works especially well as a private day or overnight extension when travelers want history with a breezier rhythm.",
     bestTime: "March to May, September to November",
     duration: "1-2 days",
-    region: "Mediterranean Coast",
+    region: "Lower Egypt",
+    type: "City",
     coverImage: "/photos/alexandria.jpg",
     highlights: [
       {

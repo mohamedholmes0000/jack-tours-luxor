@@ -3,8 +3,16 @@ import { prisma, tryDatabase } from "@/lib/data/safe-db";
 import { getPublicSettings } from "@/lib/data/settings";
 import type {
   AdminBlogPostValues,
+  AdminDestinationValues,
   AdminTourValues,
 } from "@/lib/validations";
+
+function destinationTypeValue(type: string): AdminDestinationValues["type"] {
+  if (type === "City") return "CITY";
+  if (type === "Coastal / Beach") return "COASTAL";
+  if (type === "River / Cruise Route") return "RIVER_ROUTE";
+  return "SITE";
+}
 
 export async function getAdminSummary() {
   return tryDatabase(
@@ -83,6 +91,113 @@ export async function getAdminTours() {
       published: true,
       featured: tour.featured,
     })),
+  );
+}
+
+export async function getAdminDestinations() {
+  return tryDatabase(
+    async () => {
+      const dbDestinations = await prisma.destination.findMany({
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          subtitle: true,
+          region: true,
+          type: true,
+          published: true,
+          updatedAt: true,
+        },
+      });
+
+      return dbDestinations.length
+        ? dbDestinations
+        : destinations.map((destination) => ({
+            id: destination.slug,
+            slug: destination.slug,
+            name: destination.name,
+            subtitle: destination.overview,
+            region: destination.region,
+            type: destinationTypeValue(destination.type),
+            published: true,
+            updatedAt: new Date(),
+          }));
+    },
+    destinations.map((destination) => ({
+      id: destination.slug,
+      slug: destination.slug,
+      name: destination.name,
+      subtitle: destination.overview,
+      region: destination.region,
+      type: destinationTypeValue(destination.type),
+      published: true,
+      updatedAt: new Date(),
+    })),
+  );
+}
+
+export async function getAdminDestination(id: string): Promise<(AdminDestinationValues & { id: string }) | null> {
+  return tryDatabase(
+    async () => {
+      const destination = await prisma.destination.findFirst({
+        where: { OR: [{ id }, { slug: id }] },
+      });
+
+      if (destination) {
+        return {
+          id: destination.id,
+          name: destination.name,
+          slug: destination.slug,
+          subtitle: destination.subtitle ?? "",
+          region: destination.region ?? "",
+          type: destination.type,
+          heroImage: destination.heroImage ?? "",
+          overview: destination.overview,
+          highlights: destination.highlights,
+          published: destination.published,
+          metaTitle: destination.metaTitle ?? "",
+          metaDescription: destination.metaDescription ?? "",
+        };
+      }
+
+      const fallback = destinations.find((item) => item.slug === id);
+      return fallback
+        ? {
+            id: fallback.slug,
+            name: fallback.name,
+            slug: fallback.slug,
+            subtitle: fallback.overview,
+            region: fallback.region,
+            type: destinationTypeValue(fallback.type),
+            heroImage: fallback.heroImage,
+            overview: fallback.overview,
+            highlights: fallback.highlights.map((highlight) => highlight.title),
+            published: true,
+            metaTitle: "",
+            metaDescription: "",
+          }
+        : null;
+    },
+    (() => {
+      const fallback = destinations.find((item) => item.slug === id);
+      return fallback
+        ? {
+            id: fallback.slug,
+            name: fallback.name,
+            slug: fallback.slug,
+            subtitle: fallback.overview,
+            region: fallback.region,
+            type: destinationTypeValue(fallback.type),
+            heroImage: fallback.heroImage,
+            overview: fallback.overview,
+            highlights: fallback.highlights.map((highlight) => highlight.title),
+            published: true,
+            metaTitle: "",
+            metaDescription: "",
+          }
+        : null;
+    })(),
   );
 }
 

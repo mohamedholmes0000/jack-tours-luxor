@@ -7,10 +7,12 @@ import { useForm } from "react-hook-form";
 import { FormField, inputClassName, textareaClassName } from "@/components/forms/form-field";
 import {
   adminBlogPostSchema,
+  adminDestinationSchema,
   adminFaqSchema,
   adminGalleryImageSchema,
   adminSettingsSchema,
   type AdminBlogPostValues,
+  type AdminDestinationValues,
   type AdminFaqValues,
   type AdminGalleryImageValues,
   type AdminSettingsValues,
@@ -215,6 +217,109 @@ export function GalleryImageForm({ initialValues, id }: { initialValues?: AdminG
       </div>
       <Result message={state.message} error={state.error} />
       <div className="flex justify-between"><button className="btn-secondary" type="button" onClick={remove} disabled={!id}>Delete</button><button className="btn-primary" disabled={state.loading}>Save Image</button></div>
+    </form>
+  );
+}
+
+export function DestinationForm({ initialValues, id }: { initialValues: AdminDestinationValues; id: string }) {
+  const router = useRouter();
+  const state = useApiState();
+  const [highlightsText, setHighlightsText] = useState(initialValues.highlights.join("\n"));
+  const form = useForm<AdminDestinationValues>({
+    resolver: zodResolver(adminDestinationSchema),
+    defaultValues: initialValues,
+  });
+
+  async function submit(values: AdminDestinationValues) {
+    state.setLoading(true);
+    state.setMessage(null);
+    state.setError(null);
+    const payload = {
+      ...values,
+      highlights: highlightsText
+        .split("\n")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    };
+
+    const response = await fetch(`/api/admin/destinations/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = (await response.json()) as { ok: boolean; message?: string };
+    state.setLoading(false);
+
+    if (!response.ok || !result.ok) {
+      state.setError(result.message ?? "Unable to save destination.");
+      return;
+    }
+
+    state.setMessage("Destination saved. Public pages updated.");
+    router.refresh();
+  }
+
+  return (
+    <form className="space-y-6" onSubmit={form.handleSubmit(submit)}>
+      <div className="grid gap-5 border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:grid-cols-2">
+        <FormField label="Name" error={form.formState.errors.name?.message}>
+          <input className={inputClassName} {...form.register("name")} />
+        </FormField>
+        <FormField label="Slug" error={form.formState.errors.slug?.message}>
+          <input className={inputClassName} {...form.register("slug")} />
+        </FormField>
+        <FormField label="Subtitle" error={form.formState.errors.subtitle?.message}>
+          <input className={inputClassName} {...form.register("subtitle")} />
+        </FormField>
+        <FormField label="Region" error={form.formState.errors.region?.message}>
+          <select className={inputClassName} {...form.register("region")}>
+            <option value="Upper Egypt">Upper Egypt</option>
+            <option value="Lower Egypt">Lower Egypt</option>
+            <option value="Red Sea Coast">Red Sea Coast</option>
+          </select>
+        </FormField>
+        <FormField label="Type" error={form.formState.errors.type?.message}>
+          <select className={inputClassName} {...form.register("type")}>
+            <option value="CITY">City</option>
+            <option value="SITE">Archaeological Site</option>
+            <option value="COASTAL">Coastal / Beach</option>
+            <option value="RIVER_ROUTE">River / Cruise Route</option>
+          </select>
+        </FormField>
+        <FormField label="Hero image URL" error={form.formState.errors.heroImage?.message}>
+          <input className={inputClassName} {...form.register("heroImage")} />
+        </FormField>
+        <div className="md:col-span-2">
+          <FormField label="Overview" error={form.formState.errors.overview?.message}>
+            <textarea className={textareaClassName} {...form.register("overview")} />
+          </FormField>
+        </div>
+        <div className="md:col-span-2">
+          <FormField label="Highlights">
+            <textarea
+              className={textareaClassName}
+              value={highlightsText}
+              onChange={(event) => setHighlightsText(event.target.value)}
+              placeholder="One highlight per line"
+            />
+          </FormField>
+        </div>
+        <label className="flex min-h-12 items-center gap-3 border border-[var(--color-gray-100)] px-4">
+          <input type="checkbox" {...form.register("published")} /> Published
+        </label>
+        <FormField label="Meta title">
+          <input className={inputClassName} {...form.register("metaTitle")} />
+        </FormField>
+        <FormField label="Meta description">
+          <input className={inputClassName} {...form.register("metaDescription")} />
+        </FormField>
+      </div>
+      <Result message={state.message} error={state.error} />
+      <div className="flex justify-end">
+        <button className="btn-primary" disabled={state.loading} type="submit">
+          {state.loading ? "Saving..." : "Save Destination"}
+        </button>
+      </div>
     </form>
   );
 }

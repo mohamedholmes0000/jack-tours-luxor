@@ -51,6 +51,7 @@ model Destination {
   name            String
   type            DestinationType @default(SITE)
   subtitle        String?
+  region          String?
   heroImage       String?
   overview        String   @db.Text
   highlights      String[]
@@ -64,6 +65,8 @@ model Destination {
 enum DestinationType {
   CITY
   SITE
+  COASTAL
+  RIVER_ROUTE
 }
 
 model BlogPost {
