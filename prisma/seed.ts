@@ -45,17 +45,17 @@ async function main() {
   }
 
   const tours = [
-    ["private-valley-of-the-kings-karnak-temple-tour", "Private Valley of the Kings & Karnak Temple Tour", "Day Tours", "A refined private Luxor day tour with an expert Egyptologist."],
-    ["3-day-luxor-aswan-nile-cruise-experience", "3-Day Luxor & Aswan Nile Cruise Experience", "Nile Cruises", "A compact Nile cruise experience between Luxor and Aswan."],
-    ["7-day-egypt-highlights-cairo-luxor-aswan", "7-Day Egypt Highlights: Cairo, Luxor & Aswan", "Multi-Day Packages", "A private Egypt itinerary connecting the country's essential landmarks."],
-    ["luxury-luxor-private-egyptologist-hot-air-balloon", "Luxury Luxor: Private Egyptologist & Hot Air Balloon", "Luxury Tours", "A premium Luxor experience with sunrise ballooning and private guiding."],
-    ["tailor-made-egypt-journey", "Tailor-Made Egypt Journey", "Custom Egypt Tours", "A flexible private journey designed around your dates, pace, and interests."],
+    ["private-valley-of-the-kings-karnak-temple-tour", "Private Valley of the Kings & Karnak Temple Tour", "Day Tours", "A refined private Luxor day tour with an expert Egyptologist.", "Luxor", 4.9, 12],
+    ["3-day-luxor-aswan-nile-cruise-experience", "3-Day Luxor & Aswan Nile Cruise Experience", "Nile Cruises", "A compact Nile cruise experience between Luxor and Aswan.", "Aswan", 4.8, 9],
+    ["7-day-egypt-highlights-cairo-luxor-aswan", "7-Day Egypt Highlights: Cairo, Luxor & Aswan", "Multi-Day Packages", "A private Egypt itinerary connecting the country's essential landmarks.", "Cairo", 4.9, 14],
+    ["luxury-luxor-private-egyptologist-hot-air-balloon", "Luxury Luxor: Private Egyptologist & Hot Air Balloon", "Luxury Tours", "A premium Luxor experience with sunrise ballooning and private guiding.", "Luxor", 4.9, 7],
+    ["tailor-made-egypt-journey", "Tailor-Made Egypt Journey", "Custom Egypt Tours", "A flexible private journey designed around your dates, pace, and interests.", "Luxor", 0, 0],
   ];
 
-  for (const [slug, title, category, shortDescription] of tours) {
+  for (const [slug, title, category, shortDescription, city, rating, reviewCount] of tours) {
     await prisma.tour.upsert({
       where: { slug },
-      update: {},
+      update: { city, rating, reviewCount },
       create: {
         slug,
         title,
@@ -65,6 +65,9 @@ async function main() {
           "Designed for travelers who want Egypt handled with taste, local knowledge, and responsive support from the first WhatsApp message to the final transfer.",
         highlights: ["Private expert guide", "Flexible itinerary", "Premium transport", "WhatsApp support"],
         duration: category === "Day Tours" ? "1 day" : "Custom",
+        city,
+        rating,
+        reviewCount,
         groupSize: "Private",
         departurePoint: "Luxor",
         languages: ["English", "Arabic"],

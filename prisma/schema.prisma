@@ -24,6 +24,9 @@ model Tour {
   overview         String   @db.Text
   highlights       String[]
   duration         String
+  city             String?
+  rating           Float?   @default(0)
+  reviewCount      Int?     @default(0)
   groupSize        String
   departurePoint   String?
   languages        String[]

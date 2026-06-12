@@ -263,6 +263,28 @@ a {
   animation: mobile-menu-slide-in 300ms ease-out;
 }
 
+@keyframes tour-filter-sheet {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.tour-filter-sheet-content,
+.tour-filter-sheet-content button,
+.tour-filter-sheet-content label,
+.tour-filter-sheet-content span {
+  color: white;
+}
+
+.tour-filter-sheet-content input[type="number"],
+.tour-filter-sheet-content input[type="range"] {
+  color: var(--color-navy);
+}
+
 @media (max-width: 767px) {
   .gallery-liquid-card,
   .gallery-liquid-caption {

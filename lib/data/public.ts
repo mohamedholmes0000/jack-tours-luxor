@@ -14,6 +14,13 @@ import {
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
 import { safeImageSrc } from "@/lib/images";
 
+const cityNames = ["Luxor", "Aswan", "Cairo", "Hurghada", "Abu Simbel", "Red Sea"];
+
+function inferTourCity(parts: string[]) {
+  const haystack = parts.join(" ").toLowerCase();
+  return cityNames.find((city) => haystack.includes(city.toLowerCase())) ?? "Luxor";
+}
+
 function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number]): Tour {
   return {
     slug: tour.slug,
@@ -23,6 +30,15 @@ function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number])
     overview: tour.overview,
     highlights: tour.highlights,
     duration: tour.duration,
+    city: tour.city ?? inferTourCity([
+      tour.title,
+      tour.category,
+      tour.shortDescription,
+      tour.overview,
+      tour.departurePoint ?? "",
+    ]),
+    rating: tour.rating ?? 0,
+    reviewCount: tour.reviewCount ?? 0,
     groupSize: tour.groupSize,
     departurePoint: tour.departurePoint ?? "Flexible",
     languages: tour.languages,

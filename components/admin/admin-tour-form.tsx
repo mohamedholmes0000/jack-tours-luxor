@@ -20,6 +20,9 @@ const emptyTour: AdminTourValues = {
   shortDescription: "",
   overview: "",
   duration: "",
+  city: "",
+  rating: 0,
+  reviewCount: 0,
   groupSize: "Private",
   departurePoint: "",
   priceFrom: 0,
@@ -213,6 +216,15 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
           </FormField>
           <FormField label="Duration" error={errors.duration?.message}>
             <input className={inputClassName} {...register("duration")} />
+          </FormField>
+          <FormField label="City" error={errors.city?.message}>
+            <input className={inputClassName} placeholder="Luxor" {...register("city")} />
+          </FormField>
+          <FormField label="Rating" error={errors.rating?.message}>
+            <input className={inputClassName} max="5" min="0" step="0.1" type="number" {...register("rating", { valueAsNumber: true })} />
+          </FormField>
+          <FormField label="Review count" error={errors.reviewCount?.message}>
+            <input className={inputClassName} min="0" type="number" {...register("reviewCount", { valueAsNumber: true })} />
           </FormField>
           <FormField label="Group size" error={errors.groupSize?.message}>
             <input className={inputClassName} {...register("groupSize")} />

@@ -6,6 +6,9 @@ export type Tour = {
   overview: string;
   highlights: string[];
   duration: string;
+  city: string;
+  rating: number;
+  reviewCount: number;
   groupSize: string;
   departurePoint: string;
   languages: string[];
@@ -135,6 +138,9 @@ export const tours: Tour[] = [
       "Flexible start time and WhatsApp support",
     ],
     duration: "1 day",
+    city: "Luxor",
+    rating: 4.9,
+    reviewCount: 12,
     groupSize: "Private",
     departurePoint: "Luxor hotel or Nile cruise",
     languages: ["English", "Arabic"],
@@ -179,6 +185,9 @@ export const tours: Tour[] = [
       "Ideal for compact Egypt itineraries",
     ],
     duration: "3 days",
+    city: "Aswan",
+    rating: 4.8,
+    reviewCount: 9,
     groupSize: "Private arrangements",
     departurePoint: "Luxor",
     languages: ["English", "Arabic"],
@@ -223,6 +232,9 @@ export const tours: Tour[] = [
       "Daily WhatsApp coordination",
     ],
     duration: "7 days",
+    city: "Cairo",
+    rating: 4.9,
+    reviewCount: 14,
     groupSize: "Private",
     departurePoint: "Cairo",
     languages: ["English", "Arabic"],
@@ -267,6 +279,9 @@ export const tours: Tour[] = [
       "Ideal for couples and milestone trips",
     ],
     duration: "1 day",
+    city: "Luxor",
+    rating: 4.9,
+    reviewCount: 7,
     groupSize: "Private",
     departurePoint: "Luxor",
     languages: ["English", "Arabic"],
@@ -311,6 +326,9 @@ export const tours: Tour[] = [
       "Simple WhatsApp-led inquiry flow",
     ],
     duration: "Custom",
+    city: "Luxor",
+    rating: 0,
+    reviewCount: 0,
     groupSize: "Private",
     departurePoint: "Flexible",
     languages: ["English", "Arabic"],
