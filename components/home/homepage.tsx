@@ -113,6 +113,41 @@ const testimonial = {
   origin: "United States",
 };
 
+const approvedHeroEyebrow = "Private Egypt · est. Luxor";
+const approvedHeroHeadline = "Egypt, privately";
+const approvedHeroHeadlineAccent = "composed.";
+const approvedHeroSubheadline =
+  "Tailor-made Egypt journeys with private guides, elegant pacing, and calm planning from a Luxor-based team.";
+
+function cleanSettingText(value: string | undefined) {
+  return (value ?? "")
+    .replaceAll("آ·", "·")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function cleanHeroText(settings: Awaited<ReturnType<typeof getPublicSettings>>) {
+  const headline = cleanSettingText(settings.homepageHeroHeadline);
+  const accent = cleanSettingText(settings.homepageHeroHeadlineAccent);
+  const subheadline = cleanSettingText(settings.homepageHeroSubheadline);
+  const hasComposedInHeadline =
+    headline.includes("privatelycomposed") || headline.includes("privately composed");
+
+  return {
+    eyebrow: approvedHeroEyebrow,
+    headline: hasComposedInHeadline ? approvedHeroHeadline : headline || approvedHeroHeadline,
+    accent: hasComposedInHeadline ? approvedHeroHeadlineAccent : accent || approvedHeroHeadlineAccent,
+    subheadline:
+      subheadline.includes("Luxury private Egypt tours") || !subheadline
+        ? approvedHeroSubheadline
+        : subheadline,
+  };
+}
+
+function primaryCategoryLabel(category: string) {
+  return category.replace(/\s*·\s*Custom$/i, "").replace(/\s*\/\s*Custom$/i, "").trim();
+}
+
 // ----------------------------------------------------------------------------
 // Inline JourneyCard — tall, photography-led, homepage-only. Does NOT replace
 // the shared TourCard used by /tours; that file is untouched.
@@ -137,7 +172,7 @@ function JourneyCard({ tour, eager = false }: { tour: Tour; eager?: boolean }) {
       />
       <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
         <p className="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-light)]">
-          {tour.category}
+          {primaryCategoryLabel(tour.category)}
         </p>
         <h3 className="mt-3 font-serif text-[1.85rem] font-semibold leading-[1.02] text-white sm:text-[2.2rem]">
           {tour.title}
@@ -172,6 +207,7 @@ export async function Homepage() {
   const heroCtaLabel =
     settings.homepageHeroPrimaryCtaLabel || "Plan My Egypt Journey";
   const heroCtaHref = settings.homepageHeroPrimaryCtaHref || "/trip-planner";
+  const heroText = cleanHeroText(settings);
   const microTrustLine = [
     settings.homepageTrustItem1,
     settings.homepageTrustItem2,
@@ -206,19 +242,19 @@ export async function Homepage() {
 
         <div className="container-premium relative flex min-h-[calc(100svh-3.5rem)] flex-col justify-between pb-10 pt-7 sm:min-h-[calc(100svh-3.5rem)] sm:pb-16 sm:pt-9 md:min-h-[calc(100vh-6.625rem)] lg:pb-24 lg:pt-12">
           <p className="eyebrow text-[var(--color-gold-light)]">
-            {settings.homepageHeroEyebrow}
+            {heroText.eyebrow}
           </p>
 
           <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
             <h1 className="font-serif font-bold leading-[1.02] text-white text-[clamp(2.6rem,7vw,6rem)]">
-              {settings.homepageHeroHeadline}
+              {heroText.headline}
               {" "}
               <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
-                {settings.homepageHeroHeadlineAccent}
+                {heroText.accent}
               </span>
             </h1>
             <p className="mt-4 max-w-md text-[0.98rem] leading-7 text-white/86 sm:mt-7 sm:text-lg sm:leading-8 lg:max-w-lg">
-              {settings.homepageHeroSubheadline}
+              {heroText.subheadline}
             </p>
             <div className="mt-6 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
               <Link className="btn-primary" href={heroCtaHref}>
@@ -234,12 +270,16 @@ export async function Homepage() {
             </div>
 
             {/* Compact reassurance row directly below the CTAs. */}
-            <ul className="mt-5 flex flex-col gap-2 border-l border-[rgb(240_204_122_/_40%)] pl-4 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-white/76 sm:mt-7 sm:flex-row sm:flex-wrap sm:border-l-0 sm:pl-0">
+            <ul className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-2 border-l border-[rgb(240_204_122_/_40%)] pl-4 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-white/76 sm:mt-7 sm:border-l-0 sm:pl-0">
               {microTrustLine.map((item, index) => (
-                <li key={item} className="flex items-center gap-2 whitespace-nowrap">
-                  <span className="whitespace-nowrap">{item}</span>
+                <li key={item} className="flex items-center gap-2">
+                  <span style={{ whiteSpace: "nowrap" }}>{cleanSettingText(item)}</span>
                   {index < microTrustLine.length - 1 ? (
-                    <span aria-hidden className="hidden text-[var(--color-gold-light)] sm:inline">
+                    <span
+                      aria-hidden
+                      className="text-[var(--color-gold-light)]"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
                       {" · "}
                     </span>
                   ) : null}
