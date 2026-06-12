@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { ContactForm } from "@/components/forms/contact-form";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { getPublicSettings } from "@/lib/data/settings";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -9,56 +11,113 @@ export const metadata: Metadata = {
     "Contact Jack Egypt Tour for private Luxor tours, Egypt itineraries, Nile cruises, and DMC services.",
 };
 
-export default function ContactPage() {
+function MessageCircleIcon() {
+  return (
+    <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none">
+      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.7 8.7 0 0 1-3.8-.9L3 21l1.6-5A8.5 8.5 0 1 1 21 11.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none">
+      <path d="M4 6h16v12H4V6Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function MapPinIcon() {
+  return (
+    <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none">
+      <path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M12 12.3a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6Z" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function ContactInfoCard({
+  href,
+  icon,
+  title,
+  detail,
+  subtitle,
+}: {
+  href?: string;
+  icon: ReactNode;
+  title: string;
+  detail: string;
+  subtitle: string;
+}) {
+  const className =
+    "block rounded-xl bg-white p-6 shadow-[0_2px_8px_rgb(0_0_0_/_6%)] transition hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_10%)]";
+  const content = (
+    <>
+      <span className="text-[var(--color-gold)]">{icon}</span>
+      <h2 className="mt-4 text-lg font-semibold text-[var(--color-navy)]">{title}</h2>
+      <p className="mt-2 text-[15px] text-[var(--color-navy)]/60">{detail}</p>
+      <p className="mt-1 text-[13px] text-[var(--color-navy)]/40">{subtitle}</p>
+    </>
+  );
+
+  return href ? (
+    <a className={className} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined}>
+      {content}
+    </a>
+  ) : (
+    <div className={className}>{content}</div>
+  );
+}
+
+export default async function ContactPage() {
+  const settings = await getPublicSettings();
+  const whatsappNumber = settings.whatsappNumber || settings.phone || "+20 XXX XXX XXXX";
+  const email = settings.email || "admin@jacktoursluxor.com";
+  const address = settings.address || "Luxor, Upper Egypt";
+
   return (
     <>
-      <section className="section-dark pattern-overlay py-20 text-white md:py-28">
-        <div className="container-premium relative grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-end">
-          <div>
-            <p className="eyebrow text-[var(--color-gold-light)]">Contact</p>
-            <h1 className="mt-5 max-w-4xl font-serif text-5xl font-semibold leading-tight md:text-7xl">
-              Ask a local Luxor team for <span className="italic text-[var(--color-gold-light)]">practical Egypt travel guidance.</span>
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/76">
-              Send a short message and continue the conversation on WhatsApp for the fastest reply.
-            </p>
-          </div>
-          <div className="border border-[rgb(214_173_84_/_28%)] bg-white/[0.06] p-6 shadow-[0_24px_70px_rgb(0_0_0_/_24%)]">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
-              Direct support
-            </p>
-            <div className="mt-5 space-y-3 text-sm leading-7 text-white/76">
-              <p>Luxor, Egypt</p>
-              <p>24/7 WhatsApp response path</p>
-              <p>info@jackegypttour.com</p>
-            </div>
-            <a className="btn-primary mt-6" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
-              WhatsApp Now
-            </a>
-          </div>
+      <section className="relative grid h-[220px] place-items-center overflow-hidden bg-[var(--color-navy)] text-center text-white">
+        <Image
+          src="/photos/luxor-temple.jpg"
+          alt="Luxor Temple in Egypt"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-[rgb(0_0_0_/_50%)]" />
+        <div className="relative px-5">
+          <p className="eyebrow text-[var(--color-gold-light)]">Get In Touch</p>
+          <h1 className="mt-3 text-4xl font-bold leading-tight text-white">Contact Us</h1>
+          <p className="mt-3 text-base text-white/70">We reply within 24 hours</p>
         </div>
       </section>
 
-      <section className="section-ivory py-16 md:py-24">
-        <div className="container-premium grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div>
-            <p className="eyebrow">Website message</p>
-            <h2 className="mt-4 font-serif text-4xl font-semibold leading-tight text-[var(--color-navy)] md:text-5xl">
-              Tell us what you need, then send it to WhatsApp.
-            </h2>
-            <p className="mt-5 text-base leading-8 text-[var(--color-gray-600)]">
-              No email automation yet in this MVP slice. The form validates your details and builds
-              a readable WhatsApp message for sales follow-up.
-            </p>
-            <div className="relative mt-8 min-h-72 overflow-hidden shadow-[0_24px_70px_rgb(87_59_22_/_14%)]">
-              <Image
-                src="/photos/hatshepsut.jpg"
-                alt="Ancient Egyptian columns"
-                fill
-                sizes="(min-width: 1024px) 40vw, 100vw"
-                className="object-cover"
-              />
-            </div>
+      <section className="bg-[var(--color-ivory)] py-14 md:py-20">
+        <div className="container-premium grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
+          <div className="grid gap-4">
+            <ContactInfoCard
+              href={buildWhatsAppUrlForNumber("Hello Jack Egypt Tour, I would like to ask about a private Egypt trip.", whatsappNumber)}
+              icon={<MessageCircleIcon />}
+              title="WhatsApp"
+              detail={whatsappNumber}
+              subtitle="Fastest way to reach us"
+            />
+            <ContactInfoCard
+              href={`mailto:${email}`}
+              icon={<MailIcon />}
+              title="Email"
+              detail={email}
+              subtitle="We reply within 24 hours"
+            />
+            <ContactInfoCard
+              icon={<MapPinIcon />}
+              title="Visit Us"
+              detail={address}
+              subtitle="By appointment only"
+            />
           </div>
           <ContactForm />
         </div>

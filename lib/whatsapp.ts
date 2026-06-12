@@ -28,8 +28,8 @@ export type TourInquiryMessageInput = {
 export type ContactMessageInput = {
   name: string;
   email: string;
-  phone: string;
-  subject: string;
+  phone?: string;
+  subject?: string;
   message: string;
 };
 

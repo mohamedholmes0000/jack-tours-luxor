@@ -43,8 +43,8 @@ export const tripPlannerSchema = z.object({
 export const contactSchema = z.object({
   name: z.string().trim().min(2, "Add your name."),
   email: z.string().trim().email("Add a valid email."),
-  phone: phoneLike,
-  subject: z.string().trim().min(3, "Add a short subject."),
+  phone: z.string().trim().optional(),
+  subject: z.string().trim().optional(),
   message: z.string().trim().min(10, "Add a little more detail."),
 });
 
