@@ -136,17 +136,15 @@ function JourneyCard({ tour, eager = false }: { tour: Tour; eager?: boolean }) {
         className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-[rgb(6_17_31_/_20%)] to-transparent"
       />
       <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
-        <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)]">
+        <p className="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-light)]">
           {tour.category}
-          <span className="mx-2 opacity-50">·</span>
-          {tour.duration}
         </p>
         <h3 className="mt-3 font-serif text-[1.85rem] font-semibold leading-[1.02] text-white sm:text-[2.2rem]">
           {tour.title}
         </h3>
         <div className="mt-5 flex items-center justify-between">
           <span className="text-xs text-white/74">{formatPrice(tour)}</span>
-          <span className="inline-flex items-center gap-2 text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
+          <span className="inline-flex items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-light)]">
             View
             <span
               aria-hidden
@@ -212,7 +210,7 @@ export async function Homepage() {
           </p>
 
           <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
-            <h1 className="font-serif font-semibold leading-[0.94] text-white text-[clamp(2.8rem,11vw,9.5rem)]">
+            <h1 className="font-serif font-bold leading-[1.02] text-white text-[clamp(2.6rem,7vw,6rem)]">
               {settings.homepageHeroHeadline}
               {" "}
               <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
@@ -236,7 +234,7 @@ export async function Homepage() {
             </div>
 
             {/* Compact reassurance row directly below the CTAs. */}
-            <ul className="mt-5 flex flex-col gap-2 border-l border-[rgb(240_204_122_/_40%)] pl-4 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-white/76 sm:mt-7 sm:flex-row sm:flex-wrap sm:border-l-0 sm:pl-0">
+            <ul className="mt-5 flex flex-col gap-2 border-l border-[rgb(240_204_122_/_40%)] pl-4 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-white/76 sm:mt-7 sm:flex-row sm:flex-wrap sm:border-l-0 sm:pl-0">
               {microTrustLine.map((item, index) => (
                 <li key={item} className="flex items-center gap-2 whitespace-nowrap">
                   <span className="whitespace-nowrap">{item}</span>
@@ -251,7 +249,7 @@ export async function Homepage() {
           </div>
 
           {/* Tiny scroll cue, desktop-only — corner detail. */}
-          <div className="absolute bottom-8 right-6 hidden flex-col items-center gap-2 text-[0.6rem] font-bold uppercase tracking-[0.22em] text-white/60 lg:flex">
+          <div className="absolute bottom-8 right-6 hidden flex-col items-center gap-2 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-white/60 lg:flex">
             <span>Scroll</span>
             <span aria-hidden className="scroll-cue h-7 w-px bg-white/50" />
           </div>
@@ -278,7 +276,7 @@ export async function Homepage() {
             </div>
             <Link
               href="/destinations"
-              className="self-start text-[0.66rem] font-bold uppercase tracking-[0.22em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)] sm:self-auto"
+              className="self-start text-[0.8125rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)] sm:self-auto"
             >
               All destinations →
             </Link>
@@ -316,6 +314,7 @@ export async function Homepage() {
               <p className="eyebrow">Featured journeys</p>
               <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.06] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
                 Polished private experiences,
+                {" "}
                 <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
                   ready to tailor.
                 </span>
@@ -343,6 +342,7 @@ export async function Homepage() {
             <p className="eyebrow">Why Jack Egypt Tour</p>
             <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.06] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
               Private Egypt travel
+              {" "}
               <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
                 with local intelligence.
               </span>
@@ -457,7 +457,7 @@ export async function Homepage() {
           aria-hidden
           className="absolute inset-0 bg-gradient-to-b from-[rgba(6,17,31,0.65)] via-[rgba(6,17,31,0.35)] to-[rgba(6,17,31,0.85)]"
         />
-        <div className="container-premium relative grid min-h-[70vh] grid-cols-2 content-between gap-6 py-14 sm:min-h-[80vh] sm:py-20 lg:grid-cols-4">
+        <div className="container-premium relative grid min-h-[70vh] grid-cols-2 content-between gap-8 py-16 sm:min-h-[80vh] sm:py-16 lg:grid-cols-4">
           {stats.map(([value, label], idx) => (
             <div
               key={label}
@@ -467,11 +467,11 @@ export async function Homepage() {
                 idx >= 2 ? "self-end" : "self-start"
               } lg:self-start`}
             >
-              <p className="font-serif text-[3.2rem] font-medium leading-none text-[var(--color-gold-light)] sm:text-[4.5rem] lg:text-[5.5rem]">
+              <p className="font-serif text-[clamp(2.5rem,5vw,3.5rem)] font-semibold leading-none text-[var(--color-gold-light)]">
                 {value}
               </p>
               <div className="mt-2 h-px w-10 bg-[var(--color-gold-light)] opacity-70" />
-              <p className="mt-3 text-[0.62rem] font-bold uppercase tracking-[0.24em] text-white/80 sm:text-xs">
+              <p className="mt-3 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-white/80">
                 {label}
               </p>
             </div>
@@ -487,6 +487,7 @@ export async function Homepage() {
           <p className="eyebrow text-[var(--color-gold-dark)]">Travelers</p>
           <p className="mt-6 font-serif text-[1.9rem] font-bold leading-[1.18] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
             Loved quietly,
+            {" "}
             <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
               from everywhere.
             </span>
@@ -511,7 +512,7 @@ export async function Homepage() {
           aria-hidden
           className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.55)] to-[rgba(6,17,31,0.15)]"
         />
-        <div className="container-premium relative flex min-h-[78vh] flex-col justify-end py-14 sm:min-h-[88vh] sm:py-20 lg:min-h-[92vh]">
+        <div className="container-premium relative flex min-h-[78vh] flex-col justify-end py-20 sm:min-h-[88vh] sm:py-20 lg:min-h-[92vh]">
           <div className="reveal-up max-w-3xl">
             <p
               aria-hidden
@@ -519,12 +520,12 @@ export async function Homepage() {
             >
               &ldquo;
             </p>
-            <blockquote className="-mt-3 font-serif text-[1.6rem] font-medium leading-[1.18] text-white sm:text-[2.2rem] md:text-[2.8rem] lg:text-[3.2rem]">
+            <blockquote className="-mt-3 font-serif text-[clamp(1.4rem,2.5vw,1.8rem)] font-normal leading-[1.5] text-white">
               {testimonial.quote}
             </blockquote>
             <div className="mt-7 flex items-center gap-4">
               <span className="h-px w-12 bg-[var(--color-gold-light)]" />
-              <p className="text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[var(--color-gold-light)] sm:text-xs">
+              <p className="text-[0.72rem] font-medium uppercase tracking-[0.12em] text-[var(--color-gold-light)]">
                 {testimonial.name}
                 <span className="ml-2 text-white/65">
                   / {testimonial.origin}
@@ -552,13 +553,14 @@ export async function Homepage() {
           aria-hidden
           className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.65)] to-[rgba(6,17,31,0.25)]"
         />
-        <div className="container-premium relative flex min-h-[72vh] flex-col justify-end py-14 sm:min-h-[80vh] sm:py-20">
+        <div className="container-premium relative flex min-h-[72vh] flex-col justify-end py-20 sm:min-h-[80vh] sm:py-20">
           <div className="reveal-up max-w-2xl">
             <p className="eyebrow text-[var(--color-gold-light)]">
               Start your booking
             </p>
             <h2 className="mt-4 font-serif text-[2rem] font-bold leading-[1.04] sm:text-[2.5rem] md:text-[2.625rem]">
               Ready when
+              {" "}
               <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
                 you are.
               </span>
