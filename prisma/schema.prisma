@@ -46,6 +46,8 @@ model Destination {
   id              String   @id @default(cuid())
   slug            String   @unique
   name            String
+  type            DestinationType @default(SITE)
+  subtitle        String?
   heroImage       String?
   overview        String   @db.Text
   highlights      String[]
@@ -54,6 +56,11 @@ model Destination {
   published       Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+enum DestinationType {
+  CITY
+  SITE
 }
 
 model BlogPost {

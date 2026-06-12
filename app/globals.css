@@ -25,15 +25,26 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-dm-sans);
-  --font-serif: var(--font-cormorant);
+  --font-sans: var(--font-jost);
+  --font-serif: var(--font-jost);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-dm-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-jost), Arial, Helvetica, sans-serif;
+  font-weight: 400;
   overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-jost), Arial, Helvetica, sans-serif;
+  font-weight: 700;
 }
 
 a {
@@ -103,10 +114,65 @@ a {
   box-shadow: var(--shadow-luxury);
 }
 
+.font-accent-serif {
+  font-family: var(--font-accent-serif), Georgia, serif;
+}
+
+.site-header-utility {
+  background: #0a0e1e;
+  border-color: rgb(255 255 255 / 8%);
+}
+
+.site-main-header {
+  background: #ffffff;
+  border-color: rgb(6 17 31 / 10%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  color: var(--color-navy);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.site-main-header.header-stuck,
+.site-main-header:is(:hover, :focus-within) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.desktop-nav-link {
+  position: relative;
+}
+
+.desktop-nav-link::after {
+  background: var(--color-gold);
+  bottom: -0.55rem;
+  content: "";
+  height: 1px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 300ms ease, opacity 300ms ease;
+  width: 100%;
+}
+
+.desktop-nav-link:hover::after {
+  opacity: 0.5;
+  transform: scaleX(1);
+}
+
+.desktop-nav-link.active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
 .gallery-liquid-card {
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 72%), rgb(255 250 238 / 42%) 45%, rgb(214 173 84 / 13%));
-  backdrop-filter: blur(24px) saturate(1.5);
+    radial-gradient(circle at 12% 0%, rgb(255 255 255 / 64%), transparent 36%),
+    linear-gradient(135deg, rgb(255 255 255 / 78%), rgb(255 250 238 / 54%) 45%, rgb(214 173 84 / 15%));
   border: 1px solid rgb(214 173 84 / 24%);
   border-radius: 22px;
   box-shadow:
@@ -166,11 +232,75 @@ a {
 }
 
 .gallery-liquid-caption {
-  background: linear-gradient(135deg, rgb(255 255 255 / 76%), rgb(255 248 232 / 52%));
-  backdrop-filter: blur(12px);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 84%), rgb(255 248 232 / 66%)),
+    rgb(255 250 240 / 86%);
   border-radius: 18px;
   border-top: 1px solid rgb(255 255 255 / 70%);
   box-shadow: inset 0 1px 1px rgb(255 255 255 / 90%);
+}
+
+.gallery-lightbox-overlay {
+  backdrop-filter: blur(10px);
+}
+
+.gallery-lightbox-shell {
+  backdrop-filter: blur(18px) saturate(1.25);
+  max-height: 90dvh;
+}
+
+.gallery-lightbox-scroll {
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(90dvh - 1rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.gallery-lightbox-close {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+@keyframes mobile-menu-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.mobile-menu-panel {
+  animation: mobile-menu-slide-in 300ms ease-out;
+}
+
+@media (max-width: 767px) {
+  .gallery-liquid-card,
+  .gallery-liquid-caption {
+    backdrop-filter: none !important;
+  }
+
+  .gallery-lightbox-shell {
+    max-height: 90svh;
+  }
+
+  .gallery-lightbox-scroll {
+    max-height: calc(90svh - 1rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-liquid-card,
+  .gallery-liquid-card::after,
+  .gallery-liquid-card img {
+    transition: none !important;
+  }
+
+  .gallery-liquid-card:hover {
+    transform: none;
+  }
 }
 
 .btn-primary,
@@ -284,7 +414,7 @@ a {
   .drop-cap::first-letter {
     color: var(--color-gold-dark);
     float: left;
-    font-family: var(--font-cormorant), Georgia, serif;
+    font-family: var(--font-accent-serif), Georgia, serif;
     font-size: 4.4em;
     font-weight: 500;
     line-height: 0.82;
@@ -297,12 +427,20 @@ a {
   align-items: center;
   display: flex;
   justify-content: center;
-  min-height: 56vh;
-  padding-block: 5rem;
+  min-height: auto;
+  padding-block: 3.5rem;
   text-align: center;
 }
+
+.cartouche-pause.hidden {
+  display: none;
+}
 @media (max-width: 640px) {
-  .cartouche-pause { min-height: 30vh; padding-block: 2.75rem; }
+  .cartouche-pause { padding-block: 3.5rem; }
+}
+
+@media (min-width: 641px) {
+  .cartouche-pause { padding-block: 5rem; }
 }
 
 @media (min-width: 641px) {

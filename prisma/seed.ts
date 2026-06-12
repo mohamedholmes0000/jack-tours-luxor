@@ -18,21 +18,26 @@ async function main() {
   });
 
   const destinations = [
-    ["luxor", "Luxor", "Temples, tombs, and private Egyptologist-led journeys through ancient Thebes."],
-    ["cairo", "Cairo", "Pyramids, museums, Islamic Cairo, and tailored city experiences."],
-    ["aswan", "Aswan", "Nubian culture, river islands, Philae Temple, and relaxed Nile scenery."],
-    ["hurghada", "Hurghada", "Red Sea extensions with beach time, diving, and family-friendly resorts."],
-    ["alexandria", "Alexandria", "Mediterranean heritage, coastal food, and Greco-Roman landmarks."],
+    ["luxor", "Luxor", "Heart of Ancient Egypt", "/photos/luxor-temple.jpg", "Temples, tombs, and private Egyptologist-led journeys through ancient Thebes."],
+    ["aswan", "Aswan", "Gateway to Nubia", "/photos/aswan.jpg", "Nubian culture, river islands, Philae Temple, and relaxed Nile scenery."],
+    ["cairo", "Cairo", "Pyramids & Beyond", "/photos/pyramids.jpg", "Pyramids, museums, Islamic Cairo, and tailored city experiences."],
+    ["hurghada", "Hurghada", "Red Sea Coast", "/photos/hurghada.jpg", "Red Sea extensions with beach time, diving, and family-friendly resorts."],
+    ["abu-simbel", "Abu Simbel", "Ramesses' Legacy", "/photos/abu-simbel.jpg", "A dramatic southern temple extension near Lake Nasser and the Nubian frontier."],
+    ["red-sea", "Red Sea", "Coral & Coastline", "/photos/red-sea.jpg", "Coastal Egypt for reefs, clear water, and a restful finale after ancient sites."],
+    ["alexandria", "Alexandria", "Mediterranean Heritage", "/photos/alexandria.jpg", "Mediterranean heritage, coastal food, and Greco-Roman landmarks."],
   ];
 
-  for (const [slug, name, overview] of destinations) {
+  for (const [slug, name, subtitle, heroImage, overview] of destinations) {
     await prisma.destination.upsert({
       where: { slug },
-      update: {},
+      update: { name, subtitle, heroImage, overview, type: slug === "alexandria" ? "SITE" : "CITY" },
       create: {
         slug,
         name,
+        subtitle,
+        heroImage,
         overview,
+        type: slug === "alexandria" ? "SITE" : "CITY",
         highlights: ["Private guiding", "Tailor-made pacing", "Premium local support"],
         published: true,
       },

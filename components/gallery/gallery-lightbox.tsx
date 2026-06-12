@@ -70,6 +70,33 @@ export function GalleryLightbox({ images }: { images: GalleryImage[] }) {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setActiveIndex(null);
+        return;
+      }
+
+      if (event.key === "Tab") {
+        const dialog = document.querySelector<HTMLElement>("[data-gallery-lightbox-dialog]");
+        const focusable = dialog
+          ? Array.from(
+              dialog.querySelectorAll<HTMLElement>(
+                'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+              ),
+            ).filter((element) => !element.hasAttribute("disabled") && element.offsetParent !== null)
+          : [];
+
+        if (!focusable.length) {
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     }
 
@@ -132,7 +159,7 @@ export function GalleryLightbox({ images }: { images: GalleryImage[] }) {
 
       {activeImage ? (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(6,17,31,0.82)] px-4 py-6 backdrop-blur-md"
+          className="gallery-lightbox-overlay fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(6,17,31,0.82)] px-3 py-4 sm:px-4 sm:py-6"
           role="presentation"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) {
@@ -145,10 +172,11 @@ export function GalleryLightbox({ images }: { images: GalleryImage[] }) {
             aria-modal="true"
             aria-labelledby={titleId}
             aria-describedby={descriptionId}
-            className="gallery-liquid-card w-full max-w-5xl p-2 text-[var(--color-navy)]"
+            data-gallery-lightbox-dialog
+            className="gallery-liquid-card gallery-lightbox-shell w-full max-w-5xl p-2 text-[var(--color-navy)]"
           >
-            <div className="grid max-h-[88vh] overflow-hidden rounded-[18px] bg-[var(--color-ivory)] md:grid-cols-[minmax(0,1fr)_20rem]">
-              <div className="relative min-h-[20rem] md:min-h-[34rem]">
+            <div className="gallery-lightbox-scroll grid rounded-[18px] bg-[var(--color-ivory)] md:grid-cols-[minmax(0,1fr)_20rem]">
+              <div className="relative h-[34svh] min-h-[12rem] max-h-[18rem] md:h-auto md:min-h-[34rem] md:max-h-none">
                 <Image
                   src={activeImage.url}
                   alt={activeImage.alt}
@@ -162,16 +190,16 @@ export function GalleryLightbox({ images }: { images: GalleryImage[] }) {
                 <button
                   ref={closeButtonRef}
                   type="button"
-                  className="ml-auto grid size-10 place-items-center rounded-full border border-[rgb(214_173_84_/_38%)] bg-white/70 text-xl leading-none text-[var(--color-navy)] transition hover:border-[var(--color-gold)] hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-gold)]"
+                  className="gallery-lightbox-close ml-auto grid size-10 place-items-center rounded-full border border-[rgb(214_173_84_/_38%)] bg-white/86 text-xl leading-none text-[var(--color-navy)] transition hover:border-[var(--color-gold)] hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-gold)]"
                   aria-label="Close gallery image"
                   onClick={() => setActiveIndex(null)}
                 >
                   x
                 </button>
-                <p className="mt-6 text-[0.62rem] font-extrabold uppercase tracking-[0.22em] text-[var(--color-gold)]">
+                <p className="mt-5 text-[0.62rem] font-extrabold uppercase tracking-[0.22em] text-[var(--color-gold)]">
                   {activeImage.category}
                 </p>
-                <h2 id={titleId} className="mt-3 font-serif text-4xl font-semibold leading-tight text-[var(--color-navy)]">
+                <h2 id={titleId} className="mt-3 font-serif text-3xl font-semibold leading-tight text-[var(--color-navy)] md:text-4xl">
                   {activeImage.title}
                 </h2>
                 <p id={descriptionId} className="mt-5 text-sm leading-7 text-[var(--color-gray-600)]">

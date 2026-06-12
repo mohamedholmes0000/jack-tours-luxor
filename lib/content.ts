@@ -36,6 +36,15 @@ export type Destination = {
   heroImage: string;
 };
 
+export type HomepageCityDestination = {
+  slug: string;
+  name: string;
+  subtitle: string;
+  image: string;
+  href: string;
+  tourSearchTerms: string[];
+};
+
 export type FAQItem = {
   category: "Booking" | "Tours" | "Payments" | "Safety" | "Custom Trips";
   question: string;
@@ -49,6 +58,57 @@ export type GalleryImage = {
   description: string;
   category: "Luxor" | "Nile Cruise" | "Cairo" | "Experiences";
 };
+
+export const homepageCityDestinations: HomepageCityDestination[] = [
+  {
+    slug: "luxor",
+    name: "Luxor",
+    subtitle: "Heart of Ancient Egypt",
+    image: "/photos/luxor-temple.jpg",
+    href: "/destinations/luxor",
+    tourSearchTerms: ["luxor", "karnak", "valley of the kings", "thebes", "west bank"],
+  },
+  {
+    slug: "aswan",
+    name: "Aswan",
+    subtitle: "Gateway to Nubia",
+    image: "/photos/aswan.jpg",
+    href: "/destinations/aswan",
+    tourSearchTerms: ["aswan", "nubian", "philae", "kom ombo", "edfu"],
+  },
+  {
+    slug: "cairo",
+    name: "Cairo",
+    subtitle: "Pyramids & Beyond",
+    image: "/photos/pyramids.jpg",
+    href: "/destinations/cairo",
+    tourSearchTerms: ["cairo", "pyramids", "giza", "museum"],
+  },
+  {
+    slug: "hurghada",
+    name: "Hurghada",
+    subtitle: "Red Sea Coast",
+    image: "/photos/hurghada.jpg",
+    href: "/destinations/hurghada",
+    tourSearchTerms: ["hurghada"],
+  },
+  {
+    slug: "abu-simbel",
+    name: "Abu Simbel",
+    subtitle: "Ramesses' Legacy",
+    image: "/photos/abu-simbel.jpg",
+    href: "/tours?city=abu-simbel",
+    tourSearchTerms: ["abu simbel", "ramesses", "lake nasser"],
+  },
+  {
+    slug: "red-sea",
+    name: "Red Sea",
+    subtitle: "Coral & Coastline",
+    image: "/photos/red-sea.jpg",
+    href: "/destinations/hurghada",
+    tourSearchTerms: ["red sea", "hurghada", "diving", "snorkeling", "reef"],
+  },
+];
 
 export type BlogArticle = {
   slug: string;

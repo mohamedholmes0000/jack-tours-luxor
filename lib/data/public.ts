@@ -3,10 +3,12 @@ import {
   destinations,
   faqs,
   galleryImages,
+  homepageCityDestinations,
   tours,
   type BlogArticle,
   type Destination,
   type GalleryImage,
+  type HomepageCityDestination,
   type Tour,
 } from "@/lib/content";
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
@@ -89,6 +91,111 @@ function mapBlogPost(post: Awaited<ReturnType<typeof prisma.blogPost.findMany>>[
         ? content
         : [{ heading: post.title, body: post.excerpt }],
   };
+}
+
+export type HomepageCityDestinationCard = {
+  slug: string;
+  name: string;
+  subtitle: string;
+  image: string;
+  href: string;
+  countLabel: string;
+};
+
+type DbCityDestination = {
+  slug: string;
+  name: string;
+  subtitle: string | null;
+  heroImage: string | null;
+};
+
+function countToursForCity(toursList: Tour[], searchTerms: string[]) {
+  const terms = searchTerms.map((term) => term.toLowerCase());
+
+  return toursList.filter((tour) => {
+    const haystack = [
+      tour.title,
+      tour.category,
+      tour.shortDescription,
+      tour.overview,
+      tour.departurePoint,
+      ...tour.highlights,
+      ...tour.included,
+      ...tour.excluded,
+      ...tour.itinerary.flatMap((item) => [item.title, item.description]),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return terms.some((term) => haystack.includes(term));
+  }).length;
+}
+
+function tourCountLabel(count: number) {
+  if (count <= 0) {
+    return "Coming soon";
+  }
+
+  return `${count} ${count === 1 ? "Tour" : "Tours"}`;
+}
+
+function buildCityCards(source: HomepageCityDestination[], toursList: Tour[]): HomepageCityDestinationCard[] {
+  return source.map((city) => ({
+    slug: city.slug,
+    name: city.name,
+    subtitle: city.subtitle,
+    image: city.image,
+    href: city.href,
+    countLabel: tourCountLabel(countToursForCity(toursList, city.tourSearchTerms)),
+  }));
+}
+
+export async function getHomepageCityDestinationsSafe(toursList: Tour[]) {
+  const fallbackCards = buildCityCards(homepageCityDestinations, toursList);
+
+  return tryDatabase(
+    async () => {
+      const destinationCityColumns = await prisma.$queryRaw<Array<{ column_name: string }>>`
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = 'Destination' AND column_name IN ('type', 'subtitle')
+      `;
+
+      const availableColumns = new Set(destinationCityColumns.map((column) => column.column_name));
+
+      if (!availableColumns.has("type") || !availableColumns.has("subtitle")) {
+        return fallbackCards;
+      }
+
+      const dbCities = await prisma.$queryRaw<DbCityDestination[]>`
+        SELECT "slug", "name", "subtitle", "heroImage"
+        FROM "Destination"
+        WHERE "published" = true AND "type" = 'CITY'
+        ORDER BY "createdAt" ASC
+      `;
+
+      if (!dbCities.length) {
+        return fallbackCards;
+      }
+
+      const dbCitiesBySlug = new Map(dbCities.map((city) => [city.slug, city]));
+
+      return homepageCityDestinations.map((fallbackCity) => {
+        const city = dbCitiesBySlug.get(fallbackCity.slug);
+        const count = countToursForCity(toursList, fallbackCity.tourSearchTerms);
+
+        return {
+          slug: fallbackCity.slug,
+          name: city?.name || fallbackCity.name,
+          subtitle: city?.subtitle || fallbackCity.subtitle,
+          image: safeImageSrc(city?.heroImage, fallbackCity.image),
+          href: fallbackCity.href,
+          countLabel: tourCountLabel(count),
+        };
+      });
+    },
+    fallbackCards,
+  );
 }
 
 export async function getToursSafe() {

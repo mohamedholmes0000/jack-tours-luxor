@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
 import { formatPrice, type Tour } from "@/lib/content";
-import { getToursSafe } from "@/lib/data/public";
+import { getHomepageCityDestinationsSafe, getToursSafe } from "@/lib/data/public";
 import { getPublicSettings } from "@/lib/data/settings";
 import { safeImageSrc } from "@/lib/images";
 
@@ -63,6 +63,7 @@ const tourCategoryCards: ReadonlyArray<{
   },
 ];
 
+/*
 const destinationsMarquee = [
   {
     name: "Luxor",
@@ -115,6 +116,7 @@ const destinationsMarquee = [
   },
 ];
 
+*/
 const whyPoints = [
   {
     eyebrow: "01",
@@ -207,6 +209,7 @@ export async function Homepage() {
     getToursSafe(),
     getPublicSettings(),
   ]);
+  const destinationCities = await getHomepageCityDestinationsSafe(safeTours);
   const featuredTours = safeTours.filter((tour) => tour.featured).slice(0, 3);
   const heroImage = safeImageSrc(settings.homepageHeroImage, fallbackHeroImage);
   const heroCtaLabel =
@@ -219,12 +222,12 @@ export async function Homepage() {
   ].filter(Boolean);
 
   return (
-    <div data-mobile-cta="true">
+    <div data-mobile-cta="true" className="flex flex-col">
       {/* ============================================================
           1 · HERO — full-bleed photography, slow Ken Burns, type in
           a margin (does not cover the temple subject). Single CTA.
       ============================================================ */}
-      <section className="relative isolate overflow-hidden bg-[var(--color-navy)] text-white">
+      <section className="relative isolate order-1 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
             src={heroImage}
@@ -244,7 +247,7 @@ export async function Homepage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[rgba(6,17,31,0.78)] via-[rgba(6,17,31,0.34)] to-[rgba(6,17,31,0.12)]" />
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[rgba(6,17,31,0.78)] to-transparent sm:h-20" />
 
-        <div className="container-premium relative flex min-h-[88vh] flex-col justify-between pb-10 pt-7 sm:min-h-[95vh] sm:pb-16 sm:pt-9 lg:min-h-[100vh] lg:pb-24 lg:pt-12">
+        <div className="container-premium relative flex min-h-[calc(100svh-4rem)] flex-col justify-between pb-10 pt-7 sm:min-h-[calc(100svh-4rem)] sm:pb-16 sm:pt-9 lg:min-h-[calc(100vh-6.625rem)] lg:pb-24 lg:pt-12">
           <p className="eyebrow text-[var(--color-gold-light)]">
             {settings.homepageHeroEyebrow}
           </p>
@@ -255,7 +258,7 @@ export async function Homepage() {
           <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
             <h1 className="font-serif font-semibold leading-[0.94] text-white text-[clamp(2.8rem,11vw,9.5rem)]">
               {settings.homepageHeroHeadline}
-              <span className="block italic text-[var(--color-gold-light)]">
+              <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
                 {settings.homepageHeroHeadlineAccent}
               </span>
             </h1>
@@ -306,7 +309,7 @@ export async function Homepage() {
       {/* ============================================================
           2 · MOBILE TOUR STYLES — image-backed swipe cards.
       ============================================================ */}
-      <section className="border-y border-[rgb(214_173_84_/_24%)] bg-[var(--color-navy)] py-7 text-white sm:bg-[var(--color-ivory)] sm:py-5 sm:text-[var(--color-navy)]">
+      <section className="hidden border-y border-[rgb(214_173_84_/_24%)] bg-[var(--color-navy)] py-7 text-white sm:bg-[var(--color-ivory)] sm:py-5 sm:text-[var(--color-navy)]">
         <div className="container-premium">
           <div className="mb-4 flex items-end justify-between gap-4 sm:hidden">
             <div>
@@ -356,7 +359,7 @@ export async function Homepage() {
       {/* ============================================================
           3 · EDITORIAL PAUSE — pure ivory wall, one serif sentence.
       ============================================================ */}
-      <section className="cartouche-pause homepage-note-pause bg-[var(--color-ivory)]">
+      <section className="cartouche-pause homepage-note-pause hidden bg-[var(--color-ivory)]">
         <div className="container-premium reveal-up">
           <p className="eyebrow text-[var(--color-gold-dark)]">A note</p>
           <p className="mt-6 font-serif text-[2rem] font-medium leading-[1.18] text-[var(--color-navy)] sm:text-[3rem] md:text-[3.6rem] lg:text-[4.4rem]">
@@ -374,14 +377,14 @@ export async function Homepage() {
           scrolls. Comment number left at "8" to preserve original
           numbering; visual order is what matters.)
       ============================================================ */}
-      <section className="bg-[var(--color-ivory)] pt-16 pb-20 sm:pt-20 sm:pb-24 md:pt-24 md:pb-32">
+      <section className="order-3 bg-[var(--color-ivory)] py-14 sm:py-20">
         <div className="container-premium">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="reveal-up max-w-xl">
               <p className="eyebrow">Featured journeys</p>
-              <h2 className="mt-4 font-serif text-[2rem] font-semibold leading-[1.06] text-[var(--color-navy)] sm:text-[2.6rem] md:text-[3rem] lg:text-[3.4rem]">
+              <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.06] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
                 Polished private experiences,
-                <span className="block italic text-[var(--color-gold-dark)]">
+                <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
                   ready to tailor.
                 </span>
               </h2>
@@ -402,7 +405,7 @@ export async function Homepage() {
       {/* ============================================================
           4 · BRAND STORY — image left, drop-capped paragraph right.
       ============================================================ */}
-      <section className="bg-[var(--color-ivory)] pb-20 sm:pb-24 md:pb-32">
+      <section className="order-5 bg-[var(--color-ivory)] py-14 sm:py-20">
         <div className="container-premium grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:items-stretch lg:gap-16">
           <figure className="reveal-up relative aspect-[4/5] w-full overflow-hidden shadow-[0_28px_80px_rgb(87_59_22_/_20%)] sm:aspect-[3/4] lg:aspect-auto lg:min-h-[36rem]">
             <Image
@@ -416,9 +419,9 @@ export async function Homepage() {
 
           <div className="reveal-up flex flex-col justify-center">
             <p className="eyebrow">Our world</p>
-            <h2 className="mt-4 font-serif text-[2rem] font-semibold leading-[1.08] text-[var(--color-navy)] sm:text-[2.6rem] md:text-[3rem] lg:text-[3.4rem]">
+            <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.08] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
               A small team,
-              <span className="italic text-[var(--color-gold-dark)]">
+              <span className="font-accent-serif italic text-[var(--color-gold-dark)]">
                 {" "}
                 quietly capable.
               </span>
@@ -446,16 +449,16 @@ export async function Homepage() {
       {/* ============================================================
           5 · DESTINATIONS MARQUEE — auto-scrolling cinematic strip.
       ============================================================ */}
-      <section className="relative overflow-hidden bg-[var(--color-navy)] py-14 text-white sm:py-20">
+      <section className="relative order-2 overflow-hidden bg-[var(--color-ivory)] py-14 text-[var(--color-navy)] sm:py-20">
         <div className="container-premium reveal-up">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-xl">
-              <p className="eyebrow text-[var(--color-gold-light)]">
+              <p className="eyebrow text-[var(--color-gold-dark)]">
                 Where we travel
               </p>
-              <h2 className="mt-4 font-serif text-[2rem] font-semibold leading-[1.08] sm:text-[2.6rem] md:text-[3rem]">
+              <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.08] sm:text-[2.25rem] md:text-[2.625rem]">
                 From the Nile,
-                <span className="italic text-[var(--color-gold-light)]">
+                <span className="font-accent-serif italic text-[var(--color-gold-dark)]">
                   {" "}
                   outward.
                 </span>
@@ -463,20 +466,20 @@ export async function Homepage() {
             </div>
             <Link
               href="/destinations"
-              className="self-start text-[0.66rem] font-bold uppercase tracking-[0.22em] text-[var(--color-gold-light)] sm:self-auto"
+              className="self-start text-[0.66rem] font-bold uppercase tracking-[0.22em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)] sm:self-auto"
             >
               All destinations →
             </Link>
           </div>
         </div>
 
-        <DestinationCarousel items={destinationsMarquee} />
+        <DestinationCarousel items={destinationCities} />
       </section>
 
       {/* ============================================================
           6 · EDITORIAL PAUSE — pure navy, one italic line.
       ============================================================ */}
-      <section className="cartouche-pause bg-[var(--color-navy)] text-white">
+      <section className="cartouche-pause hidden bg-[var(--color-navy)] text-white">
         <div className="container-premium reveal-up">
           <p className="eyebrow text-[var(--color-gold-light)]">Method</p>
           <p className="mt-6 font-serif text-[2rem] font-medium leading-[1.18] sm:text-[3rem] md:text-[3.6rem] lg:text-[4.4rem]">
@@ -491,13 +494,13 @@ export async function Homepage() {
       {/* ============================================================
           7 · WHY JACK — editorial split, no boxy cards.
       ============================================================ */}
-      <section className="bg-[var(--color-ivory)] py-16 sm:py-24 md:py-32">
+      <section className="order-4 bg-[var(--color-ivory)] py-14 sm:py-20">
         <div className="container-premium grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
           <div className="reveal-up max-w-md">
             <p className="eyebrow">Why Jack Egypt Tour</p>
-            <h2 className="mt-4 font-serif text-[2rem] font-semibold leading-[1.06] text-[var(--color-navy)] sm:text-[2.6rem] md:text-[3rem] lg:text-[3.4rem]">
+            <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.06] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
               Private Egypt travel
-              <span className="block italic text-[var(--color-gold-dark)]">
+              <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
                 with local intelligence.
               </span>
             </h2>
@@ -538,7 +541,7 @@ export async function Homepage() {
       {/* ============================================================
           9 · FULL-BLEED STATS — single photograph + corner stats.
       ============================================================ */}
-      <section className="relative isolate overflow-hidden bg-[var(--color-navy)] text-white">
+      <section className="relative isolate order-6 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
             src={statsImage}
@@ -577,12 +580,12 @@ export async function Homepage() {
       {/* ============================================================
          10 · EDITORIAL PAUSE — pure ivory.
       ============================================================ */}
-      <section className="cartouche-pause bg-[var(--color-ivory)]">
+      <section className="cartouche-pause order-7 bg-[var(--color-ivory)]">
         <div className="container-premium reveal-up">
           <p className="eyebrow text-[var(--color-gold-dark)]">Travelers</p>
-          <p className="mt-6 font-serif text-[2rem] font-medium leading-[1.18] text-[var(--color-navy)] sm:text-[3rem] md:text-[3.6rem] lg:text-[4.4rem]">
+          <p className="mt-6 font-serif text-[1.9rem] font-bold leading-[1.18] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
             Loved quietly,
-            <span className="block italic text-[var(--color-gold-dark)]">
+            <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
               from everywhere.
             </span>
           </p>
@@ -592,7 +595,7 @@ export async function Homepage() {
       {/* ============================================================
          11 · PHOTOGRAPHIC TESTIMONIAL — full bleed, quote overlay.
       ============================================================ */}
-      <section className="relative isolate overflow-hidden bg-[var(--color-navy)] text-white">
+      <section className="relative isolate order-8 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
             src={testimonialImage}
@@ -633,7 +636,7 @@ export async function Homepage() {
       {/* ============================================================
          12 · FINAL CTA — immersive Nile sunset, single ask.
       ============================================================ */}
-      <section className="relative isolate overflow-hidden bg-[var(--color-navy)] text-white">
+      <section className="relative isolate order-9 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
             src={finalCtaImage}
@@ -652,9 +655,9 @@ export async function Homepage() {
             <p className="eyebrow text-[var(--color-gold-light)]">
               Start your booking
             </p>
-            <h2 className="mt-4 font-serif text-[2.4rem] font-semibold leading-[1.02] sm:text-[3.4rem] md:text-[4.8rem] lg:text-[6rem]">
+            <h2 className="mt-4 font-serif text-[2rem] font-bold leading-[1.04] sm:text-[2.5rem] md:text-[2.625rem]">
               Ready when
-              <span className="block italic text-[var(--color-gold-light)]">
+              <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
                 you are.
               </span>
             </h2>

@@ -2,18 +2,71 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type PointerEvent, type TouchEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { AdminSettingsValues } from "@/lib/validations";
 
 const navItems = [
   { href: "/tours", label: "Tours" },
   { href: "/destinations", label: "Destinations" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/blog", label: "Blog" },
-  { href: "/trip-planner", label: "Trip Planner" },
   { href: "/about", label: "About" },
+  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
+
+function MenuIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none">
+      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CloseIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none">
+      <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function UserIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none">
+      <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
+  );
+}
+
+function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor" }) {
+  if (label === "Instagram") {
+    return (
+      <svg className="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+        <rect x="4" y="4" width="16" height="16" rx="5" stroke="currentColor" strokeWidth="1.7" />
+        <circle cx="12" cy="12" r="3.5" stroke="currentColor" strokeWidth="1.7" />
+        <circle cx="17" cy="7" r="1" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  if (label === "TripAdvisor") {
+    return (
+      <svg className="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+        <path d="M3 9.5h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="8" cy="13" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+        <circle cx="16" cy="13" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M10.3 16.3 12 18l1.7-1.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg className="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+      <path d="M14 8h3V4h-3c-3 0-5 2-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9c0-.6.4-1 1-1Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 function getBrandParts(companyName: string) {
   const [firstWord, ...rest] = companyName.trim().split(/\s+/);
@@ -28,6 +81,14 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const brand = getBrandParts(settings.companyName);
+  const phone = settings.phone || "(+20) XXX XXX XXXX";
+  const phoneHref = phone.replace(/[^\d+]/g, "");
+  const email = settings.email || "info@jackegypttour.com";
+  const socialLinks = [
+    { href: settings.facebookUrl || "#", label: "Facebook" as const },
+    { href: settings.instagramUrl || "#", label: "Instagram" as const },
+    { href: settings.tripAdvisorUrl || "#", label: "TripAdvisor" as const },
+  ];
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -51,52 +112,46 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
     setIsOpen(true);
   }
 
-  function openMenuFromPointer(event: PointerEvent<HTMLButtonElement>) {
-    event.preventDefault();
-    openMenu();
-  }
-
-  function openMenuFromTouch(event: TouchEvent<HTMLButtonElement>) {
-    event.preventDefault();
-    openMenu();
-  }
-
   return (
-    <div className="flex items-center gap-2 lg:hidden">
-      <Link
-        className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-[var(--color-gold-light)] to-[var(--color-gold)] px-3 py-2 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-[var(--color-navy)] shadow-[0_12px_28px_rgb(214_173_84_/_22%)]"
-        href="/trip-planner"
-      >
-        Book Now
-      </Link>
-      <button
-        type="button"
-        aria-label="Open navigation menu"
-        aria-expanded={isOpen}
-        onClick={openMenu}
-        onPointerUp={openMenuFromPointer}
-        onTouchEnd={openMenuFromTouch}
-        className="inline-flex size-10 flex-col items-center justify-center gap-1 rounded-full border border-[rgb(214_173_84_/_38%)] bg-white/[0.06] text-[var(--color-gold-light)] shadow-[0_12px_28px_rgb(0_0_0_/_24%)]"
-      >
-        <span className="h-px w-4 bg-current" />
-        <span className="h-px w-4 bg-current" />
-        <span className="h-px w-4 bg-current" />
-      </button>
-
-      <div
-        className={`fixed inset-0 z-[90] overflow-hidden bg-[#030912]/62 backdrop-blur-[2px] transition-opacity duration-300 ${
-          isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-        }`}
-        aria-hidden={!isOpen}
-        onClick={closeMenu}
-      >
-        <aside
-          className={`pointer-events-auto absolute right-0 top-0 flex h-dvh w-[min(84vw,22rem)] flex-col border-l border-[rgb(214_173_84_/_30%)] bg-[rgba(6,17,31,0.76)] p-5 text-white shadow-[0_30px_90px_rgb(0_0_0_/_46%)] backdrop-blur-2xl transition-transform duration-300 ease-out ${
-            isOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-          aria-label="Mobile navigation"
-          onClick={(event) => event.stopPropagation()}
+    <div className="site-main-header border-b transition-all duration-200 ease-in-out lg:hidden">
+      <div className="container-premium grid h-16 grid-cols-[1fr_auto_1fr] items-center">
+        <button
+          type="button"
+          aria-label="Open navigation menu"
+          aria-expanded={isOpen}
+          onClick={openMenu}
+          className="grid size-11 place-items-center justify-self-start text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)]"
         >
+          <MenuIcon className="size-6" />
+        </button>
+
+        <Link href="/" className="flex flex-col items-center justify-center leading-none" onClick={closeMenu}>
+          <span className="font-serif text-[1.08rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]">
+            {brand.firstLine}
+          </span>
+          <span className="mt-1 text-[0.5rem] font-bold uppercase tracking-[0.22em] text-[var(--color-navy)]/68">
+            {brand.secondLine}
+          </span>
+        </Link>
+
+        <Link
+          className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-[var(--color-gold-light)] to-[var(--color-gold)] px-3 py-2 text-[0.58rem] font-bold uppercase tracking-[0.11em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] justify-self-end"
+          href="/trip-planner"
+        >
+          Book Now
+        </Link>
+      </div>
+
+      {isOpen ? (
+        <div
+          className="fixed inset-0 z-[90] overflow-hidden bg-[var(--color-navy)]"
+          onClick={closeMenu}
+        >
+          <aside
+            className="mobile-menu-panel pointer-events-auto absolute left-0 top-0 flex h-dvh w-full flex-col bg-[var(--color-navy)] p-6 text-white"
+            aria-label="Mobile navigation"
+            onClick={(event) => event.stopPropagation()}
+          >
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="font-serif text-3xl font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)]">
@@ -110,13 +165,13 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
               type="button"
               aria-label="Close navigation menu"
               onClick={closeMenu}
-              className="grid size-10 place-items-center rounded-full border border-white/14 bg-white/[0.06] text-2xl leading-none text-white/82"
+              className="grid size-11 place-items-center text-white/82 transition hover:text-[var(--color-gold-light)]"
             >
-              x
+              <CloseIcon className="size-6" />
             </button>
           </div>
 
-          <nav className="mt-9 flex flex-col gap-2">
+          <nav className="mt-10 flex flex-col">
             {navItems.map((item) => {
               const active = isActive(item.href);
 
@@ -126,31 +181,49 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   onClick={closeMenu}
-                  className={`group relative border-b border-white/10 py-3 font-serif text-2xl font-semibold text-white transition hover:text-[var(--color-gold-light)] ${
+                  className={`flex min-h-14 items-center border-b border-white/10 text-lg font-normal uppercase tracking-[0.08em] text-white transition hover:text-[var(--color-gold-light)] ${
                     active ? "text-[var(--color-gold-light)]" : ""
                   }`}
                 >
                   {item.label}
-                  <span
-                    aria-hidden
-                    className={`absolute bottom-2 left-0 h-px w-16 origin-left bg-[var(--color-gold)] transition duration-300 ease-out group-hover:scale-x-100 ${
-                      active ? "scale-x-100 opacity-100" : "scale-x-0 opacity-50"
-                    }`}
-                  />
                 </Link>
               );
             })}
+            <Link
+              href="/admin"
+              onClick={closeMenu}
+              className="flex min-h-14 items-center gap-3 border-b border-white/10 text-lg font-normal uppercase tracking-[0.08em] text-white transition hover:text-[var(--color-gold-light)]"
+            >
+              <UserIcon className="size-5" />
+              Admin
+            </Link>
           </nav>
 
-          <Link
-            className="btn-primary mt-auto w-full"
-            href="/trip-planner"
-            onClick={closeMenu}
-          >
-            Book Now
-          </Link>
-        </aside>
-      </div>
+          <div className="mt-auto border-t border-white/10 pt-6 text-sm text-white/66">
+            <a href={`tel:${phoneHref}`} className="block py-2 transition hover:text-[var(--color-gold-light)]">
+              {phone}
+            </a>
+            <a href={`mailto:${email}`} className="block py-2 transition hover:text-[var(--color-gold-light)]">
+              {email}
+            </a>
+            <div className="mt-5 flex items-center gap-5 text-white/60">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  aria-label={link.label}
+                  target={link.href === "#" ? undefined : "_blank"}
+                  rel={link.href === "#" ? undefined : "noreferrer"}
+                  className="transition hover:text-[var(--color-gold-light)]"
+                >
+                  <SocialIcon label={link.label} />
+                </a>
+              ))}
+            </div>
+          </div>
+          </aside>
+        </div>
+      ) : null}
     </div>
   );
 }

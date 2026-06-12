@@ -6,10 +6,10 @@ import { useEffect, useRef, useState } from "react";
 
 type DestinationCarouselItem = {
   name: string;
-  label: string;
+  subtitle: string;
   image: string;
   href: string;
-  description: string;
+  countLabel: string;
 };
 
 export function DestinationCarousel({ items }: { items: DestinationCarouselItem[] }) {
@@ -17,13 +17,14 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
   const animationFrameRef = useRef<number | null>(null);
   const lastStepRef = useRef<number>(0);
   const resumeTimerRef = useRef<number | null>(null);
+  const [canScroll, setCanScroll] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const dragStateRef = useRef({
     isDragging: false,
     startScrollLeft: 0,
     startX: 0,
     suppressClick: false,
   });
-  const [isPaused, setIsPaused] = useState(false);
 
   function pauseThenResume() {
     setIsPaused(true);
@@ -86,6 +87,52 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
     return true;
   }
 
+  function getScrollStep() {
+    const track = trackRef.current;
+    const firstCard = track?.firstElementChild as HTMLElement | null;
+
+    if (!track) {
+      return 0;
+    }
+
+    return firstCard ? firstCard.getBoundingClientRect().width + 40 : track.clientWidth * 0.7;
+  }
+
+  function scrollByCard(direction: "previous" | "next") {
+    const track = trackRef.current;
+
+    if (!track) {
+      return;
+    }
+
+    pauseThenResume();
+    track.scrollBy({
+      left: direction === "next" ? getScrollStep() : -getScrollStep(),
+      behavior: "smooth",
+    });
+  }
+
+  useEffect(() => {
+    const track = trackRef.current;
+
+    if (!track) {
+      return;
+    }
+
+    const trackEl = track;
+
+    function updateScrollState() {
+      setCanScroll(trackEl.scrollWidth > trackEl.clientWidth + 4);
+    }
+
+    updateScrollState();
+    window.addEventListener("resize", updateScrollState);
+
+    return () => {
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [items.length]);
+
   useEffect(() => {
     if (isPaused) {
       return;
@@ -119,12 +166,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
         return;
       }
 
-      const firstCard = trackEl.firstElementChild as HTMLElement | null;
-      const step = firstCard
-        ? firstCard.getBoundingClientRect().width + 16
-        : trackEl.clientWidth * 0.72;
-
-      trackEl.scrollBy({ left: step, behavior: "smooth" });
+      trackEl.scrollBy({ left: getScrollStep(), behavior: "smooth" });
       animationFrameRef.current = window.requestAnimationFrame(tick);
     }
 
@@ -146,63 +188,84 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
   }, []);
 
   return (
-    <div
-      ref={trackRef}
-      className="no-scrollbar -mx-[var(--container-edge,1.25rem)] mt-8 flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-[var(--container-edge,1.25rem)] pb-3 active:cursor-grabbing sm:mx-0 sm:mt-10 sm:gap-6 sm:px-0"
-      aria-label="Destinations carousel"
-      onPointerDown={(event) => {
-        startDrag(event.clientX);
-      }}
-      onPointerLeave={stopDrag}
-      onPointerMove={(event) => {
-        moveDrag(event.clientX);
-      }}
-      onPointerUp={stopDrag}
-      onWheel={pauseThenResume}
-      onTouchStart={pauseThenResume}
-    >
-      {items.map((item) => (
-        <Link
-          key={item.name}
-          href={item.href}
-          draggable={false}
-          className="group w-[78vw] max-w-[19rem] shrink-0 snap-start overflow-hidden border border-[rgb(214_173_84_/_26%)] bg-[var(--color-navy)] shadow-[0_20px_50px_rgb(0_0_0_/_28%)] transition duration-300 hover:-translate-y-1 hover:border-[rgb(214_173_84_/_44%)] sm:w-[18rem] md:w-[21rem]"
-          onDragStart={(event) => event.preventDefault()}
-          onClick={(event) => {
-            if (shouldSuppressClick()) {
-              event.preventDefault();
-            }
-          }}
-        >
-          <div className="relative h-56 overflow-hidden sm:h-60 md:h-64">
-            <Image
-              src={item.image}
-              alt={item.name}
-              fill
-              sizes="(min-width: 768px) 21rem, (min-width: 640px) 18rem, 78vw"
-              draggable={false}
-              className="object-cover transition duration-700 group-hover:scale-105"
-            />
-          </div>
-          <div className="p-5">
-            <p className="text-[0.58rem] font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
-              Destination
-            </p>
-            <p className="mt-2 font-serif text-3xl font-semibold leading-none text-white">
+    <div className="container-premium relative mt-9 sm:mt-12">
+      {items.length > 6 && canScroll ? (
+        <div className="pointer-events-none absolute inset-y-0 left-0 right-0 z-10 hidden items-center justify-between lg:flex">
+          <button
+            type="button"
+            aria-label="Previous destination"
+            className="pointer-events-auto -ml-5 grid size-10 place-items-center rounded-full border border-[rgb(6_17_31_/_20%)] bg-[var(--color-ivory)]/86 text-[var(--color-navy)] shadow-[0_10px_26px_rgb(87_59_22_/_10%)] transition hover:border-[rgb(6_17_31_/_40%)] hover:bg-[rgb(6_17_31_/_5%)]"
+            onClick={() => scrollByCard("previous")}
+          >
+            <span aria-hidden className="text-xl leading-none">
+              &lsaquo;
+            </span>
+          </button>
+          <button
+            type="button"
+            aria-label="Next destination"
+            className="pointer-events-auto -mr-5 grid size-10 place-items-center rounded-full border border-[rgb(6_17_31_/_20%)] bg-[var(--color-ivory)]/86 text-[var(--color-navy)] shadow-[0_10px_26px_rgb(87_59_22_/_10%)] transition hover:border-[rgb(6_17_31_/_40%)] hover:bg-[rgb(6_17_31_/_5%)]"
+            onClick={() => scrollByCard("next")}
+          >
+            <span aria-hidden className="text-xl leading-none">
+              &rsaquo;
+            </span>
+          </button>
+        </div>
+      ) : null}
+
+      <div
+        ref={trackRef}
+        className={`no-scrollbar flex w-full cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 active:cursor-grabbing lg:gap-8 ${
+          canScroll ? "sm:justify-start" : "sm:justify-center"
+        }`}
+        aria-label="Destinations carousel"
+        onPointerDown={(event) => {
+          startDrag(event.clientX);
+        }}
+        onPointerLeave={stopDrag}
+        onPointerMove={(event) => {
+          moveDrag(event.clientX);
+        }}
+        onPointerUp={stopDrag}
+        onWheel={pauseThenResume}
+        onTouchStart={pauseThenResume}
+      >
+        {items.map((item) => (
+          <Link
+            key={item.name}
+            href={item.href}
+            draggable={false}
+            className="group flex w-32 shrink-0 snap-center flex-col items-center text-center outline-none sm:w-[10rem] lg:w-[10.5rem]"
+            onDragStart={(event) => event.preventDefault()}
+            onClick={(event) => {
+              if (shouldSuppressClick()) {
+                event.preventDefault();
+              }
+            }}
+          >
+            <span className="relative block size-[7.5rem] overflow-hidden rounded-full border-2 border-[rgb(201_168_76_/_15%)] bg-[var(--color-sand)] shadow-[0_18px_38px_rgb(87_59_22_/_12%)] transition duration-300 ease-out group-hover:scale-105 group-hover:border-[rgb(201_168_76_/_100%)] group-focus-visible:scale-105 group-focus-visible:border-[rgb(201_168_76_/_100%)] sm:size-[9rem] lg:size-[10.5rem]">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                sizes="(min-width: 1024px) 168px, (min-width: 640px) 144px, 120px"
+                draggable={false}
+                className="object-cover transition duration-500 group-hover:scale-105"
+              />
+            </span>
+            <span className="mt-4 font-serif text-base font-semibold leading-tight text-[var(--color-navy)]">
               {item.name}
-            </p>
-            <p className="mt-2 text-[0.6rem] font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
-              {item.label}
-            </p>
-            <p className="mt-3 line-clamp-3 text-sm leading-6 text-white/72">
-              {item.description}
-            </p>
-            <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-light)] transition group-hover:translate-x-1">
-              Explore Outward →
-            </p>
-          </div>
-        </Link>
-      ))}
+            </span>
+            <span className="mt-1 max-w-[10rem] text-[13px] font-normal leading-5 text-[rgb(6_17_31_/_50%)]">
+              {item.subtitle}
+            </span>
+            <span className="mt-2 text-xs font-medium leading-5 text-[var(--color-gold-dark)]">
+              {item.countLabel}
+            </span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

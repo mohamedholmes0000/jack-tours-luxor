@@ -33,6 +33,8 @@ export function Footer({ settings }: { settings: AdminSettingsValues }) {
             <Link href="/destinations">Destinations</Link>
             <Link href="/gallery">Gallery</Link>
             <Link href="/blog">Blog</Link>
+            <Link href="/trip-planner">Trip Planner</Link>
+            <Link href="/contact">Contact</Link>
             <Link href="/faq">FAQ</Link>
           </div>
         </div>
