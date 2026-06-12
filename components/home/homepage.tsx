@@ -206,7 +206,7 @@ export async function Homepage() {
   const heroImage = safeImageSrc(settings.homepageHeroImage, fallbackHeroImage);
   const heroCtaLabel =
     settings.homepageHeroPrimaryCtaLabel || "Plan My Egypt Journey";
-  const heroCtaHref = settings.homepageHeroPrimaryCtaHref || "/trip-planner";
+  const heroCtaHref = "/trip-planner";
   const heroText = cleanHeroText(settings);
   const microTrustLine = [
     settings.homepageTrustItem1,

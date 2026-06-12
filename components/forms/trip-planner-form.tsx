@@ -16,6 +16,7 @@ const hotelOptions = ["Comfort 3-4 star", "Premium 4-5 star", "Luxury 5 star", "
 export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string }) {
   const [step, setStep] = useState(0);
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
 
   const {
@@ -50,6 +51,7 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
 
   async function onSubmit(values: TripPlannerValues) {
     setIsSending(true);
+    setErrorMessage(null);
     const message = buildTripPlannerMessage(values);
     const url = buildWhatsAppUrlForNumber(message, whatsappNumber);
     const inquiryPayload = {
@@ -69,13 +71,22 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
     };
 
     try {
-      await fetch("/api/inquiries", {
+      const response = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(inquiryPayload),
       });
+
+      if (!response.ok) {
+        setErrorMessage("We couldn't send your inquiry. Please try again.");
+        setIsSending(false);
+        return;
+      }
     } catch (error) {
-      console.warn("Inquiry API unavailable; continuing to WhatsApp.", error);
+      console.warn("Inquiry API unavailable.", error);
+      setErrorMessage("We couldn't send your inquiry. Please try again.");
+      setIsSending(false);
+      return;
     }
 
     setSuccessUrl(url);
@@ -105,8 +116,11 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
             Opening WhatsApp...
           </h2>
           <p className="mt-3 text-sm leading-7 text-[var(--color-gray-600)]">
-            We opened WhatsApp with a clean planning message. If it did not open, use the button
-            below.
+            Opening WhatsApp... If it didn&apos;t open,{" "}
+            <a className="font-bold text-[var(--color-gold-dark)] underline" href={successUrl} target="_blank" rel="noreferrer">
+              click here
+            </a>{" "}
+            to retry.
           </p>
           <a className="btn-primary mt-6" href={successUrl} target="_blank" rel="noreferrer">
             Open WhatsApp
@@ -230,10 +244,15 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
               </button>
             ) : (
               <button className="btn-primary" type="submit" disabled={isSending}>
-                {isSending ? "Preparing..." : "Send to WhatsApp"}
+                {isSending ? "Sending..." : "Send to WhatsApp"}
               </button>
             )}
           </div>
+          {errorMessage ? (
+            <p className="mt-4 border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {errorMessage}
+            </p>
+          ) : null}
         </form>
       )}
     </div>

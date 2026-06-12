@@ -65,13 +65,35 @@ function tripPlannerLine(label: string, value?: string | number | string[]) {
   return `- ${label}: ${displayValue}`;
 }
 
+function formatTripPlannerDate(value: string) {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    return value;
+  }
+
+  const [, year, month, day] = match;
+  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+}
+
 export function buildTripPlannerMessage(input: TripPlannerMessageInput): string {
   return [
     "Hello Jack Egypt Tour,",
     "I'd like to plan a trip. Here are my details:",
     "",
-    tripPlannerLine("Arrival date", input.arrivalDate),
-    tripPlannerLine("Departure date", input.departureDate),
+    tripPlannerLine("Arrival date", formatTripPlannerDate(input.arrivalDate)),
+    tripPlannerLine("Departure date", formatTripPlannerDate(input.departureDate)),
     tripPlannerLine("Travelers", input.travelers),
     tripPlannerLine("Nationality", input.nationality),
     tripPlannerLine("Destinations", input.destinations),
