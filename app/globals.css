@@ -69,7 +69,7 @@ a {
 
 .container-premium {
   margin-inline: auto;
-  width: min(100% - 2rem, 1180px);
+  width: min(100% - 2rem, 1440px);
 }
 
 .public-site section:not([data-home-hero]) h2 {
