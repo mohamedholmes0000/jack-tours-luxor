@@ -29,16 +29,19 @@ model Tour {
   reviewCount      Int?     @default(0)
   groupSize        String
   departurePoint   String?
+  meetingPoint     String?
   languages        String[]
   priceFrom        Float?
   priceCurrency    String   @default("USD")
   included         String[]
   excluded         String[]
   itinerary        Json?
+  faqs             Json?
   heroImage        String?
   images           String[]
   metaTitle        String?
   metaDescription  String?
+  ogImage          String?
   published        Boolean  @default(false)
   featured         Boolean  @default(false)
   createdAt        DateTime @default(now())
@@ -46,20 +49,27 @@ model Tour {
 }
 
 model Destination {
-  id              String   @id @default(cuid())
-  slug            String   @unique
-  name            String
-  type            DestinationType @default(SITE)
-  subtitle        String?
-  region          String?
-  heroImage       String?
-  overview        String   @db.Text
-  highlights      String[]
-  metaTitle       String?
-  metaDescription String?
-  published       Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                String          @id @default(cuid())
+  slug              String          @unique
+  name              String
+  type              DestinationType @default(SITE)
+  subtitle          String?
+  region            String?
+  heroImage         String?
+  coverImage        String?
+  overview          String          @db.Text
+  description       String?         @db.Text
+  bestTime          String?
+  suggestedDuration String?
+  highlights        String[]
+  highlightsData    Json?
+  galleryImages     String[]
+  metaTitle         String?
+  metaDescription   String?
+  ogImage           String?
+  published         Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }
 
 enum DestinationType {
@@ -87,58 +97,270 @@ model BlogPost {
 }
 
 model Inquiry {
-  id              String    @id @default(cuid())
-  name            String
-  email           String?
-  phone           String?
-  whatsapp        String?
-  arrivalDate     DateTime?
-  departureDate   DateTime?
-  travelers       Int?
-  nationality     String?
-  budgetRange     String?
-  hotelCategory   String?
-  destinations    String[]
-  tourSlug        String?
-  message         String?   @db.Text
-  type            String    @default("GENERAL")
-  status          String    @default("NEW")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  name          String
+  email         String?
+  phone         String?
+  whatsapp      String?
+  arrivalDate   DateTime?
+  departureDate DateTime?
+  travelers     Int?
+  nationality   String?
+  budgetRange   String?
+  hotelCategory String?
+  destinations  String[]
+  tourSlug      String?
+  message       String?   @db.Text
+  internalNotes String?   @db.Text
+  type          String    @default("GENERAL")
+  status        String    @default("NEW")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Testimonial {
   id          String   @id @default(cuid())
   name        String
   nationality String?
+  country     String?
   rating      Int
   text        String   @db.Text
+  avatarImage String?
   source      String?
+  order       Int      @default(0)
+  active      Boolean  @default(true)
   featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
 
 model FAQ {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   question String
-  answer   String @db.Text
-  category String @default("General")
-  order    Int    @default(0)
+  answer   String  @db.Text
+  category String  @default("General")
+  order    Int     @default(0)
   active   Boolean @default(true)
 }
 
 model GalleryImage {
-  id        String   @id @default(cuid())
-  url       String
-  alt       String
-  category  String?
+  id              String           @id @default(cuid())
+  url             String
+  alt             String
+  title           String?
+  caption         String?
+  description     String?          @db.Text
+  category        String?
+  categoryId      String?
+  categoryRef     GalleryCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   relatedTourSlug String?
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
+  order           Int              @default(0)
+  active          Boolean          @default(true)
+  createdAt       DateTime         @default(now())
 }
 
 model SiteSetting {
   id    String @id @default(cuid())
   key   String @unique
   value String @db.Text
+}
+
+model HomepageSettings {
+  id                         String   @id @default("homepage")
+  heroVisible                Boolean  @default(true)
+  heroBackgroundImage        String?
+  heroEyebrow                String?
+  heroHeadline               String?
+  heroHeadlineAccent         String?
+  heroSubheadline            String?  @db.Text
+  heroPrimaryCtaLabel        String?
+  heroPrimaryCtaHref         String?
+  heroSecondaryLinkLabel     String?
+  heroSecondaryLinkHref      String?
+  heroTrustBadges            Json?
+  destinationsVisible        Boolean  @default(true)
+  destinationsEyebrow        String?
+  destinationsHeading        String?
+  destinationsHeadingAccent  String?
+  destinationsViewAllLabel   String?
+  destinationsViewAllHref    String?
+  featuredVisible            Boolean  @default(true)
+  featuredEyebrow            String?
+  featuredHeading            String?
+  featuredHeadingAccent      String?
+  featuredDescription        String?  @db.Text
+  featuredViewAllLabel       String?
+  featuredViewAllHref        String?
+  whyVisible                 Boolean  @default(true)
+  whyEyebrow                 String?
+  whyHeading                 String?
+  whyHeadingAccent           String?
+  whyDescription             String?  @db.Text
+  whyCtaLabel                String?
+  whyCtaHref                 String?
+  whyCollageImage1           String?
+  whyCollageImage2           String?
+  whyCollageImage3           String?
+  whyIncludedHeading         String?
+  whyServices                Json?
+  ourWorldVisible            Boolean  @default(true)
+  ourWorldEyebrow            String?
+  ourWorldHeading            String?
+  ourWorldHeadingAccent      String?
+  ourWorldBody               String?  @db.Text
+  ourWorldImage              String?
+  ourWorldReadMoreLabel      String?
+  ourWorldReadMoreHref       String?
+  statsVisible               Boolean  @default(true)
+  statsItems                 Json?
+  statsBackgroundImage       String?
+  testimonialsVisible        Boolean  @default(true)
+  testimonialsEyebrow        String?
+  testimonialsHeading        String?
+  testimonialsHeadingAccent  String?
+  finalCtaVisible            Boolean  @default(true)
+  finalCtaBackgroundImage    String?
+  finalCtaEyebrow            String?
+  finalCtaHeading            String?
+  finalCtaHeadingAccent      String?
+  finalCtaDescription        String?  @db.Text
+  finalCtaPrimaryButtonLabel String?
+  finalCtaPrimaryButtonHref  String?
+  finalCtaSecondaryLinkLabel String?
+  finalCtaSecondaryLinkHref  String?
+  updatedAt                  DateTime @updatedAt
+}
+
+model ToursListingPage {
+  id                  String   @id @default("tours-listing")
+  heroBackgroundImage String?
+  heroEyebrow         String?
+  heroHeading         String?
+  heroSubtitle        String?
+  emptyStateMessage   String?  @db.Text
+  updatedAt           DateTime @updatedAt
+}
+
+model DestinationsListingPage {
+  id                  String   @id @default("destinations-listing")
+  heroBackgroundImage String?
+  heroEyebrow         String?
+  heroHeading         String?
+  heroSubtitle        String?
+  emptyStateMessage   String?  @db.Text
+  updatedAt           DateTime @updatedAt
+}
+
+model AboutPage {
+  id                 String   @id @default("about")
+  heroImage          String?
+  heroEyebrow        String?
+  heroHeading        String?
+  heroSubtitle       String?
+  whoEyebrow         String?
+  whoHeading         String?
+  whoBody            String?  @db.Text
+  whoImage           String?
+  valuesEyebrow      String?
+  valuesHeading      String?
+  valuesItems        Json?
+  statsItems         Json?
+  ctaBackgroundImage String?
+  ctaEyebrow         String?
+  ctaHeading         String?
+  ctaButtonLabel     String?
+  ctaButtonHref      String?
+  updatedAt          DateTime @updatedAt
+}
+
+model ContactPage {
+  id                    String   @id @default("contact")
+  heroImage             String?
+  heroEyebrow           String?
+  heroHeading           String?
+  heroSubtitle          String?
+  whatsappIcon          String?
+  whatsappLabel         String?
+  whatsappSubtitle      String?
+  emailIcon             String?
+  emailLabel            String?
+  emailSubtitle         String?
+  locationIcon          String?
+  locationLabel         String?
+  locationSubtitle      String?
+  formHeading           String?
+  formSubheading        String?  @db.Text
+  successMessage        String?  @db.Text
+  inquiryEmailRecipient String?
+  updatedAt             DateTime @updatedAt
+}
+
+model GalleryPage {
+  id             String   @id @default("gallery")
+  heroImage      String?
+  heroEyebrow    String?
+  heroHeading    String?
+  heroSubtitle   String?  @db.Text
+  ctaHeading     String?
+  ctaSubtext     String?  @db.Text
+  ctaButtonLabel String?
+  ctaButtonHref  String?
+  updatedAt      DateTime @updatedAt
+}
+
+model TripPlannerPage {
+  id                      String   @id @default("trip-planner")
+  heroImage               String?
+  heroEyebrow             String?
+  heroHeading             String?
+  heroHeadingAccent       String?
+  heroSubtitle            String?  @db.Text
+  directWhatsappLabel     String?
+  stepLabels              Json?
+  fieldLabels             Json?
+  fieldPlaceholders       Json?
+  successRedirectMessage  String?  @db.Text
+  whatsappMessageTemplate String?  @db.Text
+  updatedAt               DateTime @updatedAt
+}
+
+model GlobalSettings {
+  id                    String   @id @default("global")
+  whatsappNumber        String?
+  phone                 String?
+  email                 String?
+  address               String?
+  facebookUrl           String?
+  instagramUrl          String?
+  tripAdvisorUrl        String?
+  siteFavicon           String?
+  defaultSeoTitle       String?
+  defaultSeoDescription String?  @db.Text
+  defaultOgImage        String?
+  updatedAt             DateTime @updatedAt
+}
+
+model HeaderFooter {
+  id                  String   @id @default("header-footer")
+  logoImage           String?
+  logoText            String?
+  logoSubtitle        String?
+  headerNavLinks      Json?
+  bookNowLabel        String?
+  bookNowHref         String?
+  footerDescription   String?  @db.Text
+  footerExploreLinks  Json?
+  footerCopyrightText String?
+  footerWhatsappLabel String?
+  updatedAt           DateTime @updatedAt
+}
+
+model GalleryCategory {
+  id        String         @id @default(cuid())
+  slug      String         @unique
+  name      String
+  order     Int            @default(0)
+  active    Boolean        @default(true)
+  images    GalleryImage[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
