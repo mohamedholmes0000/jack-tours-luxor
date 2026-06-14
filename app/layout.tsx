@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { getPublicSettings } from "@/lib/data/settings";
@@ -16,6 +17,23 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
+  display: "swap",
+});
+
+const whyUsFont = localFont({
+  src: [
+    {
+      path: "../public/fonts/recoleta-light.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/recoleta-semibold.otf",
+      weight: "600",
+      style: "normal",
+    },
+  ],
+  variable: "--font-whyus",
   display: "swap",
 });
 
@@ -72,7 +90,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${cormorant.variable} h-full antialiased`}
+      className={`${inter.variable} ${cormorant.variable} ${whyUsFont.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <SiteChrome settings={settings}>{children}</SiteChrome>

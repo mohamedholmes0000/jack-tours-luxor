@@ -76,26 +76,41 @@ const destinationsMarquee = [
 ];
 
 */
-const whyPoints = [
+type WhyUsServiceIcon =
+  | "user-check"
+  | "hotel"
+  | "car"
+  | "ship"
+  | "message"
+  | "sparkles";
+
+const whyUsServices: ReadonlyArray<{
+  icon: WhyUsServiceIcon;
+  label: string;
+}> = [
   {
-    eyebrow: "01",
-    title: "Luxor-based.",
-    text: "We plan from the city where Egypt's archaeological days begin — not from a desk in another country.",
+    icon: "user-check",
+    label: "Private Guides",
   },
   {
-    eyebrow: "02",
-    title: "Private by default.",
-    text: "Trusted guides, private vehicles, and pacing shaped around your interests, your dates, your light.",
+    icon: "hotel",
+    label: "Hotel Bookings",
   },
   {
-    eyebrow: "03",
-    title: "On WhatsApp time.",
-    text: "Short inquiry flow, quick replies, practical coordination before, during, and after travel.",
+    icon: "car",
+    label: "Airport Transfers",
   },
   {
-    eyebrow: "04",
-    title: "Tailored, not templated.",
-    text: "Day tours, Nile cruises, multi-day routes — composed for you, not pulled from a catalog.",
+    icon: "ship",
+    label: "Nile Cruises",
+  },
+  {
+    icon: "message",
+    label: "24/7 WhatsApp",
+  },
+  {
+    icon: "sparkles",
+    label: "Tailor-Made",
   },
 ];
 
@@ -146,6 +161,73 @@ function cleanHeroText(settings: Awaited<ReturnType<typeof getPublicSettings>>) 
 
 function primaryCategoryLabel(category: string) {
   return category.replace(/\s*·\s*Custom$/i, "").replace(/\s*\/\s*Custom$/i, "").trim();
+}
+
+function WhyUsIcon({ icon }: { icon: WhyUsServiceIcon }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="mx-auto h-8 w-8 text-[var(--color-gold)]"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {icon === "user-check" ? (
+        <>
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="m16 11 2 2 4-4" />
+        </>
+      ) : null}
+      {icon === "hotel" ? (
+        <>
+          <path d="M3 21h18" />
+          <path d="M5 21V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v14" />
+          <path d="M9 21v-6h6v6" />
+          <path d="M9 9h.01" />
+          <path d="M15 9h.01" />
+          <path d="M9 13h.01" />
+          <path d="M15 13h.01" />
+        </>
+      ) : null}
+      {icon === "car" ? (
+        <>
+          <path d="M19 17h2l-1.5-5.5A3 3 0 0 0 16.6 9H7.4a3 3 0 0 0-2.9 2.5L3 17h2" />
+          <path d="M7 17h10" />
+          <circle cx="7" cy="17" r="2" />
+          <circle cx="17" cy="17" r="2" />
+          <path d="M5 13h14" />
+        </>
+      ) : null}
+      {icon === "ship" ? (
+        <>
+          <path d="M3 17h18l-2 4H5l-2-4Z" />
+          <path d="M5 17V9h14v8" />
+          <path d="M9 9V4h6v5" />
+          <path d="M8 13h.01" />
+          <path d="M12 13h.01" />
+          <path d="M16 13h.01" />
+        </>
+      ) : null}
+      {icon === "message" ? (
+        <>
+          <path d="M21 11.5a8.4 8.4 0 0 1-1.2 4.3 8.5 8.5 0 0 1-7.3 4.2 8.4 8.4 0 0 1-4.3-1.2L3 20l1.2-5.2A8.4 8.4 0 0 1 3 10.5 8.5 8.5 0 0 1 11.5 2 8.5 8.5 0 0 1 20 10.5v1Z" />
+          <path d="M8 10h8" />
+          <path d="M8 14h5" />
+        </>
+      ) : null}
+      {icon === "sparkles" ? (
+        <>
+          <path d="m12 3 1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7L12 3Z" />
+          <path d="m19 14 .8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14Z" />
+          <path d="m5 13 .7 1.8L7.5 15.5l-1.8.7L5 18l-.7-1.8-1.8-.7 1.8-.7L5 13Z" />
+        </>
+      ) : null}
+    </svg>
+  );
 }
 
 // ----------------------------------------------------------------------------
@@ -376,48 +458,90 @@ export async function Homepage() {
       {/* ============================================================
           4 · WHY JACK — editorial split, no boxy cards.
       ============================================================ */}
-      <section className="order-4 bg-[var(--color-ivory)] py-14 sm:py-20 lg:py-20">
-        <div className="container-premium grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-16">
-          <div className="reveal-up max-w-md">
-            <p className="eyebrow">Why Jack Egypt Tour</p>
-            <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.06] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
-              Private Egypt travel
-              {" "}
-              <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
-                with local intelligence.
-              </span>
-            </h2>
-            <p className="mt-6 text-base leading-7 text-[var(--color-gray-600)] sm:text-lg sm:leading-8">
-              Send a short brief. Receive considered guidance. Travel with a
-              Luxor team that understands both the monuments and the small
-              details around them.
-            </p>
+      <section className="order-4 bg-[var(--color-ivory)] py-14 lg:py-20">
+        <div
+          className="container-premium font-[family-name:var(--font-whyus)]"
+          style={{ fontFamily: "var(--font-whyus)" }}
+        >
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+            <div className="reveal-up max-w-xl">
+              <p className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--color-gold)]">
+                WHY JACK EGYPT TOUR
+              </p>
+              <h2
+                className="mt-4 max-w-xl text-[clamp(2rem,3.5vw,2.8rem)] font-semibold leading-[1.15] text-[var(--color-navy)]"
+                style={{ fontFamily: "var(--font-whyus)" }}
+              >
+                Everything you need for a{" "}
+                <span className="font-accent-serif italic text-[var(--color-gold)]">
+                  perfect Egypt journey
+                </span>
+              </h2>
+              <p className="mt-5 max-w-[480px] text-base font-normal leading-[1.7] text-[var(--color-navy)]/70">
+                From private guides to seamless logistics, we handle every
+                detail of your Egypt experience — so you can focus on the
+                wonder.
+              </p>
+              <Link
+                href="/trip-planner"
+                className="mt-6 inline-flex rounded-md bg-[var(--color-gold)] px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_12px_30px_rgb(201_168_76_/_22%)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-gold-light)]"
+              >
+                Plan Your Journey
+              </Link>
+            </div>
+
+            <div className="reveal-up relative h-[360px] lg:h-[520px]">
+              <div className="absolute left-0 top-0 h-[140px] w-[58%] overflow-hidden rounded-2xl shadow-[0_8px_24px_rgb(0_0_0_/_12%)] lg:h-[200px] lg:w-[280px]">
+                <Image
+                  src="/photos/karnak.jpg"
+                  alt="Karnak temple columns in Luxor"
+                  fill
+                  sizes="(min-width: 1024px) 280px, 58vw"
+                  className="object-cover"
+                />
+              </div>
+              <div className="absolute right-0 top-10 h-[220px] w-[48%] overflow-hidden rounded-2xl shadow-[0_8px_24px_rgb(0_0_0_/_12%)] lg:h-[320px] lg:w-[240px]">
+                <Image
+                  src="/photos/hatshepsut.jpg"
+                  alt="Hatshepsut temple facade"
+                  fill
+                  sizes="(min-width: 1024px) 240px, 48vw"
+                  className="object-cover"
+                />
+              </div>
+              <div className="absolute bottom-0 left-8 h-[150px] w-[58%] overflow-hidden rounded-2xl shadow-[0_8px_24px_rgb(0_0_0_/_12%)] lg:left-10 lg:h-[200px] lg:w-[260px]">
+                <Image
+                  src="/photos/felucca.jpg"
+                  alt="Felucca sailing on the Nile"
+                  fill
+                  sizes="(min-width: 1024px) 260px, 58vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
           </div>
 
-          <ul className="reveal-up flex flex-col">
-            {whyPoints.map((item, idx) => (
-              <li
-                key={item.title}
-                className={`grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 py-6 sm:gap-x-10 sm:py-8 ${
-                  idx === 0
-                    ? "border-y border-[rgb(214_173_84_/_30%)]"
-                    : "border-b border-[rgb(214_173_84_/_30%)]"
-                }`}
-              >
-                <p className="font-serif text-3xl font-medium text-[var(--color-gold-dark)] sm:text-4xl">
-                  {item.eyebrow}
-                </p>
-                <div>
-                  <h3 className="font-serif text-2xl font-semibold leading-tight text-[var(--color-navy)] sm:text-[1.85rem]">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 max-w-md text-sm leading-7 text-[var(--color-gray-600)] sm:text-base sm:leading-7">
-                    {item.text}
+          <div className="mt-12 lg:mt-16">
+            <h3
+              className="mb-8 text-center text-sm font-medium uppercase tracking-[0.1em] text-[var(--color-navy)]/50"
+              style={{ fontFamily: "var(--font-whyus)" }}
+            >
+              What&apos;s included in every journey
+            </h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+              {whyUsServices.map((service) => (
+                <div
+                  key={service.label}
+                  className="min-h-[140px] rounded-xl bg-white px-4 py-6 text-center shadow-[0_2px_8px_rgb(0_0_0_/_4%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_8%)]"
+                >
+                  <WhyUsIcon icon={service.icon} />
+                  <p className="mt-3 text-sm font-semibold leading-[1.3] text-[var(--color-navy)]">
+                    {service.label}
                   </p>
                 </div>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
