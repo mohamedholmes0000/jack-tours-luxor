@@ -107,16 +107,16 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
         </button>
 
         <Link href="/" className="flex flex-col items-center justify-center leading-none" onClick={closeMenu}>
-          <span className="font-serif text-[1.08rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]">
+          <span className="font-serif text-2xl font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-navy)]">
             JACK
           </span>
-          <span className="mt-1 text-[0.5rem] font-bold uppercase tracking-[0.22em] text-[var(--color-navy)]/68">
-            TOURS LUXOR
+          <span className="mt-0.5 font-sans text-[0.56rem] font-medium uppercase tracking-[0.2em] text-[var(--color-navy)]/70">
+            EGYPT TOUR
           </span>
         </Link>
 
         <Link
-          className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] px-3 py-2 text-[0.58rem] font-bold uppercase tracking-[0.08em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] transition hover:bg-[var(--color-gold-light)] justify-self-end"
+          className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] px-3 py-2 font-sans text-[0.58rem] font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] transition hover:bg-[var(--color-gold-light)] justify-self-end"
           href="/trip-planner"
         >
           BOOK NOW
@@ -138,8 +138,8 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
               <p className="font-serif text-3xl font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)]">
                 JACK
               </p>
-              <p className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/64">
-                TOURS LUXOR
+              <p className="mt-1 font-sans text-[0.62rem] font-medium uppercase tracking-[0.2em] text-white/64">
+                EGYPT TOUR
               </p>
             </div>
             <button
@@ -162,7 +162,7 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   onClick={closeMenu}
-                  className={`flex min-h-14 items-center border-b border-white/10 text-lg font-normal uppercase tracking-[0.08em] text-white transition hover:text-[var(--color-gold-light)] ${
+                  className={`flex min-h-14 items-center border-b border-white/10 font-sans text-lg font-normal uppercase tracking-[0.08em] text-white transition hover:text-[var(--color-gold-light)] ${
                     active ? "text-[var(--color-gold-light)]" : ""
                   }`}
                 >

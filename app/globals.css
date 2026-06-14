@@ -25,15 +25,16 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-jost);
-  --font-serif: var(--font-jost);
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-jost), Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
   font-weight: 400;
+  line-height: 1.6;
   overflow-x: hidden;
 }
 
@@ -43,23 +44,35 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-jost), Arial, Helvetica, sans-serif;
+  font-family: var(--font-heading), Georgia, serif;
+  line-height: 1.12;
 }
 
 h1,
 h2 {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 h3,
 h4,
 h5,
 h6 {
-  font-weight: 600;
+  font-weight: 500;
+}
+
+p {
+  line-height: 1.7;
 }
 
 a {
   text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 ::selection {
@@ -73,8 +86,20 @@ a {
 }
 
 .public-site section:not([data-home-hero]) h2 {
-  font-size: clamp(1.9rem, 3vw, 2.6rem);
-  line-height: 1.08;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  line-height: 1.12;
+}
+
+.public-site h1 {
+  font-size: clamp(2.8rem, 7vw, 6rem);
+  font-weight: 600;
+  line-height: 1.06;
+}
+
+.public-site h3 {
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  font-weight: 500;
+  line-height: 1.14;
 }
 
 .luxury-shell {
@@ -118,9 +143,10 @@ a {
 
 .eyebrow {
   color: var(--color-gold);
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
   font-size: 0.78125rem;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -131,7 +157,7 @@ a {
 }
 
 .font-accent-serif {
-  font-family: var(--font-accent-serif), Georgia, serif;
+  font-family: var(--font-heading), Georgia, serif;
 }
 
 .site-header-utility {
@@ -319,9 +345,10 @@ a {
   border-radius: 6px;
   display: inline-flex;
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  font-weight: 500;
   justify-content: center;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   min-height: 44px;
   padding: 0.75rem 1.5rem;
   text-transform: uppercase;
@@ -423,7 +450,7 @@ a {
   .drop-cap::first-letter {
     color: var(--color-gold-dark);
     float: left;
-    font-family: var(--font-jost), Arial, Helvetica, sans-serif;
+    font-family: var(--font-heading), Georgia, serif;
     font-size: 4.4em;
     font-weight: 500;
     line-height: 0.82;

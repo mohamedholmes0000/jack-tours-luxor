@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Jost } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { getPublicSettings } from "@/lib/data/settings";
 import "./globals.css";
 
-const jost = Jost({
-  variable: "--font-jost",
+const inter = Inter({
+  variable: "--font-body",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
 });
 
 const cormorant = Cormorant_Garamond({
-  variable: "--font-accent-serif",
+  variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   display: "swap",
 });
@@ -72,7 +72,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${jost.variable} ${cormorant.variable} h-full antialiased`}
+      className={`${inter.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <SiteChrome settings={settings}>{children}</SiteChrome>

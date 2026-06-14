@@ -129,17 +129,17 @@ export function Navbar({ settings }: { settings: AdminSettingsValues }) {
       </div>
 
       <header className={`site-main-header hidden border-b transition-all duration-200 ease-in-out md:block ${isNavStuck ? "header-stuck" : ""}`}>
-        <div className="container-premium grid h-[70px] grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8">
+        <div className="container-premium grid h-20 grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8">
           <Link href="/" className="flex flex-col leading-none">
-            <span className="font-serif text-2xl font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]">
+            <span className="font-serif text-[2rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-navy)] lg:text-[2.25rem]">
               JACK
             </span>
-            <span className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-[var(--color-navy)]/68">
-              TOURS LUXOR
+            <span className="mt-1 font-sans text-[0.66rem] font-medium uppercase tracking-[0.2em] text-[var(--color-navy)]/70 lg:text-[0.69rem]">
+              EGYPT TOUR
             </span>
           </Link>
 
-          <nav className="flex items-center gap-6 text-[0.76rem] font-medium uppercase tracking-[0.08em] text-[var(--color-navy)] lg:gap-12 lg:text-[0.82rem]">
+          <nav className="flex items-center gap-6 font-sans text-[0.76rem] font-medium uppercase tracking-[0.08em] text-[var(--color-navy)] lg:gap-12 lg:text-[0.82rem]">
           {navItems.map((item) => {
             const active = isActive(item.href);
 
@@ -167,7 +167,7 @@ export function Navbar({ settings }: { settings: AdminSettingsValues }) {
               <UserIcon className="size-5" />
             </Link>
             <Link
-              className="inline-flex min-h-10 items-center justify-center rounded-md bg-[var(--color-gold)] px-4 py-2.5 text-[0.78rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] lg:px-6 lg:text-[0.8rem]"
+              className="inline-flex min-h-10 items-center justify-center rounded-md bg-[var(--color-gold)] px-4 py-2.5 font-sans text-[0.78rem] font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] lg:px-6 lg:text-[0.8rem]"
               href="/trip-planner"
             >
               BOOK NOW
