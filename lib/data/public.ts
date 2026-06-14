@@ -149,26 +149,40 @@ type DbCityDestination = {
   heroImage: string | null;
 };
 
-function countToursForCity(toursList: Tour[], searchTerms: string[]) {
-  const terms = searchTerms.map((term) => term.toLowerCase());
+function normalizeCityTerm(value: string) {
+  return value.trim().toLowerCase().replace(/&/g, "and");
+}
 
-  return toursList.filter((tour) => {
-    const haystack = [
-      tour.title,
-      tour.category,
-      tour.shortDescription,
-      tour.overview,
-      tour.departurePoint,
-      ...tour.highlights,
-      ...tour.included,
-      ...tour.excluded,
-      ...tour.itinerary.flatMap((item) => [item.title, item.description]),
-    ]
-      .join(" ")
-      .toLowerCase();
+function countStaticToursByCity(city: string) {
+  const normalizedCity = normalizeCityTerm(city);
 
-    return terms.some((term) => haystack.includes(term));
-  }).length;
+  if (!normalizedCity) {
+    return 0;
+  }
+
+  return tours.filter((tour) => normalizeCityTerm(tour.city || "") === normalizedCity).length;
+}
+
+export async function getTourCountByCity(city: string): Promise<number> {
+  const trimmedCity = city.trim();
+
+  if (!trimmedCity) {
+    return 0;
+  }
+
+  return tryDatabase(
+    async () =>
+      prisma.tour.count({
+        where: {
+          published: true,
+          city: {
+            equals: trimmedCity,
+            mode: "insensitive",
+          },
+        },
+      }),
+    countStaticToursByCity(trimmedCity),
+  );
 }
 
 function tourCountLabel(count: number) {
@@ -179,19 +193,21 @@ function tourCountLabel(count: number) {
   return `${count} ${count === 1 ? "Tour" : "Tours"}`;
 }
 
-function buildCityCards(source: HomepageCityDestination[], toursList: Tour[]): HomepageCityDestinationCard[] {
-  return source.map((city) => ({
-    slug: city.slug,
-    name: city.name,
-    subtitle: city.subtitle,
-    image: city.image,
-    href: city.href,
-    countLabel: tourCountLabel(countToursForCity(toursList, city.tourSearchTerms)),
-  }));
+async function buildCityCards(source: HomepageCityDestination[]): Promise<HomepageCityDestinationCard[]> {
+  return Promise.all(
+    source.map(async (city) => ({
+      slug: city.slug,
+      name: city.name,
+      subtitle: city.subtitle,
+      image: city.image,
+      href: city.href,
+      countLabel: tourCountLabel(await getTourCountByCity(city.name)),
+    })),
+  );
 }
 
-export async function getHomepageCityDestinationsSafe(toursList: Tour[]) {
-  const fallbackCards = buildCityCards(homepageCityDestinations, toursList);
+export async function getHomepageCityDestinationsSafe() {
+  const fallbackCards = await buildCityCards(homepageCityDestinations);
 
   return tryDatabase(
     async () => {
@@ -220,19 +236,20 @@ export async function getHomepageCityDestinationsSafe(toursList: Tour[]) {
 
       const dbCitiesBySlug = new Map(dbCities.map((city) => [city.slug, city]));
 
-      return homepageCityDestinations.map((fallbackCity) => {
+      return Promise.all(homepageCityDestinations.map(async (fallbackCity) => {
         const city = dbCitiesBySlug.get(fallbackCity.slug);
-        const count = countToursForCity(toursList, fallbackCity.tourSearchTerms);
+        const name = city?.name || fallbackCity.name;
+        const count = await getTourCountByCity(name);
 
         return {
           slug: fallbackCity.slug,
-          name: city?.name || fallbackCity.name,
+          name,
           subtitle: city?.subtitle || fallbackCity.subtitle,
           image: safeImageSrc(city?.heroImage, fallbackCity.image),
           href: fallbackCity.href,
           countLabel: tourCountLabel(count),
         };
-      });
+      }));
     },
     fallbackCards,
   );
@@ -268,27 +285,15 @@ export type DestinationListingItem = Destination & {
   tourCount: number;
 };
 
-function normalizeDestinationTerm(value: string) {
-  return value.trim().toLowerCase().replace(/&/g, "and");
-}
-
-function countToursForDestination(destination: Destination, toursList: Tour[]) {
-  const destinationName = normalizeDestinationTerm(destination.name);
-  const destinationSlug = normalizeDestinationTerm(destination.slug.replace(/-/g, " "));
-
-  return toursList.filter((tour) => {
-    const city = normalizeDestinationTerm(tour.city || "");
-    return city === destinationName || city === destinationSlug;
-  }).length;
-}
-
 export async function getDestinationListingSafe() {
-  const [destinationList, toursList] = await Promise.all([getDestinationsSafe(), getToursSafe()]);
+  const destinationList = await getDestinationsSafe();
 
-  return destinationList.map((destination) => ({
-    ...destination,
-    tourCount: countToursForDestination(destination, toursList),
-  }));
+  return Promise.all(
+    destinationList.map(async (destination) => ({
+      ...destination,
+      tourCount: await getTourCountByCity(destination.name),
+    })),
+  );
 }
 
 export async function getBlogArticlesSafe() {

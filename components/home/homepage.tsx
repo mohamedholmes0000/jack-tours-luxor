@@ -201,7 +201,7 @@ export async function Homepage() {
     getToursSafe(),
     getPublicSettings(),
   ]);
-  const destinationCities = await getHomepageCityDestinationsSafe(safeTours);
+  const destinationCities = await getHomepageCityDestinationsSafe();
   const featuredTours = safeTours.filter((tour) => tour.featured).slice(0, 3);
   const heroImage = safeImageSrc(settings.homepageHeroImage, fallbackHeroImage);
   const heroCtaLabel =
