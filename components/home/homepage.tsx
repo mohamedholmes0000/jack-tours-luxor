@@ -167,63 +167,76 @@ function WhyUsIcon({ icon }: { icon: WhyUsServiceIcon }) {
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="mx-auto h-8 w-8 text-[var(--color-gold)]"
+      viewBox="0 0 48 48"
+      className="mx-auto h-9 w-9 text-[var(--color-gold)]"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.7"
+      strokeWidth="2.4"
       strokeLinecap="round"
       strokeLinejoin="round"
     >
       {icon === "user-check" ? (
         <>
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="m16 11 2 2 4-4" />
+          <circle cx="18" cy="14" r="6" />
+          <path d="M8 40v-5.5A9.5 9.5 0 0 1 17.5 25h3A9.5 9.5 0 0 1 30 34.5V40" />
+          <path d="M32 9v25" />
+          <path d="M32 10h9l-2.5 4L41 18h-9" />
+          <path d="M15 39h8" />
         </>
       ) : null}
       {icon === "hotel" ? (
         <>
-          <path d="M3 21h18" />
-          <path d="M5 21V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v14" />
-          <path d="M9 21v-6h6v6" />
-          <path d="M9 9h.01" />
-          <path d="M15 9h.01" />
-          <path d="M9 13h.01" />
-          <path d="M15 13h.01" />
+          <path d="M8 42h32" />
+          <path d="M12 42V11a3 3 0 0 1 3-3h18a3 3 0 0 1 3 3v31" />
+          <path d="M20 42V30h8v12" />
+          <path d="M18 15h3" />
+          <path d="M27 15h3" />
+          <path d="M18 22h3" />
+          <path d="M27 22h3" />
+          <path d="M12 28H8v14" />
+          <path d="M36 25h4v17" />
+          <path d="M16 8l8-4 8 4" />
         </>
       ) : null}
       {icon === "car" ? (
         <>
-          <path d="M19 17h2l-1.5-5.5A3 3 0 0 0 16.6 9H7.4a3 3 0 0 0-2.9 2.5L3 17h2" />
-          <path d="M7 17h10" />
-          <circle cx="7" cy="17" r="2" />
-          <circle cx="17" cy="17" r="2" />
-          <path d="M5 13h14" />
+          <path d="M9 32h30l-2.4-10.2A5 5 0 0 0 31.8 18H16.2a5 5 0 0 0-4.8 3.8L9 32Z" />
+          <path d="M13 26h22" />
+          <path d="M8 32v6" />
+          <path d="M40 32v6" />
+          <circle cx="16" cy="34" r="4" />
+          <circle cx="32" cy="34" r="4" />
+          <path d="M30 7h7" />
+          <path d="M36 7l4 4-4 4" />
+          <path d="M28 11h12" />
         </>
       ) : null}
       {icon === "ship" ? (
         <>
-          <path d="M3 17h18l-2 4H5l-2-4Z" />
-          <path d="M5 17V9h14v8" />
-          <path d="M9 9V4h6v5" />
-          <path d="M8 13h.01" />
-          <path d="M12 13h.01" />
-          <path d="M16 13h.01" />
+          <path d="M24 6v26" />
+          <path d="M24 8c-7 4-10.5 10.5-11 19h11" />
+          <path d="M24 11c6 4 9.5 9.5 10 16H24" />
+          <path d="M8 32h32l-4 9H12l-4-9Z" />
+          <path d="M14 38c2 1.4 4 1.4 6 0s4-1.4 6 0 4 1.4 6 0" />
         </>
       ) : null}
       {icon === "message" ? (
         <>
-          <path d="M21 11.5a8.4 8.4 0 0 1-1.2 4.3 8.5 8.5 0 0 1-7.3 4.2 8.4 8.4 0 0 1-4.3-1.2L3 20l1.2-5.2A8.4 8.4 0 0 1 3 10.5 8.5 8.5 0 0 1 11.5 2 8.5 8.5 0 0 1 20 10.5v1Z" />
-          <path d="M8 10h8" />
-          <path d="M8 14h5" />
+          <path d="M39 29a15 15 0 0 1-21.4 8.2L9 39l1.8-8.3A15 15 0 1 1 39 29Z" />
+          <path d="M17 23h7" />
+          <path d="M17 29h4" />
+          <circle cx="32" cy="16" r="7" />
+          <path d="M32 12v4l3 2" />
+          <path d="M28 42h8" />
         </>
       ) : null}
       {icon === "sparkles" ? (
         <>
-          <path d="m12 3 1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7L12 3Z" />
-          <path d="m19 14 .8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14Z" />
-          <path d="m5 13 .7 1.8L7.5 15.5l-1.8.7L5 18l-.7-1.8-1.8-.7 1.8-.7L5 13Z" />
+          <path d="m18 31 13-13" />
+          <path d="m21 18 9 9" />
+          <path d="M12 38l6-7-7-7-6 7a5 5 0 0 0 7 7Z" />
+          <path d="m35 8 1.6 4.4L41 14l-4.4 1.6L35 20l-1.6-4.4L29 14l4.4-1.6L35 8Z" />
+          <path d="m15 7 1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1L15 7Z" />
         </>
       ) : null}
     </svg>
@@ -459,19 +472,13 @@ export async function Homepage() {
           4 · WHY JACK — editorial split, no boxy cards.
       ============================================================ */}
       <section className="order-4 bg-[var(--color-ivory)] py-14 lg:py-20">
-        <div
-          className="container-premium font-[family-name:var(--font-whyus)]"
-          style={{ fontFamily: "var(--font-whyus)" }}
-        >
+        <div className="container-premium">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div className="reveal-up max-w-xl">
               <p className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--color-gold)]">
                 WHY JACK EGYPT TOUR
               </p>
-              <h2
-                className="mt-4 max-w-xl text-[clamp(2rem,3.5vw,2.8rem)] font-semibold leading-[1.15] text-[var(--color-navy)]"
-                style={{ fontFamily: "var(--font-whyus)" }}
-              >
+              <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.5vw,2.8rem)] font-semibold leading-[1.15] text-[var(--color-navy)]">
                 Everything you need for a{" "}
                 <span className="font-accent-serif italic text-[var(--color-gold)]">
                   perfect Egypt journey
@@ -490,31 +497,85 @@ export async function Homepage() {
               </Link>
             </div>
 
-            <div className="reveal-up relative h-[360px] lg:h-[520px]">
-              <div className="absolute left-0 top-0 h-[140px] w-[58%] overflow-hidden rounded-2xl shadow-[0_8px_24px_rgb(0_0_0_/_12%)] lg:h-[200px] lg:w-[280px]">
+            <div className="reveal-up relative isolate mx-auto flex w-full max-w-[34rem] flex-col gap-5 lg:h-[440px] lg:max-w-[560px] lg:block">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 560 440"
+                className="pointer-events-none absolute inset-0 z-0 hidden h-full w-full lg:block"
+              >
+                <path
+                  d="M246 92 C 322 92 332 154 390 164 C 470 178 470 250 386 272 C 316 290 280 332 234 366"
+                  fill="none"
+                  stroke="rgb(201 168 76 / 0.6)"
+                  strokeWidth="2"
+                  strokeDasharray="7 9"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 32 32"
+                className="pointer-events-none absolute left-[288px] top-12 z-20 hidden h-8 w-8 text-[var(--color-gold)] lg:block"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 15 29 5l-9 25-5-11-12-4Z" />
+                <path d="m15 19-6 9" />
+              </svg>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 120 520"
+                className="pointer-events-none absolute inset-y-8 left-1/2 z-0 h-[calc(100%-4rem)] w-24 -translate-x-1/2 text-[var(--color-gold)] lg:hidden"
+              >
+                <path
+                  d="M60 0 C 18 86 98 144 58 224 C 18 304 96 374 60 520"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeOpacity="0.55"
+                  strokeWidth="2"
+                  strokeDasharray="7 9"
+                  strokeLinecap="round"
+                />
+                <g
+                  transform="translate(45 230) rotate(90)"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M2 12 26 3l-8 24-5-10-11-5Z" />
+                  <path d="m13 17-5 8" />
+                </g>
+              </svg>
+
+              <div className="relative z-10 h-[180px] w-[78%] self-start overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:left-6 lg:top-0 lg:h-[190px] lg:w-[260px]">
                 <Image
                   src="/photos/karnak.jpg"
                   alt="Karnak temple columns in Luxor"
                   fill
-                  sizes="(min-width: 1024px) 280px, 58vw"
+                  sizes="(min-width: 1024px) 260px, 78vw"
                   className="object-cover"
                 />
               </div>
-              <div className="absolute right-0 top-10 h-[220px] w-[48%] overflow-hidden rounded-2xl shadow-[0_8px_24px_rgb(0_0_0_/_12%)] lg:h-[320px] lg:w-[240px]">
+              <div className="relative z-10 -mt-2 h-[250px] w-[74%] self-end overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:right-8 lg:top-16 lg:mt-0 lg:h-[300px] lg:w-[238px]">
                 <Image
                   src="/photos/hatshepsut.jpg"
                   alt="Hatshepsut temple facade"
                   fill
-                  sizes="(min-width: 1024px) 240px, 48vw"
+                  sizes="(min-width: 1024px) 238px, 74vw"
                   className="object-cover"
                 />
               </div>
-              <div className="absolute bottom-0 left-8 h-[150px] w-[58%] overflow-hidden rounded-2xl shadow-[0_8px_24px_rgb(0_0_0_/_12%)] lg:left-10 lg:h-[200px] lg:w-[260px]">
+              <div className="relative z-10 -mt-2 h-[180px] w-[76%] self-start overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:bottom-0 lg:left-24 lg:mt-0 lg:h-[190px] lg:w-[250px]">
                 <Image
                   src="/photos/felucca.jpg"
                   alt="Felucca sailing on the Nile"
                   fill
-                  sizes="(min-width: 1024px) 260px, 58vw"
+                  sizes="(min-width: 1024px) 250px, 76vw"
                   className="object-cover"
                 />
               </div>
@@ -522,10 +583,7 @@ export async function Homepage() {
           </div>
 
           <div className="mt-12 lg:mt-16">
-            <h3
-              className="mb-8 text-center text-sm font-medium uppercase tracking-[0.1em] text-[var(--color-navy)]/50"
-              style={{ fontFamily: "var(--font-whyus)" }}
-            >
+            <h3 className="mb-8 text-center text-sm font-medium uppercase tracking-[0.1em] text-[var(--color-navy)]/50">
               What&apos;s included in every journey
             </h3>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
