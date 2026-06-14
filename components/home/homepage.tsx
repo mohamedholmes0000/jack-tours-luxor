@@ -376,8 +376,8 @@ export async function Homepage() {
       {/* ============================================================
           4 · WHY JACK — editorial split, no boxy cards.
       ============================================================ */}
-      <section className="order-4 bg-[var(--color-ivory)] py-14 sm:py-20">
-        <div className="container-premium grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      <section className="order-4 bg-[var(--color-ivory)] py-14 sm:py-20 lg:py-20">
+        <div className="container-premium grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-16">
           <div className="reveal-up max-w-md">
             <p className="eyebrow">Why Jack Egypt Tour</p>
             <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.06] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
@@ -497,15 +497,15 @@ export async function Homepage() {
           aria-hidden
           className="absolute inset-0 bg-gradient-to-b from-[rgba(6,17,31,0.65)] via-[rgba(6,17,31,0.35)] to-[rgba(6,17,31,0.85)]"
         />
-        <div className="container-premium relative grid min-h-[70vh] grid-cols-2 content-between gap-8 py-16 sm:min-h-[80vh] sm:py-16 lg:grid-cols-4">
+        <div className="container-premium relative grid min-h-[70vh] grid-cols-2 content-between gap-8 py-16 sm:min-h-[80vh] sm:py-16 lg:min-h-0 lg:grid-cols-4 lg:content-center lg:items-center lg:gap-x-16 lg:py-20">
           {stats.map(([value, label], idx) => (
             <div
               key={label}
               className={`reveal-up flex flex-col ${
                 idx % 2 === 0 ? "items-start text-left" : "items-end text-right"
-              } lg:items-start lg:text-left ${
+              } lg:items-center lg:text-center ${
                 idx >= 2 ? "self-end" : "self-start"
-              } lg:self-start`}
+              } lg:self-center`}
             >
               <p className="font-serif text-[clamp(2.5rem,5vw,3.5rem)] font-semibold leading-none text-[var(--color-gold-light)]">
                 {value}
@@ -552,18 +552,18 @@ export async function Homepage() {
           aria-hidden
           className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.55)] to-[rgba(6,17,31,0.15)]"
         />
-        <div className="container-premium relative flex min-h-[78vh] flex-col justify-end py-20 sm:min-h-[88vh] sm:py-20 lg:min-h-[92vh]">
-          <div className="reveal-up max-w-3xl">
+        <div className="container-premium relative flex min-h-[78vh] flex-col justify-end py-20 sm:min-h-[88vh] sm:py-20 lg:min-h-0 lg:items-center lg:justify-center lg:py-20">
+          <div className="reveal-up max-w-3xl lg:mx-auto lg:space-y-6 lg:text-center">
             <p
               aria-hidden
-              className="font-serif text-[5rem] leading-none text-[var(--color-gold-light)]/80 sm:text-[7rem]"
+              className="font-serif text-[5rem] leading-none text-[var(--color-gold-light)]/80 sm:text-[7rem] lg:text-[5rem]"
             >
               &ldquo;
             </p>
-            <blockquote className="-mt-3 font-serif text-[clamp(1.4rem,2.5vw,1.8rem)] font-normal leading-[1.5] text-white">
+            <blockquote className="-mt-3 font-serif text-[clamp(1.4rem,2.5vw,1.8rem)] font-normal leading-[1.5] text-white lg:mt-0">
               {testimonial.quote}
             </blockquote>
-            <div className="mt-7 flex items-center gap-4">
+            <div className="mt-7 flex items-center gap-4 lg:mt-0 lg:justify-center">
               <span className="h-px w-12 bg-[var(--color-gold-light)]" />
               <p className="text-[0.72rem] font-medium uppercase tracking-[0.12em] text-[var(--color-gold-light)]">
                 {testimonial.name}
