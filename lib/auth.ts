@@ -30,8 +30,17 @@ export const authOptions: NextAuthOptions = {
           null,
         );
 
-        if (user && (await bcrypt.compare(password, user.password))) {
-          return { id: user.id, email: user.email, name: user.name };
+        if (user && !user.active) {
+          return null;
+        }
+
+        if (user && user.active && (await bcrypt.compare(password, user.password))) {
+          await tryDatabase(
+            async () => prisma.adminUser.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } }),
+            null,
+          );
+
+          return { id: user.id, email: user.email, name: user.name, role: user.role, active: user.active };
         }
 
         if (
@@ -39,7 +48,7 @@ export const authOptions: NextAuthOptions = {
           email === "admin@jacktoursluxor.com" &&
           password === "Admin2024!"
         ) {
-          return { id: "dev-admin", email, name: "Jack Egypt Tour Admin" };
+          return { id: "dev-admin", email, name: "Jack Egypt Tour Admin", role: "SUPER_ADMIN", active: true };
         }
 
         return null;
@@ -49,15 +58,21 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.sub = user.id;
         token.name = user.name;
         token.email = user.email;
+        token.role = user.role;
+        token.active = user.active;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
+        session.user.id = token.sub;
         session.user.name = token.name;
         session.user.email = token.email;
+        session.user.role = token.role;
+        session.user.active = token.active;
       }
       return session;
     },

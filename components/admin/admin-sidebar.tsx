@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import type { AdminRole } from "@prisma/client";
+import { roleLabels } from "@/lib/admin/permissions";
 
 const links = [
   { href: "/admin", label: "Dashboard" },
@@ -18,6 +20,7 @@ const links = [
 type AdminSidebarUser = {
   name?: string | null;
   email?: string | null;
+  role?: AdminRole | null;
 };
 
 function getInitials(name?: string | null, email?: string | null) {
@@ -66,11 +69,33 @@ function UserIcon() {
   );
 }
 
+function UsersIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
 export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
   const pathname = usePathname();
   const displayName = user?.name || "Admin user";
   const email = user?.email || "Signed in";
+  const role = user?.role || "ADMIN";
   const profileActive = pathname === "/admin/profile";
+  const usersActive = pathname === "/admin/users" || pathname.startsWith("/admin/users/");
 
   return (
     <aside className="flex flex-col border-r border-[var(--color-gray-100)] bg-white p-5 lg:min-h-screen">
@@ -97,6 +122,20 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
             {link.label}
           </Link>
         ))}
+        {role === "SUPER_ADMIN" ? (
+          <Link
+            href="/admin/users"
+            aria-current={usersActive ? "page" : undefined}
+            className={`flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
+              usersActive
+                ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
+                : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
+            }`}
+          >
+            <UsersIcon />
+            Users
+          </Link>
+        ) : null}
       </nav>
       <div className="mt-8 border-t border-[var(--color-gray-100)] pt-5 lg:mt-auto">
         <div className="flex items-center gap-3">
@@ -109,7 +148,7 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
           </div>
         </div>
         <span className="mt-3 inline-flex rounded-full border border-[rgb(214_173_84_/_28%)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">
-          Admin
+          {roleLabels[role]}
         </span>
         <div className="mt-4 grid gap-2">
           <Link

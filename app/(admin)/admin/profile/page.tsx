@@ -1,17 +1,17 @@
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { AdminProfileForm } from "@/components/admin/admin-profile-form";
-import { authOptions } from "@/lib/auth";
+import { getCurrentAdminUser } from "@/lib/api/admin-guard";
+import { roleLabels } from "@/lib/admin/permissions";
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
 
 export default async function AdminProfilePage() {
-  const session = await getServerSession(authOptions);
+  const currentUser = await getCurrentAdminUser();
 
-  if (!session?.user?.email) {
+  if (!currentUser?.email) {
     redirect("/admin/login");
   }
 
-  const email = session.user.email.toLowerCase().trim();
+  const email = currentUser.email.toLowerCase().trim();
   const user = await tryDatabase(
     async () =>
       prisma.adminUser.findUnique({
@@ -19,13 +19,15 @@ export default async function AdminProfilePage() {
         select: {
           email: true,
           name: true,
+          role: true,
           createdAt: true,
         },
       }),
     null,
   );
 
-  const displayName = user?.name || session.user.name || "Admin user";
+  const displayName = user?.name || currentUser.name || "Admin user";
+  const role = user?.role || currentUser.role;
   const canEdit = Boolean(user);
 
   return (
@@ -50,7 +52,7 @@ export default async function AdminProfilePage() {
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">Role</p>
           <p className="mt-2 inline-flex rounded-full border border-[rgb(214_173_84_/_28%)] px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">
-            Admin
+            {roleLabels[role]}
           </p>
         </div>
       </section>

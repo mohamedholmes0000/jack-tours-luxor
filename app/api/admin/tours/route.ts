@@ -1,20 +1,13 @@
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/api/admin-guard";
 import { revalidateTourPublicPaths } from "@/lib/admin/tour-revalidation";
 import { prisma } from "@/lib/data/safe-db";
 import { hasConfiguredDatabase } from "@/lib/data/safe-db";
 import { adminTourSchema } from "@/lib/validations";
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  return Boolean(session);
-}
-
 export async function POST(request: Request) {
-  if (!(await requireAdmin())) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi({ resource: "tours", action: "create" });
+  if (!guard.ok) return guard.response;
 
   const payload = await request.json().catch(() => null);
   const parsed = adminTourSchema.safeParse(payload);

@@ -1,4 +1,6 @@
 import { InquiryStatusControl } from "@/components/admin/inquiry-status-control";
+import { canWriteAdminResource } from "@/lib/admin/permissions";
+import { getCurrentAdminUser } from "@/lib/api/admin-guard";
 import { getAdminInquiries } from "@/lib/data/admin";
 
 export const metadata = {
@@ -7,6 +9,8 @@ export const metadata = {
 
 export default async function AdminInquiriesPage() {
   const inquiries = await getAdminInquiries();
+  const currentUser = await getCurrentAdminUser();
+  const canWriteInquiries = canWriteAdminResource(currentUser?.role || "VIEWER", "inquiries", "update");
 
   return (
     <div>
@@ -50,7 +54,7 @@ export default async function AdminInquiriesPage() {
                   <td className="py-4 pr-4">{inquiry.tourSlug ?? "-"}</td>
                   <td className="py-4 pr-4">{inquiry.travelers ?? "-"}</td>
                   <td className="py-4 pr-4">
-                    <InquiryStatusControl id={inquiry.id} status={inquiry.status} />
+                    <InquiryStatusControl id={inquiry.id} status={inquiry.status} canEdit={canWriteInquiries} />
                   </td>
                   <td className="py-4 pr-4">
                     <details>

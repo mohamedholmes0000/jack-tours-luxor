@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const statuses = ["NEW", "CONTACTED", "QUOTED", "BOOKED", "CLOSED"];
 
-export function InquiryStatusControl({ id, status }: { id: string; status: string }) {
+export function InquiryStatusControl({ id, status, canEdit = true }: { id: string; status: string; canEdit?: boolean }) {
   const router = useRouter();
   const [value, setValue] = useState(status);
   const [message, setMessage] = useState<string | null>(null);
@@ -41,6 +41,11 @@ export function InquiryStatusControl({ id, status }: { id: string; status: strin
 
   return (
     <div>
+      {!canEdit ? (
+        <span className="inline-flex min-h-11 items-center border border-[var(--color-gray-100)] bg-white px-3 text-sm">
+          {status}
+        </span>
+      ) : (
       <select
         className="min-h-11 border border-[var(--color-gray-100)] bg-white px-3 text-sm"
         value={value}
@@ -53,6 +58,7 @@ export function InquiryStatusControl({ id, status }: { id: string; status: strin
           </option>
         ))}
       </select>
+      )}
       {message ? <p className="mt-2 text-xs text-[var(--color-gray-600)]">{message}</p> : null}
     </div>
   );

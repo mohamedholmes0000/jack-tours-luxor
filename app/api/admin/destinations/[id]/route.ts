@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
-import { isAdminRequest } from "@/lib/api/admin-guard";
+import { requireAdminApi } from "@/lib/api/admin-guard";
 import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
 import { adminDestinationSchema } from "@/lib/validations";
 
@@ -16,9 +16,8 @@ async function findDestination(id: string) {
 }
 
 export async function PUT(request: Request, { params }: DestinationApiProps) {
-  if (!(await isAdminRequest())) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi({ resource: "destinations", action: "update" });
+  if (!guard.ok) return guard.response;
 
   const parsed = adminDestinationSchema.safeParse(await request.json().catch(() => null));
 

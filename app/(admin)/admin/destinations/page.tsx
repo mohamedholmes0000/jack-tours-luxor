@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { canWriteAdminResource } from "@/lib/admin/permissions";
+import { getCurrentAdminUser } from "@/lib/api/admin-guard";
 import { getAdminDestinations } from "@/lib/data/admin";
 
 export const metadata = { title: "Admin Destinations" };
@@ -12,6 +14,8 @@ const typeLabels = {
 
 export default async function AdminDestinationsPage() {
   const destinations = await getAdminDestinations();
+  const currentUser = await getCurrentAdminUser();
+  const canWriteDestinations = canWriteAdminResource(currentUser?.role || "VIEWER", "destinations", "update");
 
   return (
     <div>
@@ -54,9 +58,11 @@ export default async function AdminDestinationsPage() {
                     <Link className="text-sm font-bold text-[var(--color-gold)]" href={`/destinations/${destination.slug}`}>
                       View
                     </Link>
-                    <Link className="text-sm font-bold text-[var(--color-navy)]" href={`/admin/destinations/${destination.id}`}>
-                      Edit
-                    </Link>
+                    {canWriteDestinations ? (
+                      <Link className="text-sm font-bold text-[var(--color-navy)]" href={`/admin/destinations/${destination.id}`}>
+                        Edit
+                      </Link>
+                    ) : null}
                   </div>
                 </td>
               </tr>

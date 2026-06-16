@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { canWriteAdminResource } from "@/lib/admin/permissions";
+import { getCurrentAdminUser } from "@/lib/api/admin-guard";
 import { getAdminTours } from "@/lib/data/admin";
 
 export const metadata = {
@@ -7,6 +9,8 @@ export const metadata = {
 
 export default async function AdminToursPage() {
   const tours = await getAdminTours();
+  const currentUser = await getCurrentAdminUser();
+  const canWriteTours = canWriteAdminResource(currentUser?.role || "VIEWER", "tours", "update");
 
   return (
     <div>
@@ -23,9 +27,11 @@ export default async function AdminToursPage() {
             slice.
           </p>
         </div>
-        <Link className="btn-primary" href="/admin/tours/new">
-          Add Tour
-        </Link>
+        {canWriteAdminResource(currentUser?.role || "VIEWER", "tours", "create") ? (
+          <Link className="btn-primary" href="/admin/tours/new">
+            Add Tour
+          </Link>
+        ) : null}
       </div>
 
       <section className="mt-8 overflow-x-auto border border-[var(--color-gray-100)] bg-white p-4 shadow-sm">
@@ -55,9 +61,11 @@ export default async function AdminToursPage() {
                     <Link className="text-sm font-bold text-[var(--color-gold)]" href={`/tours/${tour.slug}`}>
                       View
                     </Link>
-                    <Link className="text-sm font-bold text-[var(--color-navy)]" href={`/admin/tours/${tour.id}`}>
-                      Edit
-                    </Link>
+                    {canWriteTours ? (
+                      <Link className="text-sm font-bold text-[var(--color-navy)]" href={`/admin/tours/${tour.id}`}>
+                        Edit
+                      </Link>
+                    ) : null}
                   </div>
                 </td>
               </tr>

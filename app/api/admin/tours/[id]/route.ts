@@ -1,6 +1,5 @@
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/api/admin-guard";
 import { revalidateTourPublicPaths } from "@/lib/admin/tour-revalidation";
 import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
 import { adminTourSchema } from "@/lib/validations";
@@ -8,11 +7,6 @@ import { adminTourSchema } from "@/lib/validations";
 type TourApiProps = {
   params: Promise<{ id: string }>;
 };
-
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  return Boolean(session);
-}
 
 async function findTourForRevalidation(id: string) {
   return prisma.tour.findFirst({
@@ -22,9 +16,8 @@ async function findTourForRevalidation(id: string) {
 }
 
 export async function PUT(request: Request, { params }: TourApiProps) {
-  if (!(await requireAdmin())) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi({ resource: "tours", action: "update" });
+  if (!guard.ok) return guard.response;
 
   const { id } = await params;
   const payload = await request.json().catch(() => null);
@@ -76,9 +69,8 @@ export async function PUT(request: Request, { params }: TourApiProps) {
 }
 
 export async function DELETE(_request: Request, { params }: TourApiProps) {
-  if (!(await requireAdmin())) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi({ resource: "tours", action: "delete" });
+  if (!guard.ok) return guard.response;
 
   if (!hasConfiguredDatabase()) {
     return NextResponse.json(

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { canWriteAdminResource } from "@/lib/admin/permissions";
+import { getCurrentAdminUser } from "@/lib/api/admin-guard";
 import { getAdminSummary } from "@/lib/data/admin";
 
 export const metadata = {
@@ -7,6 +9,8 @@ export const metadata = {
 
 export default async function AdminDashboardPage() {
   const summary = await getAdminSummary();
+  const currentUser = await getCurrentAdminUser();
+  const role = currentUser?.role || "VIEWER";
   const cards = [
     ["Tours", summary.tourCount],
     ["Destinations", summary.destinationCount],
@@ -26,12 +30,16 @@ export default async function AdminDashboardPage() {
           </h1>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Link className="btn-primary" href="/admin/tours">
-            Add Tour
-          </Link>
-          <Link className="btn-secondary" href="/admin/blog">
-            Add Blog Post
-          </Link>
+          {canWriteAdminResource(role, "tours", "create") ? (
+            <Link className="btn-primary" href="/admin/tours">
+              Add Tour
+            </Link>
+          ) : null}
+          {canWriteAdminResource(role, "blog", "create") ? (
+            <Link className="btn-secondary" href="/admin/blog">
+              Add Blog Post
+            </Link>
+          ) : null}
           <Link className="btn-secondary" href="/admin/inquiries">
             View Inquiries
           </Link>

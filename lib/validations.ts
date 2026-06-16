@@ -169,6 +169,41 @@ export const adminSettingsSchema = z.object({
   homepageTrustItem3: z.string().trim().optional(),
 });
 
+const adminRoleSchema = z.enum(["SUPER_ADMIN", "ADMIN", "EDITOR", "VIEWER"]);
+const adminPasswordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters.")
+  .regex(/[A-Za-z]/, "Password must include at least one letter.")
+  .regex(/\d/, "Password must include at least one number.");
+
+export const adminUserCreateSchema = z
+  .object({
+    name: z.string().trim().min(2, "Add a name."),
+    email: z.string().trim().email("Add a valid email.").toLowerCase(),
+    password: adminPasswordSchema,
+    confirmPassword: z.string(),
+    role: adminRoleSchema,
+    active: z.boolean(),
+  })
+  .refine((value) => value.password === value.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+  });
+
+export const adminUserUpdateSchema = z
+  .object({
+    name: z.string().trim().min(2, "Add a name."),
+    email: z.string().trim().email("Add a valid email.").toLowerCase(),
+    role: adminRoleSchema,
+    active: z.boolean(),
+    password: adminPasswordSchema.optional().or(z.literal("")),
+    confirmPassword: z.string().optional().or(z.literal("")),
+  })
+  .refine((value) => !value.password || value.password === value.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+  });
+
 export type TripPlannerValues = z.infer<typeof tripPlannerSchema>;
 export type ContactValues = z.infer<typeof contactSchema>;
 export type TourInquiryValues = z.infer<typeof tourInquirySchema>;
@@ -178,3 +213,5 @@ export type AdminFaqValues = z.infer<typeof adminFaqSchema>;
 export type AdminGalleryImageValues = z.infer<typeof adminGalleryImageSchema>;
 export type AdminDestinationValues = z.infer<typeof adminDestinationSchema>;
 export type AdminSettingsValues = z.infer<typeof adminSettingsSchema>;
+export type AdminUserCreateValues = z.infer<typeof adminUserCreateSchema>;
+export type AdminUserUpdateValues = z.infer<typeof adminUserUpdateSchema>;

@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";
+import { getCurrentAdminUser } from "@/lib/api/admin-guard";
 import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
 
 type ProfilePayload = {
@@ -20,8 +19,8 @@ function passwordIsStrongEnough(password: string) {
 }
 
 export async function PUT(request: Request) {
-  const session = await getServerSession(authOptions);
-  const email = session?.user?.email?.toLowerCase().trim();
+  const currentUser = await getCurrentAdminUser();
+  const email = currentUser?.email.toLowerCase().trim();
 
   if (!email) {
     return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });

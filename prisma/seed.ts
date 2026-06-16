@@ -5,17 +5,49 @@ import { blogArticles } from "../lib/content";
 const prisma = new PrismaClient();
 
 async function main() {
-  const password = await bcrypt.hash("Admin2024!", 12);
+  const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase().trim() || "admin@jacktoursluxor.com";
+  const adminPassword = process.env.ADMIN_PASSWORD || "ChangeMe123!";
+  const legacyPassword = "Admin2024!";
+  const password = await bcrypt.hash(process.env.ADMIN_PASSWORD ? adminPassword : legacyPassword, 12);
 
-  await prisma.adminUser.upsert({
-    where: { email: "admin@jacktoursluxor.com" },
-    update: { password, name: "Jack Egypt Tour Admin" },
-    create: {
-      email: "admin@jacktoursluxor.com",
-      password,
-      name: "Jack Egypt Tour Admin",
-    },
-  });
+  const existingSuperAdmin = await prisma.adminUser.findFirst({ where: { role: "SUPER_ADMIN" } });
+  const existingUsersCount = await prisma.adminUser.count();
+
+  if (!existingSuperAdmin && existingUsersCount > 0) {
+    const firstUser = await prisma.adminUser.findFirst({ orderBy: { createdAt: "asc" } });
+    if (firstUser) {
+      await prisma.adminUser.update({
+        where: { id: firstUser.id },
+        data: { role: "SUPER_ADMIN", active: true },
+      });
+      console.log(`Super Admin: ${firstUser.email} / existing password`);
+    }
+  }
+
+  if (existingUsersCount === 0) {
+    await prisma.adminUser.create({
+      data: {
+        email: adminEmail,
+        password,
+        name: "Jack Egypt Tour Admin",
+        role: "SUPER_ADMIN",
+        active: true,
+      },
+    });
+    console.log(`Super Admin: ${adminEmail} / ${process.env.ADMIN_PASSWORD ? adminPassword : legacyPassword}`);
+  } else {
+    await prisma.adminUser.upsert({
+      where: { email: "admin@jacktoursluxor.com" },
+      update: { password, name: "Jack Egypt Tour Admin", active: true },
+      create: {
+        email: "admin@jacktoursluxor.com",
+        password,
+        name: "Jack Egypt Tour Admin",
+        role: "SUPER_ADMIN",
+        active: true,
+      },
+    });
+  }
 
   const destinations = [
     { slug: "luxor", name: "Luxor", subtitle: "Heart of Ancient Egypt", region: "Upper Egypt", type: "CITY" as const, heroImage: "/photos/luxor-temple.jpg", overview: "Temples, tombs, and private Egyptologist-led journeys through ancient Thebes." },
