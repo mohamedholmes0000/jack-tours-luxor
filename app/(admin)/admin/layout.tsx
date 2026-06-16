@@ -12,7 +12,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-[var(--color-gray-50)] lg:grid lg:grid-cols-[280px_1fr]">
-      <AdminSidebar />
+      <AdminSidebar
+        user={{
+          name: session.user?.name,
+          email: session.user?.email,
+        }}
+      />
       <main className="min-w-0 p-5 md:p-8">{children}</main>
     </div>
   );
