@@ -1,28 +1,78 @@
-import Image from "next/image";
+import Link from "next/link";
+import { AdminGalleryGrid, type AdminGalleryCard } from "@/components/admin/admin-gallery-grid";
 import { DatabaseNotice } from "@/components/admin/database-notice";
-import { GalleryImageForm } from "@/components/admin/simple-cms-forms";
 import { canWriteAdminResource } from "@/lib/admin/permissions";
 import { getCurrentAdminUser } from "@/lib/api/admin-guard";
-import { getAdminGalleryImages } from "@/lib/data/admin";
+import { getAdminGalleryCategories, getAdminGalleryImages } from "@/lib/data/admin";
 import { hasConfiguredDatabase } from "@/lib/data/safe-db";
-import { safeImageSrc } from "@/lib/images";
 
 export const metadata = { title: "Admin Gallery" };
 
 export default async function AdminGalleryPage() {
-  const images = await getAdminGalleryImages();
+  const [images, categories] = await Promise.all([getAdminGalleryImages(), getAdminGalleryCategories()]);
   const hasDb = hasConfiguredDatabase();
   const currentUser = await getCurrentAdminUser();
-  const canWriteGallery = canWriteAdminResource(currentUser?.role || "VIEWER", "gallery", "update");
+  const role = currentUser?.role || "VIEWER";
+  const canCreateGallery = canWriteAdminResource(role, "gallery", "create");
+  const canEditGallery = canWriteAdminResource(role, "gallery", "update");
+  const canDeleteGallery = canWriteAdminResource(role, "gallery", "delete");
+  const cards: AdminGalleryCard[] = images.map((image) => ({
+    active: image.active,
+    alt: image.alt,
+    caption: image.caption,
+    category: image.categoryRef?.name || image.category,
+    createdAt: image.createdAt.toISOString(),
+    id: image.id,
+    order: image.order,
+    title: image.title,
+    url: image.url,
+  }));
+  const categoryNames = Array.from(
+    new Set([
+      ...categories.map((category) => category.name),
+      ...images.map((image) => image.categoryRef?.name || image.category).filter(Boolean),
+    ]),
+  ) as string[];
+
   return (
     <div>
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-gold)]">Gallery</p>
-      <h1 className="mt-3 font-serif text-5xl font-semibold text-[var(--color-navy)]">Gallery manager</h1>
-      <div className="mt-6">{!hasDb ? <DatabaseNotice /> : null}</div>
-      <div className="mt-8 grid gap-6">
-        {canWriteGallery ? <GalleryImageForm /> : null}
-        {images.length ? images.map((image) => <div key={image.id} className="grid gap-4 lg:grid-cols-[180px_1fr]"><div className="relative min-h-40 overflow-hidden bg-[var(--color-gray-100)]"><Image src={safeImageSrc(image.url)} alt={image.alt} fill sizes="180px" className="object-cover" /></div>{canWriteGallery ? <GalleryImageForm id={image.id} initialValues={{ url: image.url, alt: image.alt, category: image.category ?? "Experiences", relatedTourSlug: image.relatedTourSlug ?? "", order: image.order }} /> : <div className="border border-[var(--color-gray-100)] bg-white p-5 text-sm text-[var(--color-gray-600)]"><p className="font-semibold text-[var(--color-navy)]">{image.alt}</p><p className="mt-2">{image.category ?? "Experiences"}</p></div>}</div>) : <p className="border border-[var(--color-gray-100)] bg-white p-5 text-sm text-[var(--color-gray-600)]">No database gallery images found. The public page still uses static fallback content.</p>}
+      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <div>
+          <h1 className="font-serif text-[32px] font-semibold leading-tight text-[var(--color-navy)]">
+            Gallery
+          </h1>
+          <p className="mt-2 text-sm text-[var(--color-navy)]/60">
+            {images.length} {images.length === 1 ? "image" : "images"} in your gallery
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Link
+            className="inline-flex items-center justify-center rounded-md border border-[rgb(214_173_84_/_45%)] px-5 py-3 text-sm font-bold uppercase tracking-[0.1em] text-[var(--color-navy)] transition hover:border-[var(--color-gold)] hover:bg-white"
+            href="/admin/gallery/categories"
+          >
+            Manage Categories
+          </Link>
+          {canCreateGallery ? (
+            <Link
+              className="inline-flex items-center justify-center rounded-md bg-[var(--color-gold)] px-6 py-3 text-sm font-bold uppercase tracking-[0.1em] text-[var(--color-navy)] transition hover:bg-[var(--color-gold-light)]"
+              href="/admin/gallery/new"
+            >
+              + Add New Image
+            </Link>
+          ) : null}
+        </div>
       </div>
+
+      <div className="mt-6 h-px w-full bg-[rgb(214_173_84_/_35%)]" />
+      <div className="mt-6">{!hasDb ? <DatabaseNotice /> : null}</div>
+
+      <AdminGalleryGrid
+        canCreate={canCreateGallery}
+        canDelete={canDeleteGallery}
+        canEdit={canEditGallery}
+        categories={categoryNames}
+        images={cards}
+      />
     </div>
   );
 }

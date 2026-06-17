@@ -454,7 +454,33 @@ export async function getAdminFaqs() {
 
 export async function getAdminGalleryImages() {
   return tryDatabase(
-    async () => prisma.galleryImage.findMany({ orderBy: [{ order: "asc" }, { createdAt: "desc" }] }),
+    async () =>
+      prisma.galleryImage.findMany({
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+        include: { categoryRef: true },
+      }),
+    [],
+  );
+}
+
+export async function getAdminGalleryImage(id: string) {
+  return tryDatabase(
+    async () =>
+      prisma.galleryImage.findUnique({
+        where: { id },
+        include: { categoryRef: true },
+      }),
+    null,
+  );
+}
+
+export async function getAdminGalleryCategories() {
+  return tryDatabase(
+    async () =>
+      prisma.galleryCategory.findMany({
+        orderBy: [{ order: "asc" }, { name: "asc" }],
+        include: { _count: { select: { images: true } } },
+      }),
     [],
   );
 }

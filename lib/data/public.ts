@@ -328,16 +328,18 @@ export async function getFaqsSafe() {
 export async function getGalleryImagesSafe(): Promise<GalleryImage[]> {
   return tryDatabase(
     async () => {
-      const images = await prisma.galleryImage.findMany({ orderBy: { order: "asc" } });
+      const images = await prisma.galleryImage.findMany({ where: { active: true }, orderBy: { order: "asc" } });
       return images.length
         ? images.map((image) => ({
             url: safeImageSrc(image.url, galleryImages[0].url),
             alt: image.alt,
-            title: image.alt,
+            title: image.title || image.alt,
             description:
-              image.category === "Experiences"
+              image.description ||
+              image.caption ||
+              (image.category === "Experiences"
                 ? "A private Egypt travel moment from the gallery."
-                : `A ${image.category ?? "Egypt"} gallery image from Jack Egypt Tour.`,
+                : `A ${image.category ?? "Egypt"} gallery image from Jack Egypt Tour.`),
             category: (image.category ?? "Experiences") as GalleryImage["category"],
           }))
         : galleryImages;
