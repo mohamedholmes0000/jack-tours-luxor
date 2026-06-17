@@ -2,7 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
 import { formatPrice, type Tour } from "@/lib/content";
-import { getHomepageCityDestinationsSafe, getToursSafe } from "@/lib/data/public";
+import {
+  getHomepageCityDestinationsSafe,
+  getHomepageSettingsSafe,
+  getToursSafe,
+} from "@/lib/data/public";
 import { getPublicSettings } from "@/lib/data/settings";
 import { safeImageSrc } from "@/lib/images";
 
@@ -159,6 +163,36 @@ function cleanHeroText(settings: Awaited<ReturnType<typeof getPublicSettings>>) 
   };
 }
 
+function splitHeroHeadline(headline: string, accent: string) {
+  const cleanHeadline = cleanSettingText(headline) || approvedHeroHeadline;
+  const cleanAccent = cleanSettingText(accent) || approvedHeroHeadlineAccent;
+  const accentIndex = cleanHeadline.toLowerCase().indexOf(cleanAccent.toLowerCase());
+
+  if (accentIndex === -1) {
+    return {
+      accent: cleanAccent,
+      headline: cleanHeadline,
+      showAccent: Boolean(cleanAccent && cleanHeadline !== approvedHeroHeadline),
+    };
+  }
+
+  return {
+    accent: cleanHeadline.slice(accentIndex, accentIndex + cleanAccent.length).trim(),
+    headline: cleanHeadline.slice(0, accentIndex).trim(),
+    showAccent: true,
+  };
+}
+
+function normalizeHeroTrustBadges(value: string[]) {
+  const fallback = [
+    "Local Egypt Travel Experts",
+    "Private Tailor-Made Tours",
+    "WhatsApp Support 24/7",
+  ];
+
+  return [0, 1, 2].map((index) => cleanSettingText(value[index]) || fallback[index]);
+}
+
 function primaryCategoryLabel(category: string) {
   return category.replace(/\s*·\s*Custom$/i, "").replace(/\s*\/\s*Custom$/i, "").trim();
 }
@@ -292,22 +326,29 @@ function JourneyCard({ tour, eager = false }: { tour: Tour; eager?: boolean }) {
 // ============================================================================
 
 export async function Homepage() {
-  const [safeTours, settings] = await Promise.all([
+  const [safeTours, settings, homepageSettings] = await Promise.all([
     getToursSafe(),
     getPublicSettings(),
+    getHomepageSettingsSafe(),
   ]);
   const destinationCities = await getHomepageCityDestinationsSafe();
   const featuredTours = safeTours.filter((tour) => tour.featured).slice(0, 3);
-  const heroImage = safeImageSrc(settings.homepageHeroImage, fallbackHeroImage);
-  const heroCtaLabel =
-    settings.homepageHeroPrimaryCtaLabel || "Plan My Egypt Journey";
-  const heroCtaHref = "/trip-planner";
-  const heroText = cleanHeroText(settings);
-  const microTrustLine = [
-    settings.homepageTrustItem1,
-    settings.homepageTrustItem2,
-    settings.homepageTrustItem3,
-  ].filter(Boolean);
+  const legacyHeroText = cleanHeroText(settings);
+  const heroImage = safeImageSrc(homepageSettings.heroBackgroundImage, fallbackHeroImage);
+  const heroCtaLabel = homepageSettings.heroPrimaryCtaLabel || "Plan My Egypt Journey";
+  const heroCtaHref = homepageSettings.heroPrimaryCtaHref || "/trip-planner";
+  const heroSecondaryLabel = homepageSettings.heroSecondaryLinkLabel || "Or Book Now";
+  const heroSecondaryHref = homepageSettings.heroSecondaryLinkHref || "/trip-planner";
+  const heroHeadline = splitHeroHeadline(
+    homepageSettings.heroHeadline || `${legacyHeroText.headline} ${legacyHeroText.accent}`,
+    homepageSettings.heroHeadlineAccent || legacyHeroText.accent,
+  );
+  const heroText = {
+    eyebrow: cleanSettingText(homepageSettings.heroEyebrow) || legacyHeroText.eyebrow,
+    subheadline:
+      cleanSettingText(homepageSettings.heroSubheadline) || legacyHeroText.subheadline,
+  };
+  const microTrustLine = normalizeHeroTrustBadges(homepageSettings.heroTrustBadges);
 
   return (
     <div data-mobile-cta="true" className="flex flex-col">
@@ -315,7 +356,8 @@ export async function Homepage() {
           1 · HERO — full-bleed photography, slow Ken Burns, type in
           a margin (does not cover the temple subject). Single CTA.
       ============================================================ */}
-      <section data-home-hero="true" className="relative isolate order-1 overflow-hidden bg-[var(--color-navy)] text-white">
+      {homepageSettings.heroVisible ? (
+        <section data-home-hero="true" className="relative isolate order-1 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
             src={heroImage}
@@ -342,11 +384,15 @@ export async function Homepage() {
 
           <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
             <h1 className="font-serif font-bold leading-[1.02] text-white text-[clamp(2.6rem,7vw,6rem)]">
-              {heroText.headline}
-              {" "}
-              <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
-                {heroText.accent}
-              </span>
+              {heroHeadline.headline}
+              {heroHeadline.showAccent ? (
+                <>
+                  {" "}
+                  <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
+                    {heroHeadline.accent}
+                  </span>
+                </>
+              ) : null}
             </h1>
             <p className="mt-4 max-w-md text-[0.98rem] leading-7 text-white/86 sm:mt-7 sm:text-lg sm:leading-8 lg:max-w-lg">
               {heroText.subheadline}
@@ -357,10 +403,10 @@ export async function Homepage() {
               </Link>
               <Link
                 className="group hidden items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85 sm:inline-flex"
-                href={heroCtaHref}
+                href={heroSecondaryHref}
               >
                 <span className="h-px w-8 bg-[var(--color-gold-light)] transition-all duration-300 group-hover:w-12" />
-                Or Book Now
+                {heroSecondaryLabel}
               </Link>
             </div>
 
@@ -389,7 +435,8 @@ export async function Homepage() {
             <span aria-hidden className="scroll-cue h-7 w-px bg-white/50" />
           </div>
         </div>
-      </section>
+        </section>
+      ) : null}
 
       {/* ============================================================
           2 · DESTINATIONS MARQUEE — auto-scrolling cinematic strip.

@@ -12,6 +12,10 @@ import {
   type Tour,
 } from "@/lib/content";
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
+import {
+  mapHomepageSettingsToEditorValues,
+  type HomepageEditorValues,
+} from "@/lib/homepage-settings";
 import { safeImageSrc } from "@/lib/images";
 
 const cityNames = ["Luxor", "Aswan", "Cairo", "Hurghada", "Abu Simbel", "Red Sea"];
@@ -345,5 +349,15 @@ export async function getGalleryImagesSafe(): Promise<GalleryImage[]> {
         : galleryImages;
     },
     galleryImages,
+  );
+}
+
+export async function getHomepageSettingsSafe(): Promise<HomepageEditorValues> {
+  return tryDatabase(
+    async () => {
+      const settings = await prisma.homepageSettings.findUnique({ where: { id: "homepage" } });
+      return mapHomepageSettingsToEditorValues(settings);
+    },
+    mapHomepageSettingsToEditorValues(null),
   );
 }
