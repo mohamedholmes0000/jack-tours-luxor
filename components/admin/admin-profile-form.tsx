@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FormField, inputClassName } from "@/components/forms/form-field";
 
@@ -17,6 +18,7 @@ type ApiResult = {
     name: string;
     email: string;
   };
+  emailChanged?: boolean;
 };
 
 function passwordScore(password: string) {
@@ -31,9 +33,12 @@ function passwordScore(password: string) {
 export function AdminProfileForm({ initialName, email, canEdit }: AdminProfileFormProps) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
+  const [profileEmail, setProfileEmail] = useState(email);
+  const [emailCurrentPassword, setEmailCurrentPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showEmailFields, setShowEmailFields] = useState(false);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
@@ -57,6 +62,8 @@ export function AdminProfileForm({ initialName, email, canEdit }: AdminProfileFo
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
+          email: showEmailFields ? profileEmail : email,
+          emailCurrentPassword: showEmailFields ? emailCurrentPassword : "",
           currentPassword: showPasswordFields ? currentPassword : "",
           newPassword: showPasswordFields ? newPassword : "",
           confirmPassword: showPasswordFields ? confirmPassword : "",
@@ -73,8 +80,16 @@ export function AdminProfileForm({ initialName, email, canEdit }: AdminProfileFo
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      setEmailCurrentPassword("");
       setShowPasswordFields(false);
+      setShowEmailFields(false);
       if (data.user?.name) setName(data.user.name);
+      if (data.user?.email) setProfileEmail(data.user.email);
+      if (data.emailChanged) {
+        setResult({ ok: true, message: "Email updated. Please sign in again with the new email." });
+        await signOut({ callbackUrl: "/admin/login" });
+        return;
+      }
       router.refresh();
     } catch {
       setResult({ ok: false, message: "Profile could not be saved." });
@@ -98,8 +113,56 @@ export function AdminProfileForm({ initialName, email, canEdit }: AdminProfileFo
           />
         </FormField>
         <FormField label="Email">
-          <input className={`${inputClassName} cursor-not-allowed opacity-70`} disabled type="email" value={email} />
+          <input className={`${inputClassName} cursor-not-allowed opacity-70`} disabled type="email" value={profileEmail} />
         </FormField>
+      </div>
+
+      <div className="rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-gray-50)] p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-[var(--color-navy)]">Email</p>
+            <p className="mt-1 text-sm text-[var(--color-gray-600)]">
+              Changing your email will require you to login with the new email next time.
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={!canEdit || isSaving}
+            onClick={() => {
+              setShowEmailFields((value) => !value);
+              setProfileEmail(email);
+              setEmailCurrentPassword("");
+            }}
+            className="border border-[rgb(214_173_84_/_34%)] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-navy)] transition hover:border-[var(--color-gold)] hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {showEmailFields ? "Cancel" : "Change Email"}
+          </button>
+        </div>
+
+        {showEmailFields ? (
+          <div className="mt-5 grid gap-5 md:grid-cols-2">
+            <FormField label="New email">
+              <input
+                autoComplete="email"
+                className={inputClassName}
+                disabled={!canEdit || isSaving}
+                onChange={(event) => setProfileEmail(event.target.value)}
+                type="email"
+                value={profileEmail}
+              />
+            </FormField>
+            <FormField label="Current password">
+              <input
+                autoComplete="current-password"
+                className={inputClassName}
+                disabled={!canEdit || isSaving}
+                onChange={(event) => setEmailCurrentPassword(event.target.value)}
+                type="password"
+                value={emailCurrentPassword}
+              />
+            </FormField>
+          </div>
+        ) : null}
       </div>
 
       <div className="rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-gray-50)] p-4">

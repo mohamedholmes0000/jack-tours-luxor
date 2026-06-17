@@ -5,6 +5,8 @@ import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
 
 type ProfilePayload = {
   name?: unknown;
+  email?: unknown;
+  emailCurrentPassword?: unknown;
   currentPassword?: unknown;
   newPassword?: unknown;
   confirmPassword?: unknown;
@@ -16,6 +18,10 @@ function cleanText(value: unknown) {
 
 function passwordIsStrongEnough(password: string) {
   return password.length >= 8 && /[A-Za-z]/.test(password) && /\d/.test(password);
+}
+
+function emailIsValid(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 export async function PUT(request: Request) {
@@ -47,16 +53,43 @@ export async function PUT(request: Request) {
   }
 
   const name = cleanText(payload.name);
+  const nextEmail = cleanText(payload.email).toLowerCase();
+  const emailCurrentPassword = cleanText(payload.emailCurrentPassword);
   const currentPassword = cleanText(payload.currentPassword);
   const newPassword = cleanText(payload.newPassword);
   const confirmPassword = cleanText(payload.confirmPassword);
-  const data: { name?: string; password?: string } = {};
+  const data: { name?: string; email?: string; password?: string } = {};
 
   if (!name || name.length < 2) {
     return NextResponse.json({ ok: false, message: "Name must be at least 2 characters." }, { status: 400 });
   }
 
   data.name = name;
+
+  if (nextEmail && nextEmail !== user.email) {
+    if (!emailIsValid(nextEmail)) {
+      return NextResponse.json({ ok: false, message: "Add a valid email address." }, { status: 400 });
+    }
+
+    if (!emailCurrentPassword) {
+      return NextResponse.json(
+        { ok: false, message: "Current password is required to change email." },
+        { status: 400 },
+      );
+    }
+
+    const emailPasswordMatches = await bcrypt.compare(emailCurrentPassword, user.password);
+    if (!emailPasswordMatches) {
+      return NextResponse.json({ ok: false, message: "Current password is incorrect." }, { status: 400 });
+    }
+
+    const existingEmailUser = await prisma.adminUser.findUnique({ where: { email: nextEmail } });
+    if (existingEmailUser && existingEmailUser.id !== user.id) {
+      return NextResponse.json({ ok: false, message: "This email is already used by another admin user." }, { status: 409 });
+    }
+
+    data.email = nextEmail;
+  }
 
   if (newPassword || confirmPassword || currentPassword) {
     if (!currentPassword) {
@@ -88,5 +121,5 @@ export async function PUT(request: Request) {
     select: { email: true, name: true },
   });
 
-  return NextResponse.json({ ok: true, user: updatedUser });
+  return NextResponse.json({ ok: true, user: updatedUser, emailChanged: Boolean(data.email) });
 }

@@ -5,10 +5,9 @@ import { blogArticles } from "../lib/content";
 const prisma = new PrismaClient();
 
 async function main() {
-  const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase().trim() || "admin@jacktoursluxor.com";
-  const adminPassword = process.env.ADMIN_PASSWORD || "ChangeMe123!";
-  const legacyPassword = "Admin2024!";
-  const password = await bcrypt.hash(process.env.ADMIN_PASSWORD ? adminPassword : legacyPassword, 12);
+  const adminEmail = "admin@jacktoursluxor.com";
+  const adminPassword = "JackAdmin2026!";
+  const password = await bcrypt.hash(adminPassword, 12);
 
   const existingSuperAdmin = await prisma.adminUser.findFirst({ where: { role: "SUPER_ADMIN" } });
   const existingUsersCount = await prisma.adminUser.count();
@@ -24,30 +23,18 @@ async function main() {
     }
   }
 
-  if (existingUsersCount === 0) {
-    await prisma.adminUser.create({
-      data: {
-        email: adminEmail,
-        password,
-        name: "Jack Egypt Tour Admin",
-        role: "SUPER_ADMIN",
-        active: true,
-      },
-    });
-    console.log(`Super Admin: ${adminEmail} / ${process.env.ADMIN_PASSWORD ? adminPassword : legacyPassword}`);
-  } else {
-    await prisma.adminUser.upsert({
-      where: { email: "admin@jacktoursluxor.com" },
-      update: { password, name: "Jack Egypt Tour Admin", active: true },
-      create: {
-        email: "admin@jacktoursluxor.com",
-        password,
-        name: "Jack Egypt Tour Admin",
-        role: "SUPER_ADMIN",
-        active: true,
-      },
-    });
-  }
+  await prisma.adminUser.upsert({
+    where: { email: adminEmail },
+    update: { password, name: "Jack Egypt Tour Admin", role: "SUPER_ADMIN", active: true },
+    create: {
+      email: adminEmail,
+      password,
+      name: "Jack Egypt Tour Admin",
+      role: "SUPER_ADMIN",
+      active: true,
+    },
+  });
+  console.log(`Super Admin: ${adminEmail} / ${adminPassword}`);
 
   const destinations = [
     { slug: "luxor", name: "Luxor", subtitle: "Heart of Ancient Egypt", region: "Upper Egypt", type: "CITY" as const, heroImage: "/photos/luxor-temple.jpg", overview: "Temples, tombs, and private Egyptologist-led journeys through ancient Thebes." },
