@@ -3,7 +3,15 @@ import { revalidatePath } from "next/cache";
 import { requireAdminApi } from "@/lib/api/admin-guard";
 import { getAdminHomepageSettings } from "@/lib/data/admin";
 import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
-import { defaultHomepageEditorValues, homepageEditorSchema } from "@/lib/homepage-settings";
+import {
+  defaultHomepageEditorValues,
+  homepageEditorPatchSchema,
+  homepageEditorSchema,
+} from "@/lib/homepage-settings";
+
+function omitUndefined<T extends Record<string, unknown>>(value: T) {
+  return Object.fromEntries(Object.entries(value).filter(([, fieldValue]) => fieldValue !== undefined));
+}
 
 export async function GET() {
   const guard = await requireAdminApi();
@@ -17,8 +25,9 @@ export async function PUT(request: Request) {
   const guard = await requireAdminApi({ resource: "pages", action: "update" });
   if (!guard.ok) return guard.response;
 
-  const parsed = homepageEditorSchema.safeParse(await request.json().catch(() => null));
+  const parsed = homepageEditorPatchSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
+    console.error("Invalid homepage settings payload", parsed.error.flatten());
     return NextResponse.json(
       { ok: false, message: "Invalid homepage settings.", errors: parsed.error.flatten() },
       { status: 400 },
@@ -32,7 +41,11 @@ export async function PUT(request: Request) {
     );
   }
 
-  const values = parsed.data;
+  const currentValues = await getAdminHomepageSettings();
+  const values = homepageEditorSchema.parse({
+    ...currentValues,
+    ...omitUndefined(parsed.data),
+  });
   const updateData = {
     destinationsEyebrow: values.destinationsEyebrow || null,
     destinationsHeading: values.destinationsHeading || null,

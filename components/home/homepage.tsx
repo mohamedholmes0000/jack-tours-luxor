@@ -164,21 +164,42 @@ function cleanHeroText(settings: Awaited<ReturnType<typeof getPublicSettings>>) 
 }
 
 function splitHeroHeadline(headline: string, accent: string) {
-  const cleanHeadline = cleanSettingText(headline) || approvedHeroHeadline;
-  const cleanAccent = cleanSettingText(accent) || approvedHeroHeadlineAccent;
+  let cleanHeadline = cleanSettingText(headline) || `${approvedHeroHeadline} ${approvedHeroHeadlineAccent}`;
+  const cleanAccent = cleanSettingText(accent);
+
+  if (!cleanAccent) {
+    return {
+      accent: "",
+      after: "",
+      before: cleanHeadline,
+      showAccent: false,
+    };
+  }
+
+  const headlineContainsAccent = cleanHeadline.toLowerCase().includes(cleanAccent.toLowerCase());
+  if (
+    !headlineContainsAccent &&
+    cleanHeadline === approvedHeroHeadline &&
+    cleanAccent === approvedHeroHeadlineAccent
+  ) {
+    cleanHeadline = `${cleanHeadline} ${cleanAccent}`;
+  }
+
   const accentIndex = cleanHeadline.toLowerCase().indexOf(cleanAccent.toLowerCase());
 
   if (accentIndex === -1) {
     return {
-      accent: cleanAccent,
-      headline: cleanHeadline,
-      showAccent: Boolean(cleanAccent && cleanHeadline !== approvedHeroHeadline),
+      accent: "",
+      after: "",
+      before: cleanHeadline,
+      showAccent: false,
     };
   }
 
   return {
     accent: cleanHeadline.slice(accentIndex, accentIndex + cleanAccent.length).trim(),
-    headline: cleanHeadline.slice(0, accentIndex).trim(),
+    after: cleanHeadline.slice(accentIndex + cleanAccent.length),
+    before: cleanHeadline.slice(0, accentIndex),
     showAccent: true,
   };
 }
@@ -384,15 +405,13 @@ export async function Homepage() {
 
           <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
             <h1 className="font-serif font-bold leading-[1.02] text-white text-[clamp(2.6rem,7vw,6rem)]">
-              {heroHeadline.headline}
+              {heroHeadline.before}
               {heroHeadline.showAccent ? (
-                <>
-                  {" "}
-                  <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
-                    {heroHeadline.accent}
-                  </span>
-                </>
+                <span className="font-accent-serif italic text-[var(--color-gold-light)]">
+                  {heroHeadline.accent}
+                </span>
               ) : null}
+              {heroHeadline.after}
             </h1>
             <p className="mt-4 max-w-md text-[0.98rem] leading-7 text-white/86 sm:mt-7 sm:text-lg sm:leading-8 lg:max-w-lg">
               {heroText.subheadline}

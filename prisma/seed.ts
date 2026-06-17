@@ -189,7 +189,7 @@ async function main() {
     update: {
       heroBackgroundImage: "/photos/karnak.jpg",
       heroEyebrow: "Private Egypt · est. Luxor",
-      heroHeadline: "Egypt, privately",
+      heroHeadline: "Egypt, privately composed.",
       heroHeadlineAccent: "composed.",
       heroSubheadline:
         "Tailor-made Egypt journeys with private guides, elegant pacing, and calm planning from a Luxor-based team.",
@@ -262,7 +262,7 @@ async function main() {
       id: "homepage",
       heroBackgroundImage: "/photos/karnak.jpg",
       heroEyebrow: "Private Egypt · est. Luxor",
-      heroHeadline: "Egypt, privately",
+      heroHeadline: "Egypt, privately composed.",
       heroHeadlineAccent: "composed.",
       heroSubheadline:
         "Tailor-made Egypt journeys with private guides, elegant pacing, and calm planning from a Luxor-based team.",
