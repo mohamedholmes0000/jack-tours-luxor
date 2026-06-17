@@ -9,6 +9,7 @@ export type AdminResource =
   | "faqs"
   | "inquiries"
   | "settings"
+  | "pages"
   | "users"
   | "profile";
 
@@ -38,7 +39,7 @@ export function canAccessAdminResource(role: AdminRole, resource: AdminResource)
   if (resource === "users") return false;
   if (resource === "profile" || resource === "dashboard") return true;
   if (role === "ADMIN") return true;
-  if (role === "EDITOR") return ["tours", "destinations", "gallery"].includes(resource);
+  if (role === "EDITOR") return ["tours", "destinations", "gallery", "pages"].includes(resource);
   if (role === "VIEWER") return true;
   return false;
 }
@@ -50,7 +51,7 @@ export function canWriteAdminResource(role: AdminRole, resource: AdminResource, 
   if (role === "ADMIN") return true;
   if (role === "EDITOR") {
     if (method === "delete") return false;
-    return ["tours", "destinations", "gallery", "profile"].includes(resource);
+    return ["tours", "destinations", "gallery", "pages", "profile"].includes(resource);
   }
   return false;
 }
@@ -64,6 +65,7 @@ export function resourceFromPath(pathname: string): AdminResource {
   if (pathname.startsWith("/admin/faqs")) return "faqs";
   if (pathname.startsWith("/admin/inquiries")) return "inquiries";
   if (pathname.startsWith("/admin/settings")) return "settings";
+  if (pathname.startsWith("/admin/pages")) return "pages";
   if (pathname.startsWith("/admin/profile")) return "profile";
   return "dashboard";
 }

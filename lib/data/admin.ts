@@ -1,5 +1,6 @@
 import { blogArticles, destinations, tours } from "@/lib/content";
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
+import { mapHomepageSettingsToEditorValues } from "@/lib/homepage-settings";
 import { getPublicSettings } from "@/lib/data/settings";
 import type {
   AdminBlogPostValues,
@@ -487,4 +488,14 @@ export async function getAdminGalleryCategories() {
 
 export async function getAdminSettings() {
   return getPublicSettings();
+}
+
+export async function getAdminHomepageSettings() {
+  return tryDatabase(
+    async () => {
+      const settings = await prisma.homepageSettings.findUnique({ where: { id: "homepage" } });
+      return mapHomepageSettingsToEditorValues(settings);
+    },
+    mapHomepageSettingsToEditorValues(null),
+  );
 }

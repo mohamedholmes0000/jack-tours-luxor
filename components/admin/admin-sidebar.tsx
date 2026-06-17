@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import { Home } from "lucide-react";
 import type { AdminRole } from "@prisma/client";
 import { roleLabels } from "@/lib/admin/permissions";
 
@@ -96,6 +97,7 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
   const role = user?.role || "ADMIN";
   const profileActive = pathname === "/admin/profile";
   const usersActive = pathname === "/admin/users" || pathname.startsWith("/admin/users/");
+  const homepageActive = pathname === "/admin/pages/homepage";
 
   return (
     <aside className="flex flex-col border-r border-[var(--color-gray-100)] bg-white p-5 lg:min-h-screen">
@@ -108,6 +110,23 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
         </span>
       </Link>
       <nav className="mt-8 grid gap-2">
+        <div className="mb-2">
+          <p className="mb-2 px-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-gray-600)]">
+            Pages
+          </p>
+          <Link
+            href="/admin/pages/homepage"
+            aria-current={homepageActive ? "page" : undefined}
+            className={`flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
+              homepageActive
+                ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
+                : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
+            }`}
+          >
+            <Home className="h-4 w-4" />
+            Homepage
+          </Link>
+        </div>
         {links.map((link) => (
           <Link
             key={link.href}

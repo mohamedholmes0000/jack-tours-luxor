@@ -14,7 +14,7 @@ const adminImageSource = z
     "Use an https image URL from a trusted host or a local /photos/ or /images/ path.",
   );
 
-const optionalAdminImageSource = adminImageSource.optional().or(z.literal(""));
+export const optionalAdminImageSource = adminImageSource.optional().or(z.literal(""));
 const adminImageListItem = adminImageSource.or(z.literal(""));
 
 export const inquirySchema = z.object({
