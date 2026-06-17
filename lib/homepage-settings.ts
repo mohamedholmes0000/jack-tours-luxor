@@ -41,10 +41,20 @@ export type HomepageServiceItem = {
   label: string;
 };
 
+export type HomepageStatItem = {
+  value: string;
+  label: string;
+};
+
 export type HomepageEditorValues = z.infer<typeof homepageEditorSchema>;
 
 const serviceItemSchema = z.object({
   icon: z.string().trim().min(1),
+  label: z.string().trim().min(1),
+});
+
+const statItemSchema = z.object({
+  value: z.string().trim().min(1),
   label: z.string().trim().min(1),
 });
 
@@ -60,6 +70,19 @@ export const homepageEditorSchema = z.object({
   heroSecondaryLinkLabel: z.string().trim().optional(),
   heroSecondaryLinkHref: z.string().trim().optional(),
   heroTrustBadges: z.array(z.string().trim()).length(3),
+  destinationsVisible: z.boolean(),
+  destinationsEyebrow: z.string().trim().optional(),
+  destinationsHeading: z.string().trim().optional(),
+  destinationsHeadingAccent: z.string().trim().optional(),
+  destinationsViewAllLabel: z.string().trim().optional(),
+  destinationsViewAllHref: z.string().trim().optional(),
+  featuredVisible: z.boolean(),
+  featuredEyebrow: z.string().trim().optional(),
+  featuredHeading: z.string().trim().optional(),
+  featuredHeadingAccent: z.string().trim().optional(),
+  featuredDescription: z.string().trim().optional(),
+  featuredViewAllLabel: z.string().trim().optional(),
+  featuredViewAllHref: z.string().trim().optional(),
   whyVisible: z.boolean(),
   whyEyebrow: z.string().trim().optional(),
   whyHeading: z.string().trim().optional(),
@@ -72,6 +95,21 @@ export const homepageEditorSchema = z.object({
   whyCollageImage3: optionalAdminImageSource,
   whyIncludedHeading: z.string().trim().optional(),
   whyServices: z.array(serviceItemSchema).length(6),
+  ourWorldVisible: z.boolean(),
+  ourWorldEyebrow: z.string().trim().optional(),
+  ourWorldHeading: z.string().trim().optional(),
+  ourWorldHeadingAccent: z.string().trim().optional(),
+  ourWorldBody: z.string().trim().optional(),
+  ourWorldImage: optionalAdminImageSource,
+  ourWorldReadMoreLabel: z.string().trim().optional(),
+  ourWorldReadMoreHref: z.string().trim().optional(),
+  statsVisible: z.boolean(),
+  statsItems: z.array(statItemSchema).length(4),
+  statsBackgroundImage: optionalAdminImageSource,
+  testimonialsVisible: z.boolean(),
+  testimonialsEyebrow: z.string().trim().optional(),
+  testimonialsHeading: z.string().trim().optional(),
+  testimonialsHeadingAccent: z.string().trim().optional(),
   finalCtaVisible: z.boolean(),
   finalCtaBackgroundImage: optionalAdminImageSource,
   finalCtaEyebrow: z.string().trim().optional(),
@@ -85,6 +123,19 @@ export const homepageEditorSchema = z.object({
 });
 
 export const defaultHomepageEditorValues: HomepageEditorValues = {
+  destinationsEyebrow: "Where we travel",
+  destinationsHeading: "From the Nile,",
+  destinationsHeadingAccent: "outward.",
+  destinationsViewAllHref: "/destinations",
+  destinationsViewAllLabel: "All destinations →",
+  destinationsVisible: true,
+  featuredDescription: "",
+  featuredEyebrow: "Featured journeys",
+  featuredHeading: "Polished private experiences,",
+  featuredHeadingAccent: "ready to tailor.",
+  featuredViewAllHref: "/tours",
+  featuredViewAllLabel: "View all tours",
+  featuredVisible: true,
   finalCtaBackgroundImage: "/photos/felucca.jpg",
   finalCtaDescription:
     "Tell us what you have in mind. We will shape the route, guide style, pacing, and logistics around you.",
@@ -112,6 +163,27 @@ export const defaultHomepageEditorValues: HomepageEditorValues = {
     "WhatsApp Support 24/7",
   ],
   heroVisible: true,
+  ourWorldBody:
+    "We are based in Luxor. We arrange private days at Karnak and the Valley of the Kings, slow Nile journeys to Aswan, dawn at Abu Simbel, and Red Sea finales. We work in small numbers, with trusted guides, on WhatsApp time. Everything else is negotiable.",
+  ourWorldEyebrow: "Our world",
+  ourWorldHeading: "A small team,",
+  ourWorldHeadingAccent: "quietly capable.",
+  ourWorldImage: "/photos/hatshepsut.jpg",
+  ourWorldReadMoreHref: "Luxor, Upper Egypt",
+  ourWorldReadMoreLabel: "Jack Egypt Tour",
+  ourWorldVisible: true,
+  statsBackgroundImage: "/photos/felucca.jpg",
+  statsItems: [
+    { value: "10+", label: "Years on the ground" },
+    { value: "1,000+", label: "Travelers hosted" },
+    { value: "50+", label: "Private routes" },
+    { value: "24/7", label: "WhatsApp support" },
+  ],
+  statsVisible: true,
+  testimonialsEyebrow: "Traveler stories",
+  testimonialsHeading: "Loved quietly,",
+  testimonialsHeadingAccent: "from everywhere.",
+  testimonialsVisible: true,
   whyCollageImage1: "/photos/karnak.jpg",
   whyCollageImage2: "/photos/hatshepsut.jpg",
   whyCollageImage3: "/photos/felucca.jpg",
@@ -150,6 +222,17 @@ function normalizeServices(value: unknown) {
   });
 }
 
+function normalizeStats(value: unknown) {
+  if (!Array.isArray(value)) return defaultHomepageEditorValues.statsItems;
+  return defaultHomepageEditorValues.statsItems.map((fallback, index) => {
+    const item = value[index] as Partial<HomepageStatItem> | undefined;
+    return {
+      value: item?.value || fallback.value,
+      label: item?.label || fallback.label,
+    };
+  });
+}
+
 export function mapHomepageSettingsToEditorValues(
   settings: Partial<Record<keyof HomepageEditorValues, unknown>> | null | undefined,
 ): HomepageEditorValues {
@@ -158,9 +241,15 @@ export function mapHomepageSettingsToEditorValues(
   return {
     ...defaultHomepageEditorValues,
     ...settings,
+    destinationsVisible: settings.destinationsVisible ?? defaultHomepageEditorValues.destinationsVisible,
     finalCtaVisible: settings.finalCtaVisible ?? defaultHomepageEditorValues.finalCtaVisible,
+    featuredVisible: settings.featuredVisible ?? defaultHomepageEditorValues.featuredVisible,
     heroTrustBadges: normalizeTrustBadges(settings.heroTrustBadges),
     heroVisible: settings.heroVisible ?? defaultHomepageEditorValues.heroVisible,
+    ourWorldVisible: settings.ourWorldVisible ?? defaultHomepageEditorValues.ourWorldVisible,
+    statsItems: normalizeStats(settings.statsItems),
+    statsVisible: settings.statsVisible ?? defaultHomepageEditorValues.statsVisible,
+    testimonialsVisible: settings.testimonialsVisible ?? defaultHomepageEditorValues.testimonialsVisible,
     whyServices: normalizeServices(settings.whyServices),
     whyVisible: settings.whyVisible ?? defaultHomepageEditorValues.whyVisible,
   } as HomepageEditorValues;

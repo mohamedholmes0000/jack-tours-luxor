@@ -27,7 +27,7 @@ export default async function AdminHomepageEditorPage() {
           Homepage Editor
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-navy)]/60">
-          Phase C1 includes Hero, Why Us, and Final CTA controls. Public homepage rendering will be wired in Phase D.
+          Edit the homepage section settings. Public homepage rendering will be wired in Phase D.
         </p>
         {!canEditPages ? (
           <p className="mt-4 rounded-xl border border-[var(--color-gray-100)] bg-white p-4 text-sm text-[var(--color-gray-600)]">

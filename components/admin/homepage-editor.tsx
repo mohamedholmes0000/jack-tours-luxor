@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import type { ComponentType } from "react";
 import { useMemo, useRef, useState } from "react";
 import {
@@ -51,10 +52,20 @@ const iconMap: Record<string, DynamicLucideIcon> = {
   Utensils: dynamic(() => import("lucide-react").then((mod) => mod.Utensils)),
 };
 
-type SectionKey = "hero" | "why" | "finalCta";
+type SectionKey =
+  | "destinations"
+  | "featured"
+  | "finalCta"
+  | "hero"
+  | "ourWorld"
+  | "stats"
+  | "testimonials"
+  | "why";
 type ImageField =
   | "finalCtaBackgroundImage"
   | "heroBackgroundImage"
+  | "ourWorldImage"
+  | "statsBackgroundImage"
   | "whyCollageImage1"
   | "whyCollageImage2"
   | "whyCollageImage3";
@@ -345,11 +356,35 @@ function SectionCard({
   );
 }
 
+function InfoBanner({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="rounded-xl border border-[rgb(214_173_84_/_28%)] bg-[var(--color-sand)]/45 p-4 text-sm leading-6 text-[var(--color-navy)]/75">
+      {children}
+    </div>
+  );
+}
+
+const sectionLabels: Record<SectionKey, string> = {
+  destinations: "Destinations Header",
+  featured: "Featured Journeys Header",
+  finalCta: "Final CTA",
+  hero: "Hero",
+  ourWorld: "Our World",
+  stats: "Stats",
+  testimonials: "Testimonials Header",
+  why: "Why Us",
+};
+
 export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; initialValues: HomepageEditorValues }) {
   const [values, setValues] = useState(initialValues);
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
+    destinations: false,
+    featured: false,
     finalCta: false,
     hero: true,
+    ourWorld: false,
+    stats: false,
+    testimonials: false,
     why: false,
   });
   const [savingSection, setSavingSection] = useState<SectionKey | null>(null);
@@ -378,7 +413,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
         return;
       }
 
-      setToast(`${section === "finalCta" ? "Final CTA" : section === "why" ? "Why Us" : "Hero"} section saved.`);
+      setToast(`${sectionLabels[section]} section saved.`);
     } finally {
       setSavingSection(null);
     }
@@ -446,6 +481,58 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
+        description="Section heading and view-all link for the destination circles."
+        open={openSections.destinations}
+        title="Destinations Header"
+        onToggle={() => setOpenSections((current) => ({ ...current, destinations: !current.destinations }))}
+      >
+        <div className="grid gap-5">
+          <InfoBanner>
+            Destination cards are managed separately at{" "}
+            <Link className="font-bold text-[var(--color-gold-dark)]" href="/admin/destinations">
+              Manage destinations →
+            </Link>
+          </InfoBanner>
+          <div className="grid gap-5 md:grid-cols-2">
+            <TextInput disabled={!canEdit} label="Eyebrow text" value={values.destinationsEyebrow} onChange={(value) => setField("destinationsEyebrow", value)} />
+            <TextInput disabled={!canEdit} label="Heading text" value={values.destinationsHeading} onChange={(value) => setField("destinationsHeading", value)} />
+            <TextInput disabled={!canEdit} label="Italic accent words" value={values.destinationsHeadingAccent} onChange={(value) => setField("destinationsHeadingAccent", value)} />
+            <TextInput disabled={!canEdit} label="View all link text" value={values.destinationsViewAllLabel} onChange={(value) => setField("destinationsViewAllLabel", value)} />
+            <TextInput disabled={!canEdit} label="View all link URL" value={values.destinationsViewAllHref} onChange={(value) => setField("destinationsViewAllHref", value)} />
+          </div>
+          <Toggle checked={values.destinationsVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("destinationsVisible", value)} />
+        </div>
+        {saveButton("destinations")}
+      </SectionCard>
+
+      <SectionCard
+        description="Section heading, intro copy, and view-all link for featured tours."
+        open={openSections.featured}
+        title="Featured Journeys Header"
+        onToggle={() => setOpenSections((current) => ({ ...current, featured: !current.featured }))}
+      >
+        <div className="grid gap-5">
+          <InfoBanner>
+            Tour cards are managed at{" "}
+            <Link className="font-bold text-[var(--color-gold-dark)]" href="/admin/tours">
+              Manage tours →
+            </Link>
+            <span className="mt-1 block">Use the Featured toggle on each tour to show it on the homepage.</span>
+          </InfoBanner>
+          <div className="grid gap-5 md:grid-cols-2">
+            <TextInput disabled={!canEdit} label="Eyebrow text" value={values.featuredEyebrow} onChange={(value) => setField("featuredEyebrow", value)} />
+            <TextInput disabled={!canEdit} label="Heading text" value={values.featuredHeading} onChange={(value) => setField("featuredHeading", value)} />
+            <TextInput disabled={!canEdit} label="Italic accent words" value={values.featuredHeadingAccent} onChange={(value) => setField("featuredHeadingAccent", value)} />
+            <TextInput disabled={!canEdit} label="View all tours link text" value={values.featuredViewAllLabel} onChange={(value) => setField("featuredViewAllLabel", value)} />
+            <TextInput disabled={!canEdit} label="View all tours link URL" value={values.featuredViewAllHref} onChange={(value) => setField("featuredViewAllHref", value)} />
+          </div>
+          <TextArea disabled={!canEdit} label="Description paragraph" value={values.featuredDescription} onChange={(value) => setField("featuredDescription", value)} />
+          <Toggle checked={values.featuredVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("featuredVisible", value)} />
+        </div>
+        {saveButton("featured")}
+      </SectionCard>
+
+      <SectionCard
         description="Story copy, collage images, and included services."
         open={openSections.why}
         title="Why Us"
@@ -509,6 +596,97 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
+        description="Brand story copy, image, and signature details."
+        open={openSections.ourWorld}
+        title="Our World"
+        onToggle={() => setOpenSections((current) => ({ ...current, ourWorld: !current.ourWorld }))}
+      >
+        <div className="grid gap-6 lg:grid-cols-[minmax(280px,420px)_1fr]">
+          <ImageUploadField
+            disabled={!canEdit}
+            label="Image"
+            value={values.ourWorldImage}
+            onChange={(value) => setField("ourWorldImage", value)}
+          />
+          <div className="grid gap-5">
+            <div className="grid gap-5 md:grid-cols-2">
+              <TextInput disabled={!canEdit} label="Eyebrow text" value={values.ourWorldEyebrow} onChange={(value) => setField("ourWorldEyebrow", value)} />
+              <TextInput disabled={!canEdit} label="Heading text" value={values.ourWorldHeading} onChange={(value) => setField("ourWorldHeading", value)} />
+              <TextInput disabled={!canEdit} label="Italic accent words" value={values.ourWorldHeadingAccent} onChange={(value) => setField("ourWorldHeadingAccent", value)} />
+              <TextInput disabled={!canEdit} label="Signature text" value={values.ourWorldReadMoreLabel} onChange={(value) => setField("ourWorldReadMoreLabel", value)} />
+              <TextInput disabled={!canEdit} label="Signature location" value={values.ourWorldReadMoreHref} onChange={(value) => setField("ourWorldReadMoreHref", value)} />
+            </div>
+            <TextArea disabled={!canEdit} label="Body paragraph" rows={5} value={values.ourWorldBody} onChange={(value) => setField("ourWorldBody", value)} />
+            <Toggle checked={values.ourWorldVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("ourWorldVisible", value)} />
+          </div>
+        </div>
+        {saveButton("ourWorld")}
+      </SectionCard>
+
+      <SectionCard
+        description="Background image and four trust statistics."
+        open={openSections.stats}
+        title="Stats"
+        onToggle={() => setOpenSections((current) => ({ ...current, stats: !current.stats }))}
+      >
+        <div className="grid gap-6 lg:grid-cols-[minmax(280px,420px)_1fr]">
+          <ImageUploadField
+            disabled={!canEdit}
+            label="Background image"
+            value={values.statsBackgroundImage}
+            onChange={(value) => setField("statsBackgroundImage", value)}
+          />
+          <div className="grid gap-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              {values.statsItems.map((stat, index) => (
+                <div key={index} className="grid gap-4 rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)] p-4">
+                  <TextInput
+                    disabled={!canEdit}
+                    label={`Stat ${index + 1} value`}
+                    value={stat.value}
+                    onChange={(value) => {
+                      const next = [...values.statsItems];
+                      next[index] = { ...next[index], value };
+                      setField("statsItems", next);
+                    }}
+                  />
+                  <TextInput
+                    disabled={!canEdit}
+                    label={`Stat ${index + 1} label`}
+                    value={stat.label}
+                    onChange={(label) => {
+                      const next = [...values.statsItems];
+                      next[index] = { ...next[index], label };
+                      setField("statsItems", next);
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <Toggle checked={values.statsVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("statsVisible", value)} />
+          </div>
+        </div>
+        {saveButton("stats")}
+      </SectionCard>
+
+      <SectionCard
+        description="Eyebrow and heading copy for the testimonial section."
+        open={openSections.testimonials}
+        title="Testimonials Header"
+        onToggle={() => setOpenSections((current) => ({ ...current, testimonials: !current.testimonials }))}
+      >
+        <div className="grid gap-5">
+          <div className="grid gap-5 md:grid-cols-2">
+            <TextInput disabled={!canEdit} label="Eyebrow text" value={values.testimonialsEyebrow} onChange={(value) => setField("testimonialsEyebrow", value)} />
+            <TextInput disabled={!canEdit} label="Heading text" value={values.testimonialsHeading} onChange={(value) => setField("testimonialsHeading", value)} />
+            <TextInput disabled={!canEdit} label="Italic accent words" value={values.testimonialsHeadingAccent} onChange={(value) => setField("testimonialsHeadingAccent", value)} />
+          </div>
+          <Toggle checked={values.testimonialsVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("testimonialsVisible", value)} />
+        </div>
+        {saveButton("testimonials")}
+      </SectionCard>
+
+      <SectionCard
         description="Final booking call-to-action image, copy, and links."
         open={openSections.finalCta}
         title="Final CTA"
@@ -537,13 +715,6 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
         </div>
         {saveButton("finalCta")}
       </SectionCard>
-
-      <div className="rounded-2xl border border-[rgb(214_173_84_/_28%)] bg-[var(--color-sand)]/55 p-5 text-sm leading-6 text-[var(--color-navy)]">
-        <p className="font-serif text-2xl font-semibold">More sections coming soon</p>
-        <p className="mt-2 text-[var(--color-navy)]/70">
-          Destinations Header, Featured Journeys, Our World, Stats, Testimonials
-        </p>
-      </div>
     </div>
   );
 }
