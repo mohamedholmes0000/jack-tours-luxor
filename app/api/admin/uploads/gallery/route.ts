@@ -1,17 +1,8 @@
-import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/api/admin-guard";
+import { uploadAdminImage } from "@/lib/admin-upload";
 
 export const runtime = "nodejs";
-
-const maxBytes = 5 * 1024 * 1024;
-const allowedTypes = new Map([
-  ["image/jpeg", "jpg"],
-  ["image/png", "png"],
-  ["image/webp", "webp"],
-]);
 
 export async function POST(request: Request) {
   const guard = await requireAdminApi({ resource: "gallery", action: "create" });
@@ -24,22 +15,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "Upload an image file." }, { status: 400 });
   }
 
-  const extension = allowedTypes.get(file.type);
-  if (!extension) {
-    return NextResponse.json({ ok: false, message: "Use a JPG, PNG, or WebP image." }, { status: 400 });
+  try {
+    const uploaded = await uploadAdminImage(file, "gallery");
+    return NextResponse.json({ ok: true, ...uploaded });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unable to upload image.";
+    return NextResponse.json({ ok: false, message }, { status: 400 });
   }
-
-  if (file.size > maxBytes) {
-    return NextResponse.json({ ok: false, message: "Image must be 5MB or smaller." }, { status: 400 });
-  }
-
-  const bytes = Buffer.from(await file.arrayBuffer());
-  const uploadDir = path.join(process.cwd(), "public", "uploads", "gallery");
-  const filename = `${Date.now()}-${randomUUID()}.${extension}`;
-  const fullPath = path.join(uploadDir, filename);
-
-  await mkdir(uploadDir, { recursive: true });
-  await writeFile(fullPath, bytes);
-
-  return NextResponse.json({ ok: true, url: `/uploads/gallery/${filename}` });
 }

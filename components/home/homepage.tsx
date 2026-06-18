@@ -83,13 +83,6 @@ const destinationsMarquee = [
 
 */
 
-const stats: ReadonlyArray<readonly [string, string]> = [
-  ["10+", "Years on the ground"],
-  ["1,000+", "Travelers hosted"],
-  ["50+", "Private routes"],
-  ["24/7", "WhatsApp support"],
-];
-
 const testimonial = {
   quote:
     "An unforgettable journey from beginning to end. The guides were exceptional, the pacing felt considered, and every small detail was handled with care.",
@@ -309,6 +302,58 @@ export async function Homepage() {
     homepageSettings.finalCtaHeadingAccent,
     { appendMissingAccent: true },
   );
+  const destinations = {
+    eyebrow: homepageSettings.destinationsEyebrow || "Where we travel",
+    linkHref: homepageSettings.destinationsViewAllHref || "/destinations",
+    linkLabel: homepageSettings.destinationsViewAllLabel || "All destinations →",
+    visible: homepageSettings.destinationsVisible,
+  };
+  const destinationsHeading = splitAccentText(
+    homepageSettings.destinationsHeading || "From the Nile,",
+    homepageSettings.destinationsHeadingAccent,
+    { appendMissingAccent: true },
+  );
+  const featured = {
+    description: cleanSettingText(homepageSettings.featuredDescription),
+    eyebrow: homepageSettings.featuredEyebrow || "Featured journeys",
+    linkHref: homepageSettings.featuredViewAllHref || "/tours",
+    linkLabel: homepageSettings.featuredViewAllLabel || "View all tours",
+    visible: homepageSettings.featuredVisible,
+  };
+  const featuredHeading = splitAccentText(
+    homepageSettings.featuredHeading || "Polished private experiences,",
+    homepageSettings.featuredHeadingAccent,
+    { appendMissingAccent: true },
+  );
+  const ourWorld = {
+    body:
+      homepageSettings.ourWorldBody ||
+      "We are based in Luxor. We arrange private days at Karnak and the Valley of the Kings, slow Nile journeys to Aswan, dawn at Abu Simbel, and Red Sea finales. We work in small numbers, with trusted guides, on WhatsApp time. Everything else is negotiable.",
+    eyebrow: homepageSettings.ourWorldEyebrow || "Our world",
+    image: safeImageSrc(homepageSettings.ourWorldImage, brandStoryImage),
+    location: homepageSettings.ourWorldReadMoreHref || "Luxor, Upper Egypt",
+    signature: homepageSettings.ourWorldReadMoreLabel || "Jack Egypt Tour",
+    visible: homepageSettings.ourWorldVisible,
+  };
+  const ourWorldHeading = splitAccentText(
+    homepageSettings.ourWorldHeading || "A small team,",
+    homepageSettings.ourWorldHeadingAccent,
+    { appendMissingAccent: true },
+  );
+  const homepageStats = {
+    backgroundImage: safeImageSrc(homepageSettings.statsBackgroundImage, statsImage),
+    items: homepageSettings.statsItems,
+    visible: homepageSettings.statsVisible,
+  };
+  const testimonialsHeader = {
+    eyebrow: homepageSettings.testimonialsEyebrow || "Travelers",
+    visible: homepageSettings.testimonialsVisible,
+  };
+  const testimonialsHeading = splitAccentText(
+    homepageSettings.testimonialsHeading || "Loved quietly,",
+    homepageSettings.testimonialsHeadingAccent,
+    { appendMissingAccent: true },
+  );
 
   return (
     <div data-mobile-cta="true" className="flex flex-col">
@@ -399,32 +444,36 @@ export async function Homepage() {
       {/* ============================================================
           2 · DESTINATIONS MARQUEE — auto-scrolling cinematic strip.
       ============================================================ */}
+      {destinations.visible ? (
       <section className="relative order-2 overflow-hidden bg-[var(--color-ivory)] py-14 text-[var(--color-navy)] sm:py-20">
         <div className="container-premium reveal-up">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-xl">
               <p className="eyebrow text-[var(--color-gold-dark)]">
-                Where we travel
+                {destinations.eyebrow}
               </p>
               <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.08] sm:text-[2.25rem] md:text-[2.625rem]">
-                From the Nile,
-                <span className="font-accent-serif italic text-[var(--color-gold-dark)]">
-                  {" "}
-                  outward.
-                </span>
+                {destinationsHeading.before}
+                {destinationsHeading.showAccent ? (
+                  <span className="font-accent-serif italic text-[var(--color-gold-dark)]">
+                    {destinationsHeading.accent}
+                  </span>
+                ) : null}
+                {destinationsHeading.after}
               </h2>
             </div>
             <Link
-              href="/destinations"
+              href={destinations.linkHref}
               className="self-start text-[0.8125rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)] sm:self-auto"
             >
-              All destinations →
+              {destinations.linkLabel}
             </Link>
           </div>
         </div>
 
         <DestinationCarousel items={destinationCities} />
       </section>
+      ) : null}
 
       {/* ============================================================
           3 · EDITORIAL PAUSE — pure ivory wall, one serif sentence.
@@ -447,21 +496,29 @@ export async function Homepage() {
           scrolls. Comment number left at "8" to preserve original
           numbering; visual order is what matters.)
       ============================================================ */}
+      {featured.visible ? (
       <section className="order-3 bg-[var(--color-ivory)] py-14 sm:py-20">
         <div className="container-premium">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="reveal-up max-w-xl">
-              <p className="eyebrow">Featured journeys</p>
+              <p className="eyebrow">{featured.eyebrow}</p>
               <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.06] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
-                Polished private experiences,
-                {" "}
-                <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
-                  ready to tailor.
-                </span>
+                {featuredHeading.before}
+                {featuredHeading.showAccent ? (
+                  <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
+                    {featuredHeading.accent}
+                  </span>
+                ) : null}
+                {featuredHeading.after}
               </h2>
+              {featured.description ? (
+                <p className="mt-5 max-w-xl text-base leading-7 text-[var(--color-gray-700)]">
+                  {featured.description}
+                </p>
+              ) : null}
             </div>
-            <Link className="btn-secondary self-start sm:self-auto" href="/tours">
-              View all tours
+            <Link className="btn-secondary self-start sm:self-auto" href={featured.linkHref}>
+              {featured.linkLabel}
             </Link>
           </div>
 
@@ -472,6 +529,7 @@ export async function Homepage() {
           </div>
         </div>
       </section>
+      ) : null}
 
       {/* ============================================================
           4 · WHY JACK — editorial split, no boxy cards.
@@ -618,11 +676,12 @@ export async function Homepage() {
       {/* ============================================================
           5 · BRAND STORY — image left, drop-capped paragraph right.
       ============================================================ */}
+      {ourWorld.visible ? (
       <section className="order-5 bg-[var(--color-ivory)] py-14 sm:py-20">
         <div className="container-premium grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:items-stretch lg:gap-16">
           <figure className="reveal-up relative aspect-[4/5] w-full overflow-hidden shadow-[0_28px_80px_rgb(87_59_22_/_20%)] sm:aspect-[3/4] lg:aspect-auto lg:min-h-[36rem]">
             <Image
-              src={brandStoryImage}
+              src={ourWorld.image}
               alt="Hatshepsut mortuary temple in warm afternoon light"
               fill
               sizes="(min-width: 1024px) 55vw, 100vw"
@@ -631,33 +690,33 @@ export async function Homepage() {
           </figure>
 
           <div className="reveal-up flex flex-col justify-center">
-            <p className="eyebrow">Our world</p>
+            <p className="eyebrow">{ourWorld.eyebrow}</p>
             <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.08] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
-              A small team,
-              <span className="font-accent-serif italic text-[var(--color-gold-dark)]">
-                {" "}
-                quietly capable.
-              </span>
+              {ourWorldHeading.before}
+              {ourWorldHeading.showAccent ? (
+                <span className="font-accent-serif italic text-[var(--color-gold-dark)]">
+                  {ourWorldHeading.accent}
+                </span>
+              ) : null}
+              {ourWorldHeading.after}
             </h2>
             <p className="drop-cap mt-7 font-serif text-[1.15rem] leading-[1.6] text-[var(--color-gray-900)] sm:text-[1.25rem] sm:leading-[1.7]">
-              We are based in Luxor. We arrange private days at Karnak and the
-              Valley of the Kings, slow Nile journeys to Aswan, dawn at Abu
-              Simbel, and Red Sea finales. We work in small numbers, with
-              trusted guides, on WhatsApp time. Everything else is negotiable.
+              {ourWorld.body}
             </p>
             <div className="mt-8 h-px w-20 bg-[var(--color-gold)]" />
             {/* Stack on mobile to avoid an awkward mid-phrase wrap caused by
                 uppercase + 0.22em tracking in a narrow column; inline on sm+. */}
             <p className="mt-5 flex flex-col gap-1 text-sm font-bold uppercase tracking-[0.22em] text-[var(--color-navy)] sm:flex-row sm:items-baseline sm:gap-2">
-              <span>Jack Egypt Tour</span>
+              <span>{ourWorld.signature}</span>
               <span className="font-medium text-[var(--color-gray-600)]">
                 <span aria-hidden className="mr-1 hidden sm:inline">/</span>
-                Luxor, Upper Egypt
+                {ourWorld.location}
               </span>
             </p>
           </div>
         </div>
       </section>
+      ) : null}
 
       {/* ============================================================
           6 · EDITORIAL PAUSE — pure navy, one italic line.
@@ -677,10 +736,11 @@ export async function Homepage() {
       {/* ============================================================
           9 · FULL-BLEED STATS — single photograph + corner stats.
       ============================================================ */}
+      {homepageStats.visible ? (
       <section className="relative isolate order-6 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
-            src={statsImage}
+            src={homepageStats.backgroundImage}
             alt="Felucca on the Nile in late-afternoon light"
             fill
             sizes="100vw"
@@ -692,9 +752,9 @@ export async function Homepage() {
           className="absolute inset-0 bg-gradient-to-b from-[rgba(6,17,31,0.65)] via-[rgba(6,17,31,0.35)] to-[rgba(6,17,31,0.85)]"
         />
         <div className="container-premium relative grid min-h-[70vh] grid-cols-2 content-between gap-8 py-16 sm:min-h-[80vh] sm:py-16 lg:min-h-0 lg:grid-cols-4 lg:content-center lg:items-center lg:gap-x-16 lg:py-20">
-          {stats.map(([value, label], idx) => (
+          {homepageStats.items.map((item, idx) => (
             <div
-              key={label}
+              key={`${item.value}-${item.label}`}
               className={`reveal-up flex flex-col ${
                 idx % 2 === 0 ? "items-start text-left" : "items-end text-right"
               } lg:items-center lg:text-center ${
@@ -702,32 +762,37 @@ export async function Homepage() {
               } lg:self-center`}
             >
               <p className="font-serif text-[clamp(2.5rem,5vw,3.5rem)] font-semibold leading-none text-[var(--color-gold-light)]">
-                {value}
+                {item.value}
               </p>
               <div className="mt-2 h-px w-10 bg-[var(--color-gold-light)] opacity-70" />
               <p className="mt-3 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-white/80">
-                {label}
+                {item.label}
               </p>
             </div>
           ))}
         </div>
       </section>
+      ) : null}
 
       {/* ============================================================
          10 · EDITORIAL PAUSE — pure ivory.
       ============================================================ */}
+      {testimonialsHeader.visible ? (
       <section className="cartouche-pause order-7 bg-[var(--color-ivory)]">
         <div className="container-premium reveal-up">
-          <p className="eyebrow text-[var(--color-gold-dark)]">Travelers</p>
+          <p className="eyebrow text-[var(--color-gold-dark)]">{testimonialsHeader.eyebrow}</p>
           <p className="mt-6 font-serif text-[1.9rem] font-bold leading-[1.18] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
-            Loved quietly,
-            {" "}
-            <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
-              from everywhere.
-            </span>
+            {testimonialsHeading.before}
+            {testimonialsHeading.showAccent ? (
+              <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
+                {testimonialsHeading.accent}
+              </span>
+            ) : null}
+            {testimonialsHeading.after}
           </p>
         </div>
       </section>
+      ) : null}
 
       {/* ============================================================
          11 · PHOTOGRAPHIC TESTIMONIAL — full bleed, quote overlay.
