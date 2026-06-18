@@ -183,7 +183,7 @@ export function AdminGalleryCategoriesManager({
             <div>
               <p className="font-serif text-2xl font-semibold leading-tight text-[var(--color-navy)]">{category.name}</p>
               <p className="mt-1 text-sm text-[var(--color-gray-600)]">
-                /{category.slug} · {category.imageCount} {category.imageCount === 1 ? "image" : "images"} · order #{category.order}
+                /{category.slug} · {category.imageCount} {category.imageCount === 1 ? "album" : "albums"} · order #{category.order}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">

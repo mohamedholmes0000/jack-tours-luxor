@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AdminGalleryImageForm } from "@/components/admin/admin-gallery-image-form";
+import { AdminGalleryAlbumForm } from "@/components/admin/admin-gallery-album-form";
 import { canWriteAdminResource } from "@/lib/admin/permissions";
 import { getCurrentAdminUser } from "@/lib/api/admin-guard";
 import { getAdminGalleryCategories } from "@/lib/data/admin";
 
-export const metadata = { title: "Add Gallery Image" };
+export const metadata = { title: "Add Gallery Album" };
 
-export default async function NewGalleryImagePage() {
+export default async function NewGalleryAlbumPage() {
   const currentUser = await getCurrentAdminUser();
   const role = currentUser?.role || "VIEWER";
   const canCreateGallery = canWriteAdminResource(role, "gallery", "create");
@@ -23,14 +23,14 @@ export default async function NewGalleryImagePage() {
           ← Back to Gallery
         </Link>
         <h1 className="mt-4 font-serif text-[32px] font-semibold leading-tight text-[var(--color-navy)]">
-          Add New Image
+          Add New Album
         </h1>
         <p className="mt-2 text-sm text-[var(--color-navy)]/60">
-          Upload an image, add editorial metadata, and publish it to the public gallery.
+          Create an album first, then add multiple photos from the edit page.
         </p>
       </div>
 
-      <AdminGalleryImageForm
+      <AdminGalleryAlbumForm
         categories={categories.map((category) => ({ id: category.id, name: category.name }))}
         mode="create"
       />

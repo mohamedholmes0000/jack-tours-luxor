@@ -24,19 +24,11 @@ export async function PUT(request: Request, { params }: Props) {
 
   const { id } = await params;
   try {
-    const previous = await prisma.galleryCategory.findUnique({ where: { id }, select: { name: true } });
     const category = await prisma.galleryCategory.update({
       where: { id },
       data: parsed.data,
       select: { id: true, name: true },
     });
-
-    if (previous?.name && previous.name !== category.name) {
-      await prisma.galleryImage.updateMany({
-        where: { categoryId: id },
-        data: { category: category.name },
-      });
-    }
 
     revalidatePath("/gallery");
     return NextResponse.json({ ok: true, id: category.id });
@@ -58,10 +50,10 @@ export async function DELETE(_request: Request, { params }: Props) {
   }
 
   const { id } = await params;
-  const imageCount = await prisma.galleryImage.count({ where: { categoryId: id } });
-  if (imageCount > 0) {
+  const albumCount = await prisma.galleryAlbum.count({ where: { categoryId: id } });
+  if (albumCount > 0) {
     return NextResponse.json(
-      { ok: false, message: "Remove or reassign images before deleting this category." },
+      { ok: false, message: "Remove or reassign albums before deleting this category." },
       { status: 400 },
     );
   }

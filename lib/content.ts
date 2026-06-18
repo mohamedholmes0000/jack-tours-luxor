@@ -56,11 +56,25 @@ export type FAQItem = {
 };
 
 export type GalleryImage = {
+  id?: string;
   url: string;
   alt: string;
   title: string;
   description: string;
-  category: "Luxor" | "Nile Cruise" | "Cairo" | "Experiences";
+  caption?: string;
+  category: "Luxor" | "Nile Cruise" | "Cairo" | "Experiences" | string;
+  order?: number;
+};
+
+export type GalleryAlbum = {
+  id?: string;
+  title: string;
+  slug: string;
+  description: string;
+  coverImage: string;
+  category: string;
+  imageCount: number;
+  images: GalleryImage[];
 };
 
 export const homepageCityDestinations: HomepageCityDestination[] = [

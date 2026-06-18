@@ -155,19 +155,35 @@ model FAQ {
 }
 
 model GalleryImage {
-  id              String           @id @default(cuid())
-  url             String
-  alt             String
-  title           String?
-  caption         String?
-  description     String?          @db.Text
-  category        String?
-  categoryId      String?
-  categoryRef     GalleryCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  relatedTourSlug String?
-  order           Int              @default(0)
-  active          Boolean          @default(true)
-  createdAt       DateTime         @default(now())
+  id          String        @id @default(cuid())
+  url         String
+  publicId    String?
+  alt         String
+  title       String?
+  caption     String?
+  description String?       @db.Text
+  albumId     String?
+  album       GalleryAlbum? @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  order       Int           @default(0)
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now()) @updatedAt
+}
+
+model GalleryAlbum {
+  id                 String           @id @default(cuid())
+  title              String
+  slug               String           @unique
+  description        String?          @db.Text
+  coverImage         String
+  coverImagePublicId String?
+  categoryId         String?
+  category           GalleryCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  displayOrder       Int              @default(0)
+  active             Boolean          @default(true)
+  images             GalleryImage[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 }
 
 model SiteSetting {
@@ -372,7 +388,7 @@ model GalleryCategory {
   name      String
   order     Int            @default(0)
   active    Boolean        @default(true)
-  images    GalleryImage[]
+  albums    GalleryAlbum[]
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
 }

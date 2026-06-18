@@ -7,6 +7,7 @@ import {
   tours,
   type BlogArticle,
   type Destination,
+  type GalleryAlbum,
   type GalleryImage,
   type HomepageCityDestination,
   type Tour,
@@ -330,26 +331,99 @@ export async function getFaqsSafe() {
 }
 
 export async function getGalleryImagesSafe(): Promise<GalleryImage[]> {
+  const albums = await getGalleryAlbumsSafe();
+  return albums.flatMap((album) => album.images);
+}
+
+function fallbackGalleryAlbums(): GalleryAlbum[] {
+  const grouped = new Map<string, GalleryImage[]>();
+
+  for (const image of galleryImages) {
+    const category = image.category || "Experiences";
+    grouped.set(category, [...(grouped.get(category) ?? []), image]);
+  }
+
+  return Array.from(grouped.entries()).map(([category, images]) => ({
+    category,
+    coverImage: images[0]?.url ?? galleryImages[0].url,
+    description:
+      category === "Experiences"
+        ? "Private moments, ancient places, and Nile light captured across Egypt."
+        : `A curated ${category} album from private Jack Egypt Tour journeys.`,
+    imageCount: images.length,
+    images,
+    slug: category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""),
+    title: category === "Experiences" ? "Egypt Highlights" : `${category} Highlights`,
+  }));
+}
+
+function mapGalleryImage(
+  image: Awaited<ReturnType<typeof prisma.galleryImage.findMany>>[number],
+  category: string,
+): GalleryImage {
+  return {
+    id: image.id,
+    url: safeImageSrc(image.url, galleryImages[0].url),
+    alt: image.alt,
+    title: image.title || image.alt,
+    caption: image.caption || undefined,
+    description:
+      image.description ||
+      image.caption ||
+      (category === "Experiences"
+        ? "A private Egypt travel moment from the gallery."
+        : `A ${category} gallery image from Jack Egypt Tour.`),
+    category,
+    order: image.order,
+  };
+}
+
+export async function getGalleryAlbumsSafe(): Promise<GalleryAlbum[]> {
+  const fallbackAlbums = fallbackGalleryAlbums();
+
   return tryDatabase(
     async () => {
-      const images = await prisma.galleryImage.findMany({ where: { active: true }, orderBy: { order: "asc" } });
-      return images.length
-        ? images.map((image) => ({
-            url: safeImageSrc(image.url, galleryImages[0].url),
-            alt: image.alt,
-            title: image.title || image.alt,
-            description:
-              image.description ||
-              image.caption ||
-              (image.category === "Experiences"
-                ? "A private Egypt travel moment from the gallery."
-                : `A ${image.category ?? "Egypt"} gallery image from Jack Egypt Tour.`),
-            category: (image.category ?? "Experiences") as GalleryImage["category"],
-          }))
-        : galleryImages;
+      const albums = await prisma.galleryAlbum.findMany({
+        where: { active: true },
+        orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+        include: {
+          category: true,
+          images: {
+            where: { active: true },
+            orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+          },
+        },
+      });
+
+      return albums.length
+        ? albums.map((album) => {
+            const category = album.category?.name || "Experiences";
+            const images = album.images.map((image) => mapGalleryImage(image, category));
+
+            return {
+              id: album.id,
+              category,
+              coverImage: safeImageSrc(album.coverImage || images[0]?.url, galleryImages[0].url),
+              description:
+                album.description ||
+                (category === "Experiences"
+                  ? "Private moments, ancient places, and Nile light captured across Egypt."
+                  : `A curated ${category} album from private Jack Egypt Tour journeys.`),
+              imageCount: images.length,
+              images,
+              slug: album.slug,
+              title: album.title,
+            };
+          })
+        : fallbackAlbums;
     },
-    galleryImages,
+    fallbackAlbums,
   );
+}
+
+export async function getGalleryAlbumBySlugSafe(slug: string): Promise<GalleryAlbum | null> {
+  const albums = await getGalleryAlbumsSafe();
+  return albums.find((album) => album.slug === slug) ?? null;
 }
 
 export async function getHomepageSettingsSafe(): Promise<HomepageEditorValues> {

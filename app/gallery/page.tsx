@@ -1,130 +1,25 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { GalleryLightbox } from "@/components/gallery/gallery-lightbox";
-import type { GalleryImage } from "@/lib/content";
-import { getGalleryImagesSafe } from "@/lib/data/public";
+import { getGalleryAlbumsSafe } from "@/lib/data/public";
+import { safeImageSrc } from "@/lib/images";
 
 export const metadata: Metadata = {
   title: "Egypt Travel Gallery",
   description:
-    "Browse a premium gallery of Luxor, Nile cruise, Cairo, and private Egypt travel experiences from Jack Egypt Tour.",
+    "Browse premium Egypt travel albums from Luxor, Nile cruise, Cairo, and private Jack Egypt Tour journeys.",
 };
 
 type GalleryPageProps = {
   searchParams?: Promise<{ category?: string }>;
 };
 
-const categories = ["All", "Luxor", "Nile Cruise", "Cairo", "Experiences"] as const;
-
-const localGalleryImages: GalleryImage[] = [
-  {
-    url: "/photos/karnak.jpg",
-    alt: "Karnak Temple columns in Luxor",
-    title: "Karnak Temple Columns",
-    description: "A quiet temple moment among the monumental columns of Karnak in Luxor.",
-    category: "Luxor",
-  },
-  {
-    url: "/photos/luxor-temple.jpg",
-    alt: "Luxor Temple in Egypt",
-    title: "Luxor Temple",
-    description: "Warm stone, city light, and the open-air museum feeling of Luxor.",
-    category: "Luxor",
-  },
-  {
-    url: "/photos/valley-of-kings.jpg",
-    alt: "Valley of the Kings in Luxor",
-    title: "Valley of the Kings",
-    description: "Royal tomb country on Luxor's West Bank, best explored at a private pace.",
-    category: "Luxor",
-  },
-  {
-    url: "/photos/hatshepsut.jpg",
-    alt: "Temple of Hatshepsut in Luxor",
-    title: "Hatshepsut Temple",
-    description: "A terraced West Bank landmark framed by the cliffs of Deir el-Bahari.",
-    category: "Luxor",
-  },
-  {
-    url: "/photos/felucca.jpg",
-    alt: "Traditional felucca sailing on the Nile",
-    title: "Felucca on the Nile",
-    description: "A slower Nile rhythm between temple days and southern light.",
-    category: "Nile Cruise",
-  },
-  {
-    url: "/photos/nile.jpg",
-    alt: "Nile river view in Upper Egypt",
-    title: "Upper Egypt Nile",
-    description: "River scenery for journeys between Luxor, Edfu, Kom Ombo, and Aswan.",
-    category: "Nile Cruise",
-  },
-  {
-    url: "/photos/aswan.jpg",
-    alt: "Aswan landscape by the Nile",
-    title: "Aswan Light",
-    description: "Granite islands, soft river color, and the calmer rhythm of southern Egypt.",
-    category: "Nile Cruise",
-  },
-  {
-    url: "/photos/pyramids.jpg",
-    alt: "Pyramids of Giza near Cairo",
-    title: "Giza Plateau",
-    description: "The classic Cairo opening, shaped with time for context and photography.",
-    category: "Cairo",
-  },
-  {
-    url: "/photos/abu-simbel.jpg",
-    alt: "Abu Simbel temples in southern Egypt",
-    title: "Abu Simbel",
-    description: "A dramatic southern extension near Lake Nasser and the Nubian frontier.",
-    category: "Experiences",
-  },
-  {
-    url: "/photos/hurghada.jpg",
-    alt: "Hurghada and the Red Sea coast",
-    title: "Hurghada Coast",
-    description: "A restful Red Sea finale after Egypt's temples, tombs, and Nile journeys.",
-    category: "Experiences",
-  },
-  {
-    url: "/photos/red-sea.jpg",
-    alt: "Red Sea coastline in Egypt",
-    title: "Red Sea Water",
-    description: "Clear water, coastal air, and a softer ending to a private Egypt route.",
-    category: "Experiences",
-  },
-  {
-    url: "/photos/alexandria.jpg",
-    alt: "Alexandria on the Mediterranean coast",
-    title: "Mediterranean Egypt",
-    description: "A coastal contrast for travelers adding Alexandria to Cairo and Upper Egypt.",
-    category: "Experiences",
-  },
-];
-
-function ensureGalleryDepth(images: GalleryImage[]) {
-  const seen = new Set(images.map((image) => image.url));
-  const merged = [...images];
-
-  for (const image of localGalleryImages) {
-    if (merged.length >= 12) break;
-    if (!seen.has(image.url)) {
-      merged.push(image);
-      seen.add(image.url);
-    }
-  }
-
-  return merged;
-}
-
 export default async function GalleryPage({ searchParams }: GalleryPageProps) {
   const params = await searchParams;
-  const galleryImages = ensureGalleryDepth(await getGalleryImagesSafe());
+  const albums = await getGalleryAlbumsSafe();
+  const categories = ["All", ...Array.from(new Set(albums.map((album) => album.category)))];
   const active = params?.category ?? "All";
-  const visibleImages =
-    active === "All" ? galleryImages : galleryImages.filter((image) => image.category === active);
+  const visibleAlbums = active === "All" ? albums : albums.filter((album) => album.category === active);
 
   return (
     <>
@@ -141,7 +36,9 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
         <div className="relative px-5">
           <p className="eyebrow text-[var(--color-gold-light)]">Our Gallery</p>
           <h1 className="mt-3 text-4xl font-bold leading-tight text-white">Moments from Egypt</h1>
-          <p className="mt-3 text-base text-white/70">Scenes from our private journeys</p>
+          <p className="mt-3 text-base text-white/70">
+            Private moments, ancient places, and Nile light captured across Egypt.
+          </p>
         </div>
       </section>
 
@@ -162,7 +59,41 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
           ))}
         </div>
 
-        <GalleryLightbox images={visibleImages} />
+        <div className="container-premium grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {visibleAlbums.map((album) => (
+            <Link
+              key={album.slug}
+              href={`/gallery/${album.slug}`}
+              className="group overflow-hidden rounded-[22px] border border-[rgb(214_173_84_/_24%)] bg-white shadow-[0_18px_45px_rgb(10_14_30_/_10%)] transition duration-300 hover:-translate-y-1 hover:border-[rgb(214_173_84_/_55%)]"
+            >
+              <div className="relative aspect-[16/11] overflow-hidden">
+                <Image
+                  src={safeImageSrc(album.coverImage)}
+                  alt={album.title}
+                  fill
+                  sizes="(min-width: 1024px) 31vw, (min-width: 768px) 48vw, 100vw"
+                  className="object-cover transition duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-navy)]/75 via-[var(--color-navy)]/10 to-transparent" />
+                <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-navy)]">
+                  {album.imageCount} {album.imageCount === 1 ? "photo" : "photos"}
+                </span>
+              </div>
+              <div className="bg-[var(--color-navy)] p-5 text-white">
+                <p className="eyebrow text-[var(--color-gold-light)]">{album.category}</p>
+                <h2 className="mt-3 font-serif text-3xl font-semibold leading-tight text-white">
+                  {album.title}
+                </h2>
+                <p className="mt-3 line-clamp-2 text-sm leading-6 text-white/68">
+                  {album.description}
+                </p>
+                <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-light)]">
+                  Open album →
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
 
       <section className="bg-[var(--color-navy)] py-14 text-white md:py-16">

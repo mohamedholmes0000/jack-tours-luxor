@@ -453,23 +453,29 @@ export async function getAdminFaqs() {
   );
 }
 
-export async function getAdminGalleryImages() {
+export async function getAdminGalleryAlbums() {
   return tryDatabase(
     async () =>
-      prisma.galleryImage.findMany({
-        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
-        include: { categoryRef: true },
+      prisma.galleryAlbum.findMany({
+        orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+        include: {
+          category: true,
+          _count: { select: { images: true } },
+        },
       }),
     [],
   );
 }
 
-export async function getAdminGalleryImage(id: string) {
+export async function getAdminGalleryAlbum(id: string) {
   return tryDatabase(
     async () =>
-      prisma.galleryImage.findUnique({
+      prisma.galleryAlbum.findUnique({
         where: { id },
-        include: { categoryRef: true },
+        include: {
+          category: true,
+          images: { orderBy: [{ order: "asc" }, { createdAt: "asc" }] },
+        },
       }),
     null,
   );
@@ -480,7 +486,7 @@ export async function getAdminGalleryCategories() {
     async () =>
       prisma.galleryCategory.findMany({
         orderBy: [{ order: "asc" }, { name: "asc" }],
-        include: { _count: { select: { images: true } } },
+        include: { _count: { select: { albums: true } } },
       }),
     [],
   );

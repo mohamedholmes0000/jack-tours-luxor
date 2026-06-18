@@ -14,7 +14,7 @@ export default async function GalleryCategoriesPage() {
   const rows: AdminGalleryCategoryRow[] = categories.map((category) => ({
     active: category.active,
     id: category.id,
-    imageCount: category._count.images,
+    imageCount: category._count.albums,
     name: category.name,
     order: category.order,
     slug: category.slug,
