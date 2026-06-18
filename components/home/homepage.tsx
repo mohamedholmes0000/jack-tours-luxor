@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { createElement } from "react";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
 import { formatPrice, type Tour } from "@/lib/content";
 import {
@@ -8,6 +9,7 @@ import {
   getToursSafe,
 } from "@/lib/data/public";
 import { getPublicSettings } from "@/lib/data/settings";
+import { getLucideIcon } from "@/lib/icons";
 import { safeImageSrc } from "@/lib/images";
 
 // ============================================================================
@@ -80,43 +82,6 @@ const destinationsMarquee = [
 ];
 
 */
-type WhyUsServiceIcon =
-  | "user-check"
-  | "hotel"
-  | "car"
-  | "ship"
-  | "message"
-  | "sparkles";
-
-const whyUsServices: ReadonlyArray<{
-  icon: WhyUsServiceIcon;
-  label: string;
-}> = [
-  {
-    icon: "user-check",
-    label: "Private Guides",
-  },
-  {
-    icon: "hotel",
-    label: "Hotel Bookings",
-  },
-  {
-    icon: "car",
-    label: "Airport Transfers",
-  },
-  {
-    icon: "ship",
-    label: "Nile Cruises",
-  },
-  {
-    icon: "message",
-    label: "24/7 WhatsApp",
-  },
-  {
-    icon: "sparkles",
-    label: "Tailor-Made",
-  },
-];
 
 const stats: ReadonlyArray<readonly [string, string]> = [
   ["10+", "Years on the ground"],
@@ -163,8 +128,15 @@ function cleanHeroText(settings: Awaited<ReturnType<typeof getPublicSettings>>) 
   };
 }
 
-function splitHeroHeadline(headline: string, accent: string) {
-  let cleanHeadline = cleanSettingText(headline) || `${approvedHeroHeadline} ${approvedHeroHeadlineAccent}`;
+function splitAccentText(
+  headline: string | undefined,
+  accent: string | undefined,
+  {
+    appendMissingAccent = false,
+    fallbackHeadline = "",
+  }: { appendMissingAccent?: boolean; fallbackHeadline?: string } = {},
+) {
+  let cleanHeadline = cleanSettingText(headline) || fallbackHeadline;
   const cleanAccent = cleanSettingText(accent);
 
   if (!cleanAccent) {
@@ -178,6 +150,11 @@ function splitHeroHeadline(headline: string, accent: string) {
 
   const headlineContainsAccent = cleanHeadline.toLowerCase().includes(cleanAccent.toLowerCase());
   if (
+    !headlineContainsAccent &&
+    appendMissingAccent
+  ) {
+    cleanHeadline = `${cleanHeadline} ${cleanAccent}`.trim();
+  } else if (
     !headlineContainsAccent &&
     cleanHeadline === approvedHeroHeadline &&
     cleanAccent === approvedHeroHeadlineAccent
@@ -204,6 +181,12 @@ function splitHeroHeadline(headline: string, accent: string) {
   };
 }
 
+function splitHeroHeadline(headline: string, accent: string | undefined) {
+  return splitAccentText(headline, accent, {
+    fallbackHeadline: `${approvedHeroHeadline} ${approvedHeroHeadlineAccent}`,
+  });
+}
+
 function normalizeHeroTrustBadges(value: string[]) {
   const fallback = [
     "Local Egypt Travel Experts",
@@ -216,86 +199,6 @@ function normalizeHeroTrustBadges(value: string[]) {
 
 function primaryCategoryLabel(category: string) {
   return category.replace(/\s*·\s*Custom$/i, "").replace(/\s*\/\s*Custom$/i, "").trim();
-}
-
-function WhyUsIcon({ icon }: { icon: WhyUsServiceIcon }) {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 48 48"
-      className="mx-auto h-9 w-9 text-[var(--color-gold)]"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {icon === "user-check" ? (
-        <>
-          <circle cx="18" cy="14" r="6" />
-          <path d="M8 40v-5.5A9.5 9.5 0 0 1 17.5 25h3A9.5 9.5 0 0 1 30 34.5V40" />
-          <path d="M32 9v25" />
-          <path d="M32 10h9l-2.5 4L41 18h-9" />
-          <path d="M15 39h8" />
-        </>
-      ) : null}
-      {icon === "hotel" ? (
-        <>
-          <path d="M8 42h32" />
-          <path d="M12 42V11a3 3 0 0 1 3-3h18a3 3 0 0 1 3 3v31" />
-          <path d="M20 42V30h8v12" />
-          <path d="M18 15h3" />
-          <path d="M27 15h3" />
-          <path d="M18 22h3" />
-          <path d="M27 22h3" />
-          <path d="M12 28H8v14" />
-          <path d="M36 25h4v17" />
-          <path d="M16 8l8-4 8 4" />
-        </>
-      ) : null}
-      {icon === "car" ? (
-        <>
-          <path d="M9 32h30l-2.4-10.2A5 5 0 0 0 31.8 18H16.2a5 5 0 0 0-4.8 3.8L9 32Z" />
-          <path d="M13 26h22" />
-          <path d="M8 32v6" />
-          <path d="M40 32v6" />
-          <circle cx="16" cy="34" r="4" />
-          <circle cx="32" cy="34" r="4" />
-          <path d="M30 7h7" />
-          <path d="M36 7l4 4-4 4" />
-          <path d="M28 11h12" />
-        </>
-      ) : null}
-      {icon === "ship" ? (
-        <>
-          <path d="M24 6v26" />
-          <path d="M24 8c-7 4-10.5 10.5-11 19h11" />
-          <path d="M24 11c6 4 9.5 9.5 10 16H24" />
-          <path d="M8 32h32l-4 9H12l-4-9Z" />
-          <path d="M14 38c2 1.4 4 1.4 6 0s4-1.4 6 0 4 1.4 6 0" />
-        </>
-      ) : null}
-      {icon === "message" ? (
-        <>
-          <path d="M39 29a15 15 0 0 1-21.4 8.2L9 39l1.8-8.3A15 15 0 1 1 39 29Z" />
-          <path d="M17 23h7" />
-          <path d="M17 29h4" />
-          <circle cx="32" cy="16" r="7" />
-          <path d="M32 12v4l3 2" />
-          <path d="M28 42h8" />
-        </>
-      ) : null}
-      {icon === "sparkles" ? (
-        <>
-          <path d="m18 31 13-13" />
-          <path d="m21 18 9 9" />
-          <path d="M12 38l6-7-7-7-6 7a5 5 0 0 0 7 7Z" />
-          <path d="m35 8 1.6 4.4L41 14l-4.4 1.6L35 20l-1.6-4.4L29 14l4.4-1.6L35 8Z" />
-          <path d="m15 7 1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1L15 7Z" />
-        </>
-      ) : null}
-    </svg>
-  );
 }
 
 // ----------------------------------------------------------------------------
@@ -362,7 +265,7 @@ export async function Homepage() {
   const heroSecondaryHref = homepageSettings.heroSecondaryLinkHref || "/trip-planner";
   const heroHeadline = splitHeroHeadline(
     homepageSettings.heroHeadline || `${legacyHeroText.headline} ${legacyHeroText.accent}`,
-    homepageSettings.heroHeadlineAccent || legacyHeroText.accent,
+    homepageSettings.heroHeadlineAccent,
   );
   const heroText = {
     eyebrow: cleanSettingText(homepageSettings.heroEyebrow) || legacyHeroText.eyebrow,
@@ -370,6 +273,42 @@ export async function Homepage() {
       cleanSettingText(homepageSettings.heroSubheadline) || legacyHeroText.subheadline,
   };
   const microTrustLine = normalizeHeroTrustBadges(homepageSettings.heroTrustBadges);
+  const whyUs = {
+    ctaHref: homepageSettings.whyCtaHref || "/trip-planner",
+    ctaLabel: homepageSettings.whyCtaLabel || "Plan Your Journey",
+    description:
+      homepageSettings.whyDescription ||
+      "From private guides to seamless logistics, we handle every detail of your Egypt experience so you can focus on the wonder.",
+    eyebrow: homepageSettings.whyEyebrow || "Why Jack Egypt Tour",
+    image1: safeImageSrc(homepageSettings.whyCollageImage1, "/photos/karnak.jpg"),
+    image2: safeImageSrc(homepageSettings.whyCollageImage2, "/photos/hatshepsut.jpg"),
+    image3: safeImageSrc(homepageSettings.whyCollageImage3, "/photos/felucca.jpg"),
+    includedHeading: homepageSettings.whyIncludedHeading || "What's included in every journey",
+    services: homepageSettings.whyServices,
+    visible: homepageSettings.whyVisible,
+  };
+  const whyUsHeading = splitAccentText(
+    homepageSettings.whyHeading || "Everything you need for a",
+    homepageSettings.whyHeadingAccent,
+    { appendMissingAccent: true },
+  );
+  const finalCta = {
+    backgroundImage: safeImageSrc(homepageSettings.finalCtaBackgroundImage, finalCtaImage),
+    description:
+      homepageSettings.finalCtaDescription ||
+      "Share dates, group size, and the places you have in mind. The Luxor team will reply with a calm, considered plan.",
+    eyebrow: homepageSettings.finalCtaEyebrow || "Start your booking",
+    primaryHref: homepageSettings.finalCtaPrimaryButtonHref || "/trip-planner",
+    primaryLabel: homepageSettings.finalCtaPrimaryButtonLabel || "Book Now",
+    secondaryHref: homepageSettings.finalCtaSecondaryLinkHref || "/trip-planner",
+    secondaryLabel: homepageSettings.finalCtaSecondaryLinkLabel || "Or open the trip planner",
+    visible: homepageSettings.finalCtaVisible,
+  };
+  const finalCtaHeading = splitAccentText(
+    homepageSettings.finalCtaHeading || "Ready when",
+    homepageSettings.finalCtaHeadingAccent,
+    { appendMissingAccent: true },
+  );
 
   return (
     <div data-mobile-cta="true" className="flex flex-col">
@@ -537,29 +476,31 @@ export async function Homepage() {
       {/* ============================================================
           4 · WHY JACK — editorial split, no boxy cards.
       ============================================================ */}
+      {whyUs.visible ? (
       <section className="order-4 bg-[var(--color-ivory)] py-14 lg:py-20">
         <div className="container-premium">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div className="reveal-up max-w-xl">
               <p className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--color-gold)]">
-                WHY JACK EGYPT TOUR
+                {whyUs.eyebrow}
               </p>
               <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.5vw,2.8rem)] font-semibold leading-[1.15] text-[var(--color-navy)]">
-                Everything you need for a{" "}
-                <span className="font-accent-serif italic text-[var(--color-gold)]">
-                  perfect Egypt journey
-                </span>
+                {whyUsHeading.before}
+                {whyUsHeading.showAccent ? (
+                  <span className="font-accent-serif italic text-[var(--color-gold)]">
+                    {whyUsHeading.accent}
+                  </span>
+                ) : null}
+                {whyUsHeading.after}
               </h2>
               <p className="mt-5 max-w-[480px] text-base font-normal leading-[1.7] text-[var(--color-navy)]/70">
-                From private guides to seamless logistics, we handle every
-                detail of your Egypt experience — so you can focus on the
-                wonder.
+                {whyUs.description}
               </p>
               <Link
-                href="/trip-planner"
+                href={whyUs.ctaHref}
                 className="mt-6 inline-flex rounded-md bg-[var(--color-gold)] px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_12px_30px_rgb(201_168_76_/_22%)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-gold-light)]"
               >
-                Plan Your Journey
+                {whyUs.ctaLabel}
               </Link>
             </div>
 
@@ -620,7 +561,7 @@ export async function Homepage() {
 
               <div className="relative z-10 h-[180px] w-[78%] self-start overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:left-6 lg:top-0 lg:h-[190px] lg:w-[260px]">
                 <Image
-                  src="/photos/karnak.jpg"
+                  src={whyUs.image1}
                   alt="Karnak temple columns in Luxor"
                   fill
                   sizes="(min-width: 1024px) 260px, 78vw"
@@ -629,7 +570,7 @@ export async function Homepage() {
               </div>
               <div className="relative z-10 -mt-2 h-[250px] w-[74%] self-end overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:right-8 lg:top-16 lg:mt-0 lg:h-[300px] lg:w-[238px]">
                 <Image
-                  src="/photos/hatshepsut.jpg"
+                  src={whyUs.image2}
                   alt="Hatshepsut temple facade"
                   fill
                   sizes="(min-width: 1024px) 238px, 74vw"
@@ -638,7 +579,7 @@ export async function Homepage() {
               </div>
               <div className="relative z-10 -mt-2 h-[180px] w-[76%] self-start overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:bottom-0 lg:left-24 lg:mt-0 lg:h-[190px] lg:w-[250px]">
                 <Image
-                  src="/photos/felucca.jpg"
+                  src={whyUs.image3}
                   alt="Felucca sailing on the Nile"
                   fill
                   sizes="(min-width: 1024px) 250px, 76vw"
@@ -650,24 +591,29 @@ export async function Homepage() {
 
           <div className="mt-12 lg:mt-16">
             <h3 className="mb-8 text-center text-sm font-medium uppercase tracking-[0.1em] text-[var(--color-navy)]/50">
-              What&apos;s included in every journey
+              {whyUs.includedHeading}
             </h3>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
-              {whyUsServices.map((service) => (
-                <div
-                  key={service.label}
-                  className="min-h-[140px] rounded-xl bg-white px-4 py-6 text-center shadow-[0_2px_8px_rgb(0_0_0_/_4%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_8%)]"
-                >
-                  <WhyUsIcon icon={service.icon} />
-                  <p className="mt-3 text-sm font-semibold leading-[1.3] text-[var(--color-navy)]">
-                    {service.label}
-                  </p>
-                </div>
+              {whyUs.services.map((service) => (
+                  <div
+                    key={`${service.icon}-${service.label}`}
+                    className="min-h-[140px] rounded-xl bg-white px-4 py-6 text-center shadow-[0_2px_8px_rgb(0_0_0_/_4%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_8%)]"
+                  >
+                    {createElement(getLucideIcon(service.icon), {
+                      "aria-hidden": true,
+                      className: "mx-auto h-9 w-9 text-[var(--color-gold)]",
+                      strokeWidth: 2.4,
+                    })}
+                    <p className="mt-3 text-sm font-semibold leading-[1.3] text-[var(--color-navy)]">
+                      {service.label}
+                    </p>
+                  </div>
               ))}
             </div>
           </div>
         </div>
       </section>
+      ) : null}
 
       {/* ============================================================
           5 · BRAND STORY — image left, drop-capped paragraph right.
@@ -827,10 +773,11 @@ export async function Homepage() {
       {/* ============================================================
          12 · FINAL CTA — immersive Nile sunset, single ask.
       ============================================================ */}
+      {finalCta.visible ? (
       <section className="relative isolate order-9 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
-            src={finalCtaImage}
+            src={finalCta.backgroundImage}
             alt="Felucca on the Nile at sunset between Luxor and Aswan"
             fill
             sizes="100vw"
@@ -844,37 +791,39 @@ export async function Homepage() {
         <div className="container-premium relative flex min-h-[72vh] flex-col justify-end py-20 sm:min-h-[80vh] sm:py-20">
           <div className="reveal-up max-w-2xl">
             <p className="eyebrow text-[var(--color-gold-light)]">
-              Start your booking
+              {finalCta.eyebrow}
             </p>
             <h2 className="mt-4 font-serif text-[2rem] font-bold leading-[1.04] sm:text-[2.5rem] md:text-[2.625rem]">
-              Ready when
-              {" "}
-              <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
-                you are.
-              </span>
+              {finalCtaHeading.before}
+              {finalCtaHeading.showAccent ? (
+                <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
+                  {finalCtaHeading.accent}
+                </span>
+              ) : null}
+              {finalCtaHeading.after}
             </h2>
             <p className="mt-5 max-w-xl text-base leading-7 text-white/80 sm:mt-7 sm:text-lg sm:leading-8">
-              Share dates, group size, and the places you have in mind. The
-              Luxor team will reply with a calm, considered plan.
+              {finalCta.description}
             </p>
             <div className="mt-7 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
               <Link
                 className="btn-primary"
-                href="/trip-planner"
+                href={finalCta.primaryHref}
               >
-                Book Now
+                {finalCta.primaryLabel}
               </Link>
               <Link
                 className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85"
-                href="/trip-planner"
+                href={finalCta.secondaryHref}
               >
                 <span className="h-px w-8 bg-[var(--color-gold-light)] transition-all duration-300 group-hover:w-12" />
-                Or open the trip planner
+                {finalCta.secondaryLabel}
               </Link>
             </div>
           </div>
         </div>
       </section>
+      ) : null}
 
       {/* ============================================================
          STICKY MOBILE CTA — toned-down navy bar (replaces the global

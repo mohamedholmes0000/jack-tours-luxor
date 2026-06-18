@@ -1,56 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import type { ComponentType } from "react";
-import { useMemo, useRef, useState } from "react";
+import { createElement, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
-  Sparkles,
-  type LucideProps,
 } from "lucide-react";
 import {
   curatedHomepageIcons,
   normalizeHomepageIconName,
   type HomepageEditorValues,
 } from "@/lib/homepage-settings";
+import { getLucideIcon } from "@/lib/icons";
 import { safeImageSrc } from "@/lib/images";
-
-type DynamicLucideIcon = ComponentType<LucideProps>;
-
-const iconMap: Record<string, DynamicLucideIcon> = {
-  Anchor: dynamic(() => import("lucide-react").then((mod) => mod.Anchor)),
-  Award: dynamic(() => import("lucide-react").then((mod) => mod.Award)),
-  Calendar: dynamic(() => import("lucide-react").then((mod) => mod.Calendar)),
-  Camera: dynamic(() => import("lucide-react").then((mod) => mod.Camera)),
-  Car: dynamic(() => import("lucide-react").then((mod) => mod.Car)),
-  Clock: dynamic(() => import("lucide-react").then((mod) => mod.Clock)),
-  Coffee: dynamic(() => import("lucide-react").then((mod) => mod.Coffee)),
-  Compass: dynamic(() => import("lucide-react").then((mod) => mod.Compass)),
-  Globe: dynamic(() => import("lucide-react").then((mod) => mod.Globe)),
-  Heart: dynamic(() => import("lucide-react").then((mod) => mod.Heart)),
-  Hotel: dynamic(() => import("lucide-react").then((mod) => mod.Hotel)),
-  Mail: dynamic(() => import("lucide-react").then((mod) => mod.Mail)),
-  Map: dynamic(() => import("lucide-react").then((mod) => mod.Map)),
-  MapPin: dynamic(() => import("lucide-react").then((mod) => mod.MapPin)),
-  MessageCircle: dynamic(() => import("lucide-react").then((mod) => mod.MessageCircle)),
-  Moon: dynamic(() => import("lucide-react").then((mod) => mod.Moon)),
-  Mountain: dynamic(() => import("lucide-react").then((mod) => mod.Mountain)),
-  Phone: dynamic(() => import("lucide-react").then((mod) => mod.Phone)),
-  Plane: dynamic(() => import("lucide-react").then((mod) => mod.Plane)),
-  Shield: dynamic(() => import("lucide-react").then((mod) => mod.Shield)),
-  Ship: dynamic(() => import("lucide-react").then((mod) => mod.Ship)),
-  Sparkles: dynamic(() => import("lucide-react").then((mod) => mod.Sparkles)),
-  Star: dynamic(() => import("lucide-react").then((mod) => mod.Star)),
-  Sun: dynamic(() => import("lucide-react").then((mod) => mod.Sun)),
-  Sunrise: dynamic(() => import("lucide-react").then((mod) => mod.Sunrise)),
-  Tent: dynamic(() => import("lucide-react").then((mod) => mod.Tent)),
-  TreePine: dynamic(() => import("lucide-react").then((mod) => mod.TreePine)),
-  UserCheck: dynamic(() => import("lucide-react").then((mod) => mod.UserCheck)),
-  Users: dynamic(() => import("lucide-react").then((mod) => mod.Users)),
-  Utensils: dynamic(() => import("lucide-react").then((mod) => mod.Utensils)),
-};
 
 type SectionKey =
   | "destinations"
@@ -147,8 +109,10 @@ function Toggle({
 
 function IconPreview({ name }: { name: string }) {
   const normalized = normalizeHomepageIconName(name);
-  const Icon = iconMap[normalized] || Sparkles;
-  return <Icon aria-hidden="true" className="h-5 w-5" />;
+  return createElement(getLucideIcon(normalized), {
+    "aria-hidden": true,
+    className: "h-5 w-5",
+  });
 }
 
 function IconPicker({
