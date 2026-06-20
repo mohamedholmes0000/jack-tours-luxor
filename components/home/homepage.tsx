@@ -601,7 +601,7 @@ export async function Homepage() {
               </Link>
             </div>
 
-            <div className="reveal-up relative isolate mx-auto w-full max-w-[300px] h-[300px] lg:h-[440px] lg:max-w-[560px]">
+            <div className="why-us-collage reveal-up relative isolate mx-auto h-[300px] w-full max-w-[300px] lg:h-[440px] lg:max-w-[560px]">
               <svg
                 aria-hidden="true"
                 viewBox="0 0 560 440"
@@ -631,7 +631,7 @@ export async function Homepage() {
               </svg>
 
               <div
-                className="absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
+                className="why-us-collage-card why-us-collage-card-1 absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
                   max-lg:top-0 max-lg:left-0 max-lg:size-[140px] max-lg:rounded-full
                   lg:left-6 lg:top-0 lg:h-[190px] lg:w-[260px] lg:rounded-2xl"
               >
@@ -644,7 +644,7 @@ export async function Homepage() {
                 />
               </div>
               <div
-                className="absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
+                className="why-us-collage-card why-us-collage-card-2 absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
                   max-lg:top-[-10px] max-lg:right-0 max-lg:size-[140px] max-lg:rounded-full
                   lg:right-8 lg:top-16 lg:h-[300px] lg:w-[238px] lg:rounded-2xl"
               >
@@ -657,7 +657,7 @@ export async function Homepage() {
                 />
               </div>
               <div
-                className="absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
+                className="why-us-collage-card why-us-collage-card-3 absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
                   max-lg:bottom-0 max-lg:left-1/2 max-lg:-translate-x-1/2 max-lg:size-[140px] max-lg:rounded-full
                   lg:bottom-0 lg:left-24 lg:h-[190px] lg:w-[250px] lg:rounded-2xl lg:translate-x-0"
               >

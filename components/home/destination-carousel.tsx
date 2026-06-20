@@ -189,6 +189,36 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
 
   return (
     <div className="container-premium relative mt-9 sm:mt-12">
+      <div className="grid grid-cols-3 gap-3 lg:hidden">
+        {items.slice(0, 3).map((item) => (
+          <Link
+            key={item.name}
+            href={item.href}
+            className="flex min-w-0 flex-col items-center text-center"
+          >
+            <span className="relative block size-[100px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)] ring-1 ring-[rgb(201_168_76_/_40%)] min-[390px]:size-[108px]">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                sizes="(min-width: 390px) 108px, 100px"
+                draggable={false}
+                className="object-cover"
+              />
+            </span>
+            <span className="mt-3 max-w-full truncate font-serif text-[1.05rem] font-semibold leading-tight text-[var(--color-navy)]">
+              {item.name}
+            </span>
+            <span className="mt-1 line-clamp-2 max-w-full text-[0.72rem] font-normal leading-4 text-[rgb(6_17_31_/_50%)]">
+              {item.subtitle}
+            </span>
+            <span className="mt-1 text-[0.72rem] font-medium leading-4 text-[var(--color-gold-dark)]">
+              {item.countLabel}
+            </span>
+          </Link>
+        ))}
+      </div>
+
       {items.length > 6 && canScroll ? (
         <div className="pointer-events-none absolute inset-y-0 left-0 right-0 z-10 hidden items-center justify-between lg:flex">
           <button
@@ -216,7 +246,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
 
       <div
         ref={trackRef}
-        className={`no-scrollbar flex w-full cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth active:cursor-grabbing lg:gap-8 ${
+        className={`no-scrollbar hidden w-full cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth active:cursor-grabbing lg:flex lg:gap-8 ${
           canScroll ? "sm:justify-start" : "sm:justify-center"
         }`}
         aria-label="Destinations carousel"
