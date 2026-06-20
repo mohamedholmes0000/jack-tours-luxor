@@ -84,16 +84,19 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
 
   useEffect(() => {
     function updateNavState() {
-      setIsNavStuck(window.scrollY > 36);
+      const threshold = isHomeRoute ? window.innerHeight * 0.6 : 36;
+      setIsNavStuck(window.scrollY > threshold);
     }
 
     updateNavState();
     window.addEventListener("scroll", updateNavState, { passive: true });
+    window.addEventListener("resize", updateNavState);
 
     return () => {
       window.removeEventListener("scroll", updateNavState);
+      window.removeEventListener("resize", updateNavState);
     };
-  }, []);
+  }, [isHomeRoute]);
 
   return (
     <>
@@ -175,7 +178,7 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
         </div>
       </header>
 
-      <MobileNavigation isHomeRoute={isHomeRoute} settings={settings} />
+      <MobileNavigation isHomeRoute={isHomeRoute} isNavStuck={isNavStuck} settings={settings} />
     </>
   );
 }

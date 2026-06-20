@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { PublicSettings } from "@/lib/data/settings";
 
-function MenuIcon({ className = "" }: { className?: string }) {
+function MenuIcon({ className = "", strokeWidth = 1.8 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none">
-      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" />
     </svg>
   );
 }
@@ -50,7 +50,15 @@ function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor"
   );
 }
 
-export function MobileNavigation({ isHomeRoute = false, settings }: { isHomeRoute?: boolean; settings: PublicSettings }) {
+export function MobileNavigation({
+  isHomeRoute = false,
+  isNavStuck = false,
+  settings,
+}: {
+  isHomeRoute?: boolean;
+  isNavStuck?: boolean;
+  settings: PublicSettings;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const phone = settings.phone || "(+20) XXX XXX XXXX";
@@ -93,19 +101,19 @@ export function MobileNavigation({ isHomeRoute = false, settings }: { isHomeRout
   }
 
   return (
-    <div className={`site-main-header border-b transition-all duration-200 ease-in-out md:hidden ${isHomeRoute ? "site-mobile-header-home" : ""}`}>
-      <div className={isHomeRoute ? "container-premium flex min-h-[8.75rem] items-start justify-between gap-4 pt-5" : "container-premium grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-2"}>
+    <div className={`site-main-header border-b transition-all duration-200 ease-in-out md:hidden ${isHomeRoute ? "site-mobile-header-home" : ""} ${isHomeRoute && isNavStuck ? "header-stuck" : ""}`}>
+      <div className={isHomeRoute ? "container-premium flex min-h-[8.25rem] items-start justify-between gap-4 pt-5" : "container-premium grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-2"}>
         <button
           type="button"
           aria-label="Open navigation menu"
           aria-expanded={isOpen}
           onClick={openMenu}
-          className={isHomeRoute ? "grid size-14 place-items-center rounded-2xl border border-white/34 bg-white/14 text-[var(--color-gold-light)] shadow-[0_18px_44px_rgb(0_0_0_/_22%)] backdrop-blur-md transition hover:border-[var(--color-gold-light)]" : "grid size-10 place-items-center justify-self-start text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)]"}
+          className={isHomeRoute ? "grid size-12 place-items-center rounded-[1.15rem] border border-white/26 bg-white/10 text-[var(--color-gold-light)] shadow-[0_12px_28px_rgb(0_0_0_/_18%)] backdrop-blur-sm transition hover:border-[var(--color-gold-light)]" : "grid size-10 place-items-center justify-self-start text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)]"}
         >
-          <MenuIcon className="size-6" />
+          <MenuIcon className={isHomeRoute ? "size-5" : "size-6"} strokeWidth={isHomeRoute ? 1.45 : 1.8} />
         </button>
 
-        <div className={isHomeRoute ? "flex flex-col items-end gap-3" : "contents"}>
+        <div className={isHomeRoute ? "flex flex-col items-end gap-2.5" : "contents"}>
           <Link href="/" className={isHomeRoute ? "flex flex-col items-end justify-center leading-none" : "flex flex-col items-center justify-center leading-none"} onClick={closeMenu}>
             <span className={isHomeRoute ? "font-serif text-[2.15rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-gold-light)] drop-shadow-[0_2px_10px_rgb(0_0_0_/_32%)]" : "font-serif text-[1.35rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-gold)]"}>
               {settings.logoLine1}
@@ -116,7 +124,7 @@ export function MobileNavigation({ isHomeRoute = false, settings }: { isHomeRout
           </Link>
 
           <Link
-            className={isHomeRoute ? "inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-[rgb(255_255_255_/_48%)] bg-[var(--color-gold)] px-5 py-2.5 font-sans text-[0.78rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)] shadow-[0_16px_34px_rgb(0_0_0_/_22%)] transition hover:bg-[var(--color-gold-light)]" : "inline-flex min-h-10 shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] px-3.5 py-2 font-sans text-[0.68rem] font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] transition hover:bg-[var(--color-gold-light)] justify-self-end"}
+            className={isHomeRoute ? "inline-flex min-h-[42px] shrink-0 items-center justify-center rounded-[10px] border border-[rgb(255_255_255_/_38%)] bg-[var(--color-gold)] px-4 py-2 font-sans text-[0.72rem] font-semibold uppercase tracking-[0.07em] text-[var(--color-navy)] shadow-[0_10px_22px_rgb(0_0_0_/_18%)] transition hover:bg-[var(--color-gold-light)]" : "inline-flex min-h-10 shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] px-3.5 py-2 font-sans text-[0.68rem] font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] transition hover:bg-[var(--color-gold-light)] justify-self-end"}
             href="/trip-planner"
           >
             {settings.bookNowLabel}

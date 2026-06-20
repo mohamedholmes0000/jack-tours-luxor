@@ -190,6 +190,26 @@ function normalizeHeroTrustBadges(value: string[]) {
   return [0, 1, 2].map((index) => cleanSettingText(value[index]) || fallback[index]);
 }
 
+function HeroTrustIcon({ index }: { index: number }) {
+  const paths = [
+    "M12 4l2.2 5.2 5.3.4-4 3.5 1.2 5.2L12 15.6 7.3 18.3l1.2-5.2-4-3.5 5.3-.4L12 4Z",
+    "M5 16c4.8-7.4 9.2-7.4 14 0M7 16h10M12 5v13M8.5 8.5 12 5l3.5 3.5",
+    "M12 4a7 7 0 0 1 7 7c0 5-7 9-7 9s-7-4-7-9a7 7 0 0 1 7-7Zm0 4v4l3 2",
+  ];
+
+  return (
+    <svg aria-hidden="true" className="size-7" viewBox="0 0 24 24" fill="none">
+      <path
+        d={paths[index] || paths[0]}
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.45"
+      />
+    </svg>
+  );
+}
+
 function primaryCategoryLabel(category: string) {
   return category.replace(/\s*·\s*Custom$/i, "").replace(/\s*\/\s*Custom$/i, "").trim();
 }
@@ -376,22 +396,21 @@ export async function Homepage() {
         {/* Bottom-only legibility scrim — keep the photo breathing. */}
         <div
           aria-hidden
-          className="absolute inset-x-0 bottom-0 h-[78%] bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.76)] to-transparent sm:h-[55%] sm:via-[rgba(6,17,31,0.55)]"
+          className="absolute inset-x-0 bottom-0 h-[86%] bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.72)] to-transparent sm:h-[66%] sm:via-[rgba(6,17,31,0.54)]"
         />
         {/* Top eyebrow strip — tiny, restrained. */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(6,17,31,0.78)] via-[rgba(6,17,31,0.34)] to-[rgba(6,17,31,0.12)]" />
-        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[rgba(6,17,31,0.78)] to-transparent sm:h-20" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_18%,rgba(255,223,166,0.2),transparent_34%),linear-gradient(90deg,rgba(6,17,31,0.5),rgba(6,17,31,0.12)_48%,rgba(6,17,31,0.38))]" />
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[rgba(6,17,31,0.5)] to-transparent sm:h-32" />
 
-        <div className="container-premium relative flex min-h-[calc(100svh-3.5rem)] flex-col justify-between pb-10 pt-7 sm:min-h-[calc(100svh-3.5rem)] sm:pb-16 sm:pt-9 md:min-h-[calc(100vh-6.625rem)] lg:pb-24 lg:pt-12">
-          <p className="eyebrow text-[var(--color-gold-light)]">
-            {heroText.eyebrow}
-          </p>
-
+        <div className="container-premium relative flex min-h-[100svh] flex-col justify-end pb-7 pt-44 sm:pb-12 md:pb-16 lg:pb-20">
           <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
-            <h1 className="font-serif font-bold leading-[1.02] text-white text-[clamp(2.6rem,7vw,6rem)]">
+            <p className="eyebrow mb-4 text-[var(--color-gold-light)] sm:mb-5">
+              {heroText.eyebrow}
+            </p>
+            <h1 className="font-serif text-[clamp(3.05rem,14vw,6.35rem)] font-semibold leading-[0.98] text-white drop-shadow-[0_10px_30px_rgb(0_0_0_/_38%)] sm:text-[clamp(3.4rem,8vw,6.5rem)]">
               {heroHeadline.before}
               {heroHeadline.showAccent ? (
-                <span className="font-accent-serif italic text-[var(--color-gold-light)]">
+                <span className="font-accent-serif italic text-[var(--color-gold-light)] drop-shadow-[0_10px_28px_rgb(0_0_0_/_34%)]">
                   {heroHeadline.accent}
                 </span>
               ) : null}
@@ -401,7 +420,7 @@ export async function Homepage() {
               {heroText.subheadline}
             </p>
             <div className="mt-6 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
-              <Link className="btn-primary" href={heroCtaHref}>
+              <Link className="btn-primary hero-primary-cta" href={heroCtaHref}>
                 <span>{heroCtaLabel}</span>
               </Link>
               <Link
@@ -414,11 +433,19 @@ export async function Homepage() {
             </div>
 
             {/* Compact reassurance row directly below the CTAs. */}
-            <ul className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-2 border-l border-[rgb(240_204_122_/_40%)] pl-4 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-white/76 sm:mt-7 sm:border-l-0 sm:pl-0">
+            <ul className="hero-trust-list mt-7 divide-y divide-white/18 border-y border-white/18 text-white/86 sm:mt-8 lg:max-w-2xl">
               {microTrustLine.map((item, index) => (
-                <li key={item} className="flex items-center gap-2">
-                  <span style={{ whiteSpace: "nowrap" }}>{cleanSettingText(item)}</span>
-                  {index < microTrustLine.length - 1 ? (
+                <li key={item} className="hero-trust-row flex items-center gap-4 py-3.5 sm:py-4">
+                  <span className="hero-trust-icon grid size-12 shrink-0 place-items-center rounded-2xl border border-white/18 bg-white/8 text-[var(--color-gold-light)] shadow-[inset_0_1px_0_rgb(255_255_255_/_14%)] backdrop-blur-sm">
+                    <HeroTrustIcon index={index} />
+                  </span>
+                  <span className="hero-trust-label min-w-0 flex-1 font-sans text-[0.83rem] font-medium uppercase tracking-[0.18em] text-white">
+                    {cleanSettingText(item)}
+                  </span>
+                  <span aria-hidden className="hero-trust-arrow text-2xl leading-none text-[var(--color-gold-light)]">
+                    →
+                  </span>
+                  {false ? (
                     <span
                       aria-hidden
                       className="text-[var(--color-gold-light)]"

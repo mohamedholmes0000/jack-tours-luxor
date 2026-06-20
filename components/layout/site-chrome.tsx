@@ -21,10 +21,23 @@ export function SiteChrome({
     return <main className="flex-1">{children}</main>;
   }
 
+  if (isHomeRoute) {
+    return (
+      <>
+        <div className="public-home-shell relative">
+          <Navbar isHomeRoute settings={settings} />
+          <main className="public-site public-site-home flex-1">{children}</main>
+        </div>
+        <Footer settings={settings} />
+        <FloatingWhatsApp settings={settings} />
+      </>
+    );
+  }
+
   return (
     <>
-      <Navbar isHomeRoute={isHomeRoute} settings={settings} />
-      <main className={`public-site flex-1 ${isHomeRoute ? "public-site-home" : ""}`}>{children}</main>
+      <Navbar settings={settings} />
+      <main className="public-site flex-1">{children}</main>
       <Footer settings={settings} />
       <FloatingWhatsApp settings={settings} />
     </>
