@@ -216,7 +216,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
 
       <div
         ref={trackRef}
-        className={`no-scrollbar flex w-full cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 active:cursor-grabbing lg:gap-8 ${
+        className={`no-scrollbar flex w-full cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth active:cursor-grabbing lg:gap-8 ${
           canScroll ? "sm:justify-start" : "sm:justify-center"
         }`}
         aria-label="Destinations carousel"
@@ -244,7 +244,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
               }
             }}
           >
-            <span className="relative block size-[7.5rem] overflow-hidden rounded-full border-2 border-[rgb(201_168_76_/_15%)] bg-[var(--color-sand)] shadow-[0_18px_38px_rgb(87_59_22_/_12%)] transition duration-300 ease-out group-hover:scale-105 group-hover:border-[rgb(201_168_76_/_100%)] group-focus-visible:scale-105 group-focus-visible:border-[rgb(201_168_76_/_100%)] sm:size-[9rem] lg:size-[10.5rem]">
+            <span className="relative block size-[7.5rem] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_18px_38px_rgb(87_59_22_/_12%)] ring-1 ring-[rgb(201_168_76_/_45%)] transition duration-300 ease-out group-hover:scale-105 group-hover:ring-2 group-hover:ring-[rgb(201_168_76_/_100%)] group-focus-visible:scale-105 group-focus-visible:ring-2 group-focus-visible:ring-[rgb(201_168_76_/_100%)] sm:size-[9rem] lg:size-[10.5rem]">
               <Image
                 src={item.image}
                 alt={item.name}

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createElement } from "react";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
+import { HeroImageSlider } from "@/components/home/hero-image-slider";
 import { formatPrice, type Tour } from "@/lib/content";
 import {
   getHomepageCityDestinationsSafe,
@@ -19,6 +20,13 @@ import { safeImageSrc } from "@/lib/images";
 // ============================================================================
 
 const fallbackHeroImage = "/photos/karnak.jpg";
+
+const defaultHeroSliderImages = [
+  "/photos/karnak.jpg",
+  "/photos/hatshepsut.jpg",
+  "/photos/felucca.jpg",
+  "/photos/luxor-temple.jpg",
+];
 
 const brandStoryImage = "/photos/hatshepsut.jpg";
 
@@ -276,6 +284,17 @@ export async function Homepage() {
   const heroCtaHref = homepageSettings.heroPrimaryCtaHref || "/trip-planner";
   const heroSecondaryLabel = homepageSettings.heroSecondaryLinkLabel || "Or Book Now";
   const heroSecondaryHref = homepageSettings.heroSecondaryLinkHref || "/trip-planner";
+  const heroSlides = Array.from(new Set([heroImage, ...defaultHeroSliderImages]))
+    .filter(Boolean)
+    .map((src, index) => ({
+      alt: [
+        "Karnak temple columns at first light in Luxor",
+        "Hatshepsut Temple terraces on the West Bank",
+        "A felucca sailing on the Nile",
+        "Luxor Temple at golden hour",
+      ][index] || "Private Egypt travel scene",
+      src,
+    }));
   const heroHeadline = splitHeroHeadline(
     homepageSettings.heroHeadline || `${legacyHeroText.headline} ${legacyHeroText.accent}`,
     homepageSettings.heroHeadlineAccent,
@@ -384,13 +403,16 @@ export async function Homepage() {
       {homepageSettings.heroVisible ? (
         <section data-home-hero="true" className="relative isolate order-1 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
+          <div className="absolute inset-0 md:hidden">
+            <HeroImageSlider images={heroSlides} />
+          </div>
           <Image
             src={heroImage}
             alt="Karnak temple columns at first light in Luxor"
             fill
             priority
             sizes="100vw"
-            className="ken-burns object-cover"
+            className="ken-burns hidden object-cover md:block"
           />
         </div>
         {/* Bottom-only legibility scrim — keep the photo breathing. */}
@@ -589,7 +611,7 @@ export async function Homepage() {
               </Link>
             </div>
 
-            <div className="reveal-up relative isolate mx-auto flex w-full max-w-[34rem] flex-col gap-5 lg:h-[440px] lg:max-w-[560px] lg:block">
+            <div className="reveal-up relative isolate mx-auto w-full max-w-[300px] h-[300px] lg:h-[440px] lg:max-w-[560px]">
               <svg
                 aria-hidden="true"
                 viewBox="0 0 560 440"
@@ -617,57 +639,43 @@ export async function Homepage() {
                 <path d="M3 15 29 5l-9 25-5-11-12-4Z" />
                 <path d="m15 19-6 9" />
               </svg>
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 120 520"
-                className="pointer-events-none absolute inset-y-8 left-1/2 z-0 h-[calc(100%-4rem)] w-24 -translate-x-1/2 text-[var(--color-gold)] lg:hidden"
-              >
-                <path
-                  d="M60 0 C 18 86 98 144 58 224 C 18 304 96 374 60 520"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeOpacity="0.55"
-                  strokeWidth="2"
-                  strokeDasharray="7 9"
-                  strokeLinecap="round"
-                />
-                <g
-                  transform="translate(45 230) rotate(90)"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M2 12 26 3l-8 24-5-10-11-5Z" />
-                  <path d="m13 17-5 8" />
-                </g>
-              </svg>
 
-              <div className="relative z-10 h-[180px] w-[78%] self-start overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:left-6 lg:top-0 lg:h-[190px] lg:w-[260px]">
+              <div
+                className="absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
+                  max-lg:top-0 max-lg:left-0 max-lg:size-[140px] max-lg:rounded-full
+                  lg:left-6 lg:top-0 lg:h-[190px] lg:w-[260px] lg:rounded-2xl"
+              >
                 <Image
                   src={whyUs.image1}
                   alt="Karnak temple columns in Luxor"
                   fill
-                  sizes="(min-width: 1024px) 260px, 78vw"
+                  sizes="(min-width: 1024px) 260px, 140px"
                   className="object-cover"
                 />
               </div>
-              <div className="relative z-10 -mt-2 h-[250px] w-[74%] self-end overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:right-8 lg:top-16 lg:mt-0 lg:h-[300px] lg:w-[238px]">
+              <div
+                className="absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
+                  max-lg:top-[-10px] max-lg:right-0 max-lg:size-[140px] max-lg:rounded-full
+                  lg:right-8 lg:top-16 lg:h-[300px] lg:w-[238px] lg:rounded-2xl"
+              >
                 <Image
                   src={whyUs.image2}
                   alt="Hatshepsut temple facade"
                   fill
-                  sizes="(min-width: 1024px) 238px, 74vw"
+                  sizes="(min-width: 1024px) 238px, 140px"
                   className="object-cover"
                 />
               </div>
-              <div className="relative z-10 -mt-2 h-[180px] w-[76%] self-start overflow-hidden rounded-2xl shadow-[0_14px_34px_rgb(0_0_0_/_14%)] lg:absolute lg:bottom-0 lg:left-24 lg:mt-0 lg:h-[190px] lg:w-[250px]">
+              <div
+                className="absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
+                  max-lg:bottom-0 max-lg:left-1/2 max-lg:-translate-x-1/2 max-lg:size-[140px] max-lg:rounded-full
+                  lg:bottom-0 lg:left-24 lg:h-[190px] lg:w-[250px] lg:rounded-2xl lg:translate-x-0"
+              >
                 <Image
                   src={whyUs.image3}
                   alt="Felucca sailing on the Nile"
                   fill
-                  sizes="(min-width: 1024px) 250px, 76vw"
+                  sizes="(min-width: 1024px) 250px, 140px"
                   className="object-cover"
                 />
               </div>
