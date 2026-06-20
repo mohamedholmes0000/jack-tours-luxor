@@ -4,8 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { blogArticles } from "@/lib/content";
 import { getBlogArticlesSafe } from "@/lib/data/public";
+import { getPublicSettings } from "@/lib/data/settings";
 import { JsonLd, blogPostingJsonLd } from "@/lib/seo";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 type BlogDetailProps = {
   params: Promise<{ slug: string }>;
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
 
 export default async function BlogDetailPage({ params }: BlogDetailProps) {
   const { slug } = await params;
-  const articles = await getBlogArticlesSafe();
+  const [articles, settings] = await Promise.all([getBlogArticlesSafe(), getPublicSettings()]);
   const article = articles.find((item) => item.slug === slug);
 
   if (!article) {
@@ -94,7 +95,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
               <Link className="btn-secondary" href="/trip-planner">
                 Trip Planner
               </Link>
-              <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
+              <a className="btn-primary" href={buildWhatsAppUrlForNumber(undefined, settings.whatsappNumber)} target="_blank" rel="noreferrer">
                 WhatsApp Us
               </a>
             </div>

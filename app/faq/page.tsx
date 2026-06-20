@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFaqsSafe } from "@/lib/data/public";
+import { getPublicSettings } from "@/lib/data/settings";
 import { JsonLd, faqPageJsonLd } from "@/lib/seo";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function FAQPage() {
-  const faqs = await getFaqsSafe();
+  const [faqs, settings] = await Promise.all([getFaqsSafe(), getPublicSettings()]);
   const categories = Array.from(new Set(faqs.map((faq) => faq.category)));
   return (
     <>
@@ -59,7 +60,7 @@ export default async function FAQPage() {
             <Link className="btn-secondary" href="/trip-planner">
               Trip Planner
             </Link>
-            <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
+            <a className="btn-primary" href={buildWhatsAppUrlForNumber(undefined, settings.whatsappNumber)} target="_blank" rel="noreferrer">
               Ask on WhatsApp
             </a>
           </div>

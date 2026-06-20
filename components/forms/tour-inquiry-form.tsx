@@ -5,14 +5,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormField, inputClassName, textareaClassName } from "@/components/forms/form-field";
 import { TourInquiryValues, tourInquirySchema } from "@/lib/validations";
-import { buildTourInquiryMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildTourInquiryMessage, buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 type TourInquiryFormProps = {
   tourTitle: string;
   tourSlug: string;
+  whatsappNumber?: string;
 };
 
-export function TourInquiryForm({ tourTitle, tourSlug }: TourInquiryFormProps) {
+export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInquiryFormProps) {
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const {
@@ -28,7 +29,7 @@ export function TourInquiryForm({ tourTitle, tourSlug }: TourInquiryFormProps) {
 
   async function onSubmit(values: TourInquiryValues) {
     setIsSending(true);
-    const url = buildWhatsAppUrl(buildTourInquiryMessage({ ...values, tourTitle }));
+    const url = buildWhatsAppUrlForNumber(buildTourInquiryMessage({ ...values, tourTitle }), whatsappNumber);
 
     try {
       await fetch("/api/inquiries", {

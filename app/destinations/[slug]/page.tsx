@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDestinationBySlug, destinations } from "@/lib/content";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { getPublicSettings } from "@/lib/data/settings";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 type DestinationDetailProps = {
   params: Promise<{ slug: string }>;
@@ -29,6 +30,7 @@ export async function generateMetadata({ params }: DestinationDetailProps): Prom
 
 export default async function DestinationDetailPage({ params }: DestinationDetailProps) {
   const { slug } = await params;
+  const settings = await getPublicSettings();
   const destination = getDestinationBySlug(slug);
 
   if (!destination) {
@@ -143,7 +145,7 @@ export default async function DestinationDetailPage({ params }: DestinationDetai
               Ask us how to combine {destination.name} with Luxor, Cairo, Aswan, or a Nile cruise.
             </p>
             <div className="mt-6 flex flex-col gap-3">
-              <a className="btn-primary" href={buildWhatsAppUrl(message)} target="_blank" rel="noreferrer">
+              <a className="btn-primary" href={buildWhatsAppUrlForNumber(message, settings.whatsappNumber)} target="_blank" rel="noreferrer">
                 WhatsApp Planner
               </a>
               <Link className="btn-secondary" href="/tours">

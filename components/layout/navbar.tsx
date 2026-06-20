@@ -4,14 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MobileNavigation } from "@/components/layout/mobile-navigation";
-import type { AdminSettingsValues } from "@/lib/validations";
-
-const navItems = [
-  { href: "/tours", label: "Tours" },
-  { href: "/destinations", label: "Destinations" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/about", label: "About" },
-];
+import type { PublicSettings } from "@/lib/data/settings";
 
 function PhoneIcon({ className = "" }: { className?: string }) {
   return (
@@ -68,15 +61,21 @@ function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor"
   );
 }
 
-export function Navbar({ settings }: { settings: AdminSettingsValues }) {
+export function Navbar({ settings }: { settings: PublicSettings }) {
   const pathname = usePathname();
   const [isNavStuck, setIsNavStuck] = useState(false);
   const phone = settings.phone || "(+20) XXX XXX XXXX";
   const email = settings.email || "admin@jacktoursluxor.com";
+  const navItems = [
+    { href: settings.navLink1Url, label: settings.navLink1Label },
+    { href: settings.navLink2Url, label: settings.navLink2Label },
+    { href: settings.navLink3Url, label: settings.navLink3Label },
+    { href: settings.navLink4Url, label: settings.navLink4Label },
+  ];
   const socialLinks = [
-    { href: settings.facebookUrl || "#", label: "Facebook" as const },
-    { href: settings.instagramUrl || "#", label: "Instagram" as const },
-    { href: settings.tripAdvisorUrl || "#", label: "TripAdvisor" as const },
+    { href: settings.socialFacebook || "#", label: "Facebook" as const },
+    { href: settings.socialInstagram || "#", label: "Instagram" as const },
+    { href: settings.socialTripadvisor || "#", label: "TripAdvisor" as const },
   ];
 
   function isActive(href: string) {
@@ -132,10 +131,10 @@ export function Navbar({ settings }: { settings: AdminSettingsValues }) {
         <div className="container-premium grid h-20 grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8">
           <Link href="/" className="flex flex-col leading-none">
             <span className="font-serif text-[2rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-navy)] lg:text-[2.25rem]">
-              JACK
+              {settings.logoLine1}
             </span>
             <span className="mt-1 font-sans text-[0.66rem] font-medium uppercase tracking-[0.2em] text-[var(--color-navy)]/70 lg:text-[0.69rem]">
-              EGYPT TOUR
+              {settings.logoLine2}
             </span>
           </Link>
 
@@ -170,7 +169,7 @@ export function Navbar({ settings }: { settings: AdminSettingsValues }) {
               className="inline-flex min-h-10 items-center justify-center rounded-md bg-[var(--color-gold)] px-4 py-2.5 font-sans text-[0.78rem] font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] lg:px-6 lg:text-[0.8rem]"
               href="/trip-planner"
             >
-              BOOK NOW
+              {settings.bookNowLabel}
             </Link>
           </div>
         </div>

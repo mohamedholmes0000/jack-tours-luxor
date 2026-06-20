@@ -3,16 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { AdminSettingsValues } from "@/lib/validations";
-
-const navItems = [
-  { href: "/tours", label: "Tours" },
-  { href: "/destinations", label: "Destinations" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/about", label: "About" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
-];
+import type { PublicSettings } from "@/lib/data/settings";
 
 function MenuIcon({ className = "" }: { className?: string }) {
   return (
@@ -59,16 +50,24 @@ function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor"
   );
 }
 
-export function MobileNavigation({ settings }: { settings: AdminSettingsValues }) {
+export function MobileNavigation({ settings }: { settings: PublicSettings }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const phone = settings.phone || "(+20) XXX XXX XXXX";
   const phoneHref = phone.replace(/[^\d+]/g, "");
   const email = settings.email || "admin@jacktoursluxor.com";
+  const navItems = [
+    { href: settings.navLink1Url, label: settings.navLink1Label },
+    { href: settings.navLink2Url, label: settings.navLink2Label },
+    { href: settings.navLink3Url, label: settings.navLink3Label },
+    { href: settings.navLink4Url, label: settings.navLink4Label },
+    { href: "/blog", label: "Blog" },
+    { href: "/contact", label: "Contact" },
+  ];
   const socialLinks = [
-    { href: settings.facebookUrl || "#", label: "Facebook" as const },
-    { href: settings.instagramUrl || "#", label: "Instagram" as const },
-    { href: settings.tripAdvisorUrl || "#", label: "TripAdvisor" as const },
+    { href: settings.socialFacebook || "#", label: "Facebook" as const },
+    { href: settings.socialInstagram || "#", label: "Instagram" as const },
+    { href: settings.socialTripadvisor || "#", label: "TripAdvisor" as const },
   ];
 
   function isActive(href: string) {
@@ -108,10 +107,10 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
 
         <Link href="/" className="flex flex-col items-center justify-center leading-none" onClick={closeMenu}>
           <span className="font-serif text-2xl font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-navy)]">
-            JACK
+            {settings.logoLine1}
           </span>
           <span className="mt-0.5 font-sans text-[0.56rem] font-medium uppercase tracking-[0.2em] text-[var(--color-navy)]/70">
-            EGYPT TOUR
+            {settings.logoLine2}
           </span>
         </Link>
 
@@ -119,7 +118,7 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
           className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] px-3 py-2 font-sans text-[0.58rem] font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] transition hover:bg-[var(--color-gold-light)] justify-self-end"
           href="/trip-planner"
         >
-          BOOK NOW
+          {settings.bookNowLabel}
         </Link>
       </div>
 
@@ -136,10 +135,10 @@ export function MobileNavigation({ settings }: { settings: AdminSettingsValues }
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="font-serif text-3xl font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)]">
-                JACK
+                {settings.logoLine1}
               </p>
               <p className="mt-1 font-sans text-[0.62rem] font-medium uppercase tracking-[0.2em] text-white/64">
-                EGYPT TOUR
+                {settings.logoLine2}
               </p>
             </div>
             <button

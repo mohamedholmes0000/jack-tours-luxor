@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice, type Tour } from "@/lib/content";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
-export function TourCard({ tour }: { tour: Tour }) {
+export function TourCard({ tour, whatsappNumber }: { tour: Tour; whatsappNumber?: string }) {
   const whatsappMessage = `Hello Jack Egypt Tour, I am interested in ${tour.title}. Can you send me details and availability?`;
 
   return (
@@ -41,7 +41,7 @@ export function TourCard({ tour }: { tour: Tour }) {
           </Link>
           <a
             className="btn-secondary flex-1"
-            href={buildWhatsAppUrl(whatsappMessage)}
+            href={buildWhatsAppUrlForNumber(whatsappMessage, whatsappNumber)}
             target="_blank"
             rel="noreferrer"
           >

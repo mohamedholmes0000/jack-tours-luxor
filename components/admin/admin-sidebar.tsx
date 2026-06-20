@@ -98,6 +98,7 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
   const profileActive = pathname === "/admin/profile";
   const usersActive = pathname === "/admin/users" || pathname.startsWith("/admin/users/");
   const homepageActive = pathname === "/admin/pages/homepage";
+  const contactPageActive = pathname === "/admin/pages/contact";
 
   return (
     <aside className="flex flex-col border-r border-[var(--color-gray-100)] bg-white p-5 lg:min-h-screen">
@@ -125,6 +126,17 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
           >
             <Home className="h-4 w-4" />
             Homepage
+          </Link>
+          <Link
+            href="/admin/pages/contact"
+            aria-current={contactPageActive ? "page" : undefined}
+            className={`mt-2 flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
+              contactPageActive
+                ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
+                : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
+            }`}
+          >
+            Contact Page
           </Link>
         </div>
         {links.map((link) => (

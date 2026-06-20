@@ -202,6 +202,52 @@ export const adminSettingsSchema = z.object({
   homepageTrustItem3: z.string().trim().optional(),
 });
 
+const optionalUrl = z.string().trim().url("Use a full URL.").optional().or(z.literal(""));
+const localPath = z
+  .string()
+  .trim()
+  .refine((value) => !value || value.startsWith("/") || value.startsWith("http"), "Use a local path or full URL.");
+
+export const adminGlobalSettingsSchema = z.object({
+  globalWhatsappNumber: z.string().trim().optional(),
+  globalPhoneNumber: z.string().trim().optional(),
+  globalEmail: z.string().trim().email("Add a valid email.").optional().or(z.literal("")),
+  socialFacebook: optionalUrl,
+  socialInstagram: optionalUrl,
+  socialTripadvisor: optionalUrl,
+  socialTwitter: optionalUrl,
+  socialYoutube: optionalUrl,
+});
+
+export const adminHeaderSettingsSchema = z.object({
+  logoLine1: z.string().trim().min(1, "Add logo line 1."),
+  logoLine2: z.string().trim().min(1, "Add logo line 2."),
+  navLink1Label: z.string().trim().min(1),
+  navLink1Url: localPath,
+  navLink2Label: z.string().trim().min(1),
+  navLink2Url: localPath,
+  navLink3Label: z.string().trim().min(1),
+  navLink3Url: localPath,
+  navLink4Label: z.string().trim().min(1),
+  navLink4Url: localPath,
+  bookNowLabel: z.string().trim().min(1),
+});
+
+export const adminFooterSettingsSchema = z.object({
+  footerTagline: z.string().trim().optional(),
+  footerDescription: z.string().trim().optional(),
+  footerCol1Heading: z.string().trim().min(1),
+  footerCol1Links: z.array(z.object({ label: z.string().trim().min(1), url: localPath })).min(1),
+  footerCol2Heading: z.string().trim().min(1),
+  footerCopyright: z.string().trim().optional(),
+});
+
+export const adminContactMapSchema = z.object({
+  contactMapLocation: z.string().trim().min(2, "Add a map location."),
+  contactMapZoom: z.number().int().min(1).max(20),
+  contactMapVisible: z.boolean(),
+});
+
 const adminRoleSchema = z.enum(["SUPER_ADMIN", "ADMIN", "EDITOR", "VIEWER"]);
 const adminPasswordSchema = z
   .string()
@@ -248,5 +294,9 @@ export type AdminGalleryAlbumValues = z.infer<typeof adminGalleryAlbumSchema>;
 export type AdminGalleryCategoryValues = z.infer<typeof adminGalleryCategorySchema>;
 export type AdminDestinationValues = z.infer<typeof adminDestinationSchema>;
 export type AdminSettingsValues = z.infer<typeof adminSettingsSchema>;
+export type AdminGlobalSettingsValues = z.infer<typeof adminGlobalSettingsSchema>;
+export type AdminHeaderSettingsValues = z.infer<typeof adminHeaderSettingsSchema>;
+export type AdminFooterSettingsValues = z.infer<typeof adminFooterSettingsSchema>;
+export type AdminContactMapValues = z.infer<typeof adminContactMapSchema>;
 export type AdminUserCreateValues = z.infer<typeof adminUserCreateSchema>;
 export type AdminUserUpdateValues = z.infer<typeof adminUserUpdateSchema>;

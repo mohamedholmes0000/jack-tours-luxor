@@ -1,7 +1,7 @@
 import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
-import type { AdminSettingsValues } from "@/lib/validations";
+import type { PublicSettings } from "@/lib/data/settings";
 
-export function FloatingWhatsApp({ settings }: { settings: AdminSettingsValues }) {
+export function FloatingWhatsApp({ settings }: { settings: PublicSettings }) {
   return (
     <a
       aria-label="Chat with Jack Egypt Tour on WhatsApp"

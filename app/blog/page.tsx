@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getBlogArticlesSafe } from "@/lib/data/public";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { getPublicSettings } from "@/lib/data/settings";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Egypt Travel Blog",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const blogArticles = await getBlogArticlesSafe();
+  const [blogArticles, settings] = await Promise.all([getBlogArticlesSafe(), getPublicSettings()]);
   return (
     <>
       <section className="section-dark pattern-overlay py-20 text-white md:py-28">
@@ -58,7 +59,7 @@ export default async function BlogPage() {
           <h2 className="max-w-2xl font-serif text-4xl font-semibold text-white">
             Have a specific Egypt planning question?
           </h2>
-          <a className="btn-primary" href={buildWhatsAppUrl()} target="_blank" rel="noreferrer">
+          <a className="btn-primary" href={buildWhatsAppUrlForNumber(undefined, settings.whatsappNumber)} target="_blank" rel="noreferrer">
             Ask on WhatsApp
           </a>
         </div>

@@ -8,8 +8,9 @@ import {
 } from "@/components/tours/tour-detail-interactions";
 import { tours, type Tour } from "@/lib/content";
 import { getToursSafe } from "@/lib/data/public";
+import { getPublicSettings } from "@/lib/data/settings";
 import { JsonLd, touristTripJsonLd } from "@/lib/seo";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 type TourDetailProps = {
   params: Promise<{ slug: string }>;
@@ -207,7 +208,7 @@ function getSimilarTours(currentTour: Tour, allTours: Tour[]) {
 
 export default async function TourDetailPage({ params }: TourDetailProps) {
   const { slug } = await params;
-  const safeTours = await getToursSafe();
+  const [safeTours, settings] = await Promise.all([getToursSafe(), getPublicSettings()]);
   const tour = safeTours.find((item) => item.slug === slug);
 
   if (!tour) {
@@ -220,7 +221,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
   const languageLabel = tour.languages.length ? tour.languages.join(", ") : "English";
   const bookingHref = `/trip-planner?tour=${encodeURIComponent(tour.slug)}`;
   const whatsappMessage = `Hi, I'm interested in the ${tour.title} tour. Could you tell me more?`;
-  const whatsappHref = buildWhatsAppUrl(whatsappMessage);
+  const whatsappHref = buildWhatsAppUrlForNumber(whatsappMessage, settings.whatsappNumber);
   const price = priceAmount(tour);
   const similarTours = getSimilarTours(tour, safeTours);
   const heroId = "tour-detail-hero";

@@ -319,6 +319,9 @@ model ContactPage {
   formSubheading        String?  @db.Text
   successMessage        String?  @db.Text
   inquiryEmailRecipient String?
+  contactMapLocation    String?
+  contactMapZoom        Int      @default(12)
+  contactMapVisible     Boolean  @default(true)
   updatedAt             DateTime @updatedAt
 }
 
@@ -353,6 +356,10 @@ model TripPlannerPage {
 
 model GlobalSettings {
   id                    String   @id @default("global")
+  companyName           String?
+  globalWhatsappNumber  String?
+  globalPhoneNumber     String?
+  globalEmail           String?
   whatsappNumber        String?
   phone                 String?
   email                 String?
@@ -360,6 +367,11 @@ model GlobalSettings {
   facebookUrl           String?
   instagramUrl          String?
   tripAdvisorUrl        String?
+  socialFacebook        String?
+  socialInstagram       String?
+  socialTripadvisor     String?
+  socialTwitter         String?
+  socialYoutube         String?
   siteFavicon           String?
   defaultSeoTitle       String?
   defaultSeoDescription String?  @db.Text
@@ -370,13 +382,28 @@ model GlobalSettings {
 model HeaderFooter {
   id                  String   @id @default("header-footer")
   logoImage           String?
+  logoLine1           String?
+  logoLine2           String?
   logoText            String?
   logoSubtitle        String?
   headerNavLinks      Json?
+  navLink1Label       String?
+  navLink1Url         String?
+  navLink2Label       String?
+  navLink2Url         String?
+  navLink3Label       String?
+  navLink3Url         String?
+  navLink4Label       String?
+  navLink4Url         String?
   bookNowLabel        String?
   bookNowHref         String?
+  footerTagline       String?
   footerDescription   String?  @db.Text
+  footerCol1Heading   String?
+  footerCol1Links     Json?
+  footerCol2Heading   String?
   footerExploreLinks  Json?
+  footerCopyright     String?
   footerCopyrightText String?
   footerWhatsappLabel String?
   updatedAt           DateTime @updatedAt

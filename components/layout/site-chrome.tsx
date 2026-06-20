@@ -4,14 +4,14 @@ import { usePathname } from "next/navigation";
 import { FloatingWhatsApp } from "@/components/shared/floating-whatsapp";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
-import type { AdminSettingsValues } from "@/lib/validations";
+import type { PublicSettings } from "@/lib/data/settings";
 
 export function SiteChrome({
   children,
   settings,
 }: {
   children: React.ReactNode;
-  settings: AdminSettingsValues;
+  settings: PublicSettings;
 }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith("/admin");

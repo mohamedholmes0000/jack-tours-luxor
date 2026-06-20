@@ -75,6 +75,9 @@ export default async function ContactPage() {
   const whatsappNumber = settings.whatsappNumber || settings.phone || "+20 XXX XXX XXXX";
   const email = settings.email || "admin@jacktoursluxor.com";
   const address = settings.address || "Luxor, Upper Egypt";
+  const mapLocation = settings.contactMapLocation || address || "Luxor, Egypt";
+  const mapZoom = settings.contactMapZoom || 12;
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(mapLocation)}&z=${mapZoom}&output=embed`;
 
   return (
     <>
@@ -122,6 +125,32 @@ export default async function ContactPage() {
           <ContactForm />
         </div>
       </section>
+
+      {settings.contactMapVisible ? (
+        <section className="bg-[var(--color-ivory)] py-14 md:py-20">
+          <div className="container-premium">
+            <div className="mb-6">
+              <p className="eyebrow text-[var(--color-gold)]">Visit Us</p>
+              <h2 className="mt-3 font-serif text-4xl font-semibold text-[var(--color-navy)]">
+                Find us in Luxor
+              </h2>
+            </div>
+            <div className="overflow-hidden rounded-xl border border-[rgb(214_173_84_/_24%)] bg-white shadow-[0_18px_50px_rgb(87_59_22_/_9%)]">
+              <iframe
+                src={mapSrc}
+                width="100%"
+                height="450"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title={`Google Map for ${mapLocation}`}
+                className="h-[320px] w-full md:h-[450px]"
+              />
+            </div>
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }

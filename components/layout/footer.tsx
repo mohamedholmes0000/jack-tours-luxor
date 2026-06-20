@@ -1,11 +1,13 @@
 import Link from "next/link";
-import type { AdminSettingsValues } from "@/lib/validations";
+import type { PublicSettings } from "@/lib/data/settings";
 
-export function Footer({ settings }: { settings: AdminSettingsValues }) {
+export function Footer({ settings }: { settings: PublicSettings }) {
   const socialLinks = [
-    { href: settings.facebookUrl, label: "Facebook" },
-    { href: settings.instagramUrl, label: "Instagram" },
-    { href: settings.tripAdvisorUrl, label: "TripAdvisor" },
+    { href: settings.socialFacebook, label: "Facebook" },
+    { href: settings.socialInstagram, label: "Instagram" },
+    { href: settings.socialTripadvisor, label: "TripAdvisor" },
+    { href: settings.socialTwitter, label: "X" },
+    { href: settings.socialYoutube, label: "YouTube" },
   ].filter((link) => link.href);
 
   return (
@@ -13,9 +15,9 @@ export function Footer({ settings }: { settings: AdminSettingsValues }) {
       <div className="container-premium grid gap-10 py-12 md:grid-cols-[1.3fr_0.7fr_0.7fr]">
         <div className="relative">
           <p className="font-serif text-4xl font-semibold text-[var(--color-gold-light)]">{settings.companyName}</p>
+          <p className="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-white/55">{settings.footerTagline}</p>
           <p className="mt-4 max-w-xl text-sm leading-7 text-white/70">
-            Luxury Egypt tours, Nile cruise planning, and practical DMC support from a Luxor-based
-            team.
+            {settings.footerDescription}
           </p>
           <Link
             className="btn-secondary mt-6"
@@ -26,21 +28,19 @@ export function Footer({ settings }: { settings: AdminSettingsValues }) {
         </div>
         <div className="relative">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
-            Explore
+            {settings.footerCol1Heading}
           </p>
           <div className="mt-4 flex flex-col gap-3 text-sm text-white/70">
-            <Link href="/tours">Tours</Link>
-            <Link href="/destinations">Destinations</Link>
-            <Link href="/gallery">Gallery</Link>
-            <Link href="/blog">Blog</Link>
-            <Link href="/trip-planner">Trip Planner</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/faq">FAQ</Link>
+            {settings.footerCol1Links.map((link) => (
+              <Link key={`${link.label}-${link.url}`} href={link.url}>
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
         <div className="relative">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
-            Contact
+            {settings.footerCol2Heading}
           </p>
           <div className="mt-4 space-y-3 text-sm text-white/70">
             <p>{settings.address}</p>
@@ -60,7 +60,7 @@ export function Footer({ settings }: { settings: AdminSettingsValues }) {
         </div>
       </div>
       <div className="relative border-t border-white/10 py-5 text-center text-xs text-white/50">
-        &copy; {new Date().getFullYear()} {settings.companyName}. All rights reserved.
+        {settings.footerCopyright}
       </div>
     </footer>
   );
