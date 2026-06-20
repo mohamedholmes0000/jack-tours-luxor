@@ -94,28 +94,28 @@ export function MobileNavigation({ settings }: { settings: PublicSettings }) {
 
   return (
     <div className="site-main-header border-b transition-all duration-200 ease-in-out md:hidden">
-      <div className="container-premium grid h-14 grid-cols-[1fr_auto_1fr] items-center">
+      <div className="container-premium grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-2">
         <button
           type="button"
           aria-label="Open navigation menu"
           aria-expanded={isOpen}
           onClick={openMenu}
-          className="grid size-11 place-items-center justify-self-start text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)]"
+          className="grid size-10 place-items-center justify-self-start text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)]"
         >
           <MenuIcon className="size-6" />
         </button>
 
         <Link href="/" className="flex flex-col items-center justify-center leading-none" onClick={closeMenu}>
-          <span className="font-serif text-2xl font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-navy)]">
+          <span className="font-serif text-[1.35rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-gold)]">
             {settings.logoLine1}
           </span>
-          <span className="mt-0.5 font-sans text-[0.56rem] font-medium uppercase tracking-[0.2em] text-[var(--color-navy)]/70">
+          <span className="mt-0.5 font-sans text-[0.58rem] font-medium uppercase tracking-[0.15em] text-[var(--color-navy)]/70">
             {settings.logoLine2}
           </span>
         </Link>
 
         <Link
-          className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] px-3 py-2 font-sans text-[0.58rem] font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] transition hover:bg-[var(--color-gold-light)] justify-self-end"
+          className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] px-3.5 py-2 font-sans text-[0.68rem] font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_10px_24px_rgb(214_173_84_/_18%)] transition hover:bg-[var(--color-gold-light)] justify-self-end"
           href="/trip-planner"
         >
           {settings.bookNowLabel}
