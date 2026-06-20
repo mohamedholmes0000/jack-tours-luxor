@@ -130,7 +130,7 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
         </div>
       </div>
 
-      <header className={`site-main-header hidden border-b transition-all duration-200 ease-in-out md:block ${isHomeRoute ? "site-main-header-home" : ""} ${isNavStuck ? "header-stuck" : ""}`}>
+      <header className={`site-main-header hidden border-b transition-[background,border-color,box-shadow,backdrop-filter] duration-200 ease-in-out md:block ${isHomeRoute ? "site-main-header-home" : ""} ${isNavStuck ? "header-stuck" : ""}`}>
         <div className="container-premium grid h-20 grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8">
           <Link href="/" className="flex flex-col leading-none">
             <span className={`font-serif text-[2rem] font-semibold uppercase leading-none tracking-[0.08em] lg:text-[2.25rem] ${isHomeRoute ? "text-[var(--color-gold-light)]" : "text-[var(--color-navy)]"}`}>

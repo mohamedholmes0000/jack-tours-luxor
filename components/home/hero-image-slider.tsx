@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+const SLIDE_INTERVAL_MS = 6500;
+
 export function HeroImageSlider({
   images,
 }: {
@@ -14,11 +16,39 @@ export function HeroImageSlider({
   useEffect(() => {
     if (!hasMultipleImages) return;
 
-    const interval = window.setInterval(() => {
-      setCurrentSlide((current) => (current + 1) % images.length);
-    }, 5000);
+    let interval: number | undefined;
 
-    return () => window.clearInterval(interval);
+    function tick() {
+      setCurrentSlide((current) => (current + 1) % images.length);
+    }
+
+    function start() {
+      stop();
+      interval = window.setInterval(tick, SLIDE_INTERVAL_MS);
+    }
+
+    function stop() {
+      if (interval !== undefined) {
+        window.clearInterval(interval);
+        interval = undefined;
+      }
+    }
+
+    function handleVisibility() {
+      if (document.hidden) {
+        stop();
+      } else {
+        start();
+      }
+    }
+
+    start();
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [hasMultipleImages, images.length]);
 
   if (images.length === 0) return null;
@@ -27,6 +57,7 @@ export function HeroImageSlider({
     <>
       {images.map((image, index) => {
         const isActive = index === currentSlide;
+        const isNext = index === (currentSlide + 1) % images.length;
 
         return (
           <Image
@@ -34,9 +65,10 @@ export function HeroImageSlider({
             src={image.src}
             alt={image.alt}
             fill
-            priority={index === 0}
+            priority={index === 0 || index === 1}
+            fetchPriority={isActive || isNext ? "high" : "low"}
             sizes="100vw"
-            className={`object-cover transition-opacity duration-1000 ease-out ${
+            className={`object-cover transition-opacity duration-[1400ms] ease-out ${
               isActive ? "ken-burns opacity-100" : "opacity-0"
             }`}
           />
@@ -44,7 +76,7 @@ export function HeroImageSlider({
       })}
 
       {hasMultipleImages ? (
-        <div className="absolute bottom-5 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-2 sm:flex">
+        <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 sm:bottom-8">
           {images.map((image, index) => {
             const isActive = index === currentSlide;
 
@@ -55,8 +87,8 @@ export function HeroImageSlider({
                 aria-label={`Show hero image ${index + 1}`}
                 aria-current={isActive ? "true" : undefined}
                 onClick={() => setCurrentSlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  isActive ? "w-8 bg-[var(--color-gold-light)]" : "w-2 bg-white/55 hover:bg-white/80"
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  isActive ? "w-8 bg-[var(--color-gold-light)]" : "w-1.5 bg-white/55 hover:bg-white/80"
                 }`}
               />
             );

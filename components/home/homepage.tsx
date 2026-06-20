@@ -403,17 +403,7 @@ export async function Homepage() {
       {homepageSettings.heroVisible ? (
         <section data-home-hero="true" className="relative isolate order-1 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 md:hidden">
-            <HeroImageSlider images={heroSlides} />
-          </div>
-          <Image
-            src={heroImage}
-            alt="Karnak temple columns at first light in Luxor"
-            fill
-            priority
-            sizes="100vw"
-            className="ken-burns hidden object-cover md:block"
-          />
+          <HeroImageSlider images={heroSlides} />
         </div>
         {/* Bottom-only legibility scrim — keep the photo breathing. */}
         <div
