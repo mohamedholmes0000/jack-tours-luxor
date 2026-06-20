@@ -61,7 +61,7 @@ function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor"
   );
 }
 
-export function Navbar({ settings }: { settings: PublicSettings }) {
+export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolean; settings: PublicSettings }) {
   const pathname = usePathname();
   const [isNavStuck, setIsNavStuck] = useState(false);
   const phone = settings.phone || "(+20) XXX XXX XXXX";
@@ -97,7 +97,7 @@ export function Navbar({ settings }: { settings: PublicSettings }) {
 
   return (
     <>
-      <div className="site-header-utility hidden border-b border-white/10 md:block">
+      <div className={`site-header-utility hidden border-b border-white/10 md:block ${isHomeRoute ? "site-header-utility-home" : ""}`}>
         <div className="container-premium flex h-9 items-center justify-between text-xs font-normal text-white/60">
           <div className="flex items-center gap-3">
             <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-flex items-center gap-2 transition hover:text-[var(--color-gold-light)]">
@@ -127,18 +127,18 @@ export function Navbar({ settings }: { settings: PublicSettings }) {
         </div>
       </div>
 
-      <header className={`site-main-header hidden border-b transition-all duration-200 ease-in-out md:block ${isNavStuck ? "header-stuck" : ""}`}>
+      <header className={`site-main-header hidden border-b transition-all duration-200 ease-in-out md:block ${isHomeRoute ? "site-main-header-home" : ""} ${isNavStuck ? "header-stuck" : ""}`}>
         <div className="container-premium grid h-20 grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8">
           <Link href="/" className="flex flex-col leading-none">
-            <span className="font-serif text-[2rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-navy)] lg:text-[2.25rem]">
+            <span className={`font-serif text-[2rem] font-semibold uppercase leading-none tracking-[0.08em] lg:text-[2.25rem] ${isHomeRoute ? "text-[var(--color-gold-light)]" : "text-[var(--color-navy)]"}`}>
               {settings.logoLine1}
             </span>
-            <span className="mt-1 font-sans text-[0.66rem] font-medium uppercase tracking-[0.2em] text-[var(--color-navy)]/70 lg:text-[0.69rem]">
+            <span className={`mt-1 font-sans text-[0.66rem] font-medium uppercase tracking-[0.2em] lg:text-[0.69rem] ${isHomeRoute ? "text-white/72" : "text-[var(--color-navy)]/70"}`}>
               {settings.logoLine2}
             </span>
           </Link>
 
-          <nav className="flex items-center gap-6 font-sans text-[0.76rem] font-medium uppercase tracking-[0.08em] text-[var(--color-navy)] lg:gap-12 lg:text-[0.82rem]">
+          <nav className={`flex items-center gap-6 font-sans text-[0.76rem] font-medium uppercase tracking-[0.08em] lg:gap-12 lg:text-[0.82rem] ${isHomeRoute ? "text-white/86" : "text-[var(--color-navy)]"}`}>
           {navItems.map((item) => {
             const active = isActive(item.href);
 
@@ -148,7 +148,7 @@ export function Navbar({ settings }: { settings: PublicSettings }) {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={`transition duration-200 hover:text-[var(--color-gold)] ${
-                  active ? "active text-[var(--color-gold-dark)]" : ""
+                  active ? `active ${isHomeRoute ? "text-[var(--color-gold-light)]" : "text-[var(--color-gold-dark)]"}` : ""
                 }`}
               >
                 {item.label}
@@ -161,7 +161,7 @@ export function Navbar({ settings }: { settings: PublicSettings }) {
             <Link
               href="/admin"
               aria-label="Admin login"
-              className="grid size-10 place-items-center rounded-full border border-[rgb(6_17_31_/_16%)] text-[var(--color-navy)] transition duration-200 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)]"
+              className={`grid size-10 place-items-center rounded-full border transition duration-200 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] ${isHomeRoute ? "border-white/20 bg-white/8 text-white/84" : "border-[rgb(6_17_31_/_16%)] text-[var(--color-navy)]"}`}
             >
               <UserIcon className="size-5" />
             </Link>
@@ -175,7 +175,7 @@ export function Navbar({ settings }: { settings: PublicSettings }) {
         </div>
       </header>
 
-      <MobileNavigation settings={settings} />
+      <MobileNavigation isHomeRoute={isHomeRoute} settings={settings} />
     </>
   );
 }

@@ -15,6 +15,7 @@ export function SiteChrome({
 }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith("/admin");
+  const isHomeRoute = pathname === "/";
 
   if (isAdminRoute) {
     return <main className="flex-1">{children}</main>;
@@ -22,8 +23,8 @@ export function SiteChrome({
 
   return (
     <>
-      <Navbar settings={settings} />
-      <main className="public-site flex-1">{children}</main>
+      <Navbar isHomeRoute={isHomeRoute} settings={settings} />
+      <main className={`public-site flex-1 ${isHomeRoute ? "public-site-home" : ""}`}>{children}</main>
       <Footer settings={settings} />
       <FloatingWhatsApp settings={settings} />
     </>
