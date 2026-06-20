@@ -275,44 +275,24 @@ select {
 }
 
 @media (max-width: 1023px) {
-  .why-us-collage {
+  .why-us-mobile-image {
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 12%) !important;
+    display: block !important;
     height: 280px !important;
-    max-width: 280px !important;
-    width: 100% !important;
-  }
-
-  .why-us-collage-card {
-    border: 1px solid rgb(201 168 76 / 30%) !important;
-    border-radius: 9999px !important;
-    box-shadow: 0 16px 38px rgb(0 0 0 / 14%) !important;
-    height: 140px !important;
+    margin: 32px auto 24px !important;
     overflow: hidden !important;
-    position: absolute !important;
-    width: 140px !important;
+    position: relative !important;
+    width: calc(100vw - 32px) !important;
   }
 
-  .why-us-collage-card-1 {
-    bottom: auto !important;
-    left: 0 !important;
-    right: auto !important;
-    top: 0 !important;
-    transform: none !important;
+  .destinations-mobile-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  .why-us-collage-card-2 {
-    bottom: auto !important;
-    left: auto !important;
-    right: 0 !important;
-    top: -10px !important;
-    transform: none !important;
-  }
-
-  .why-us-collage-card-3 {
-    bottom: 0 !important;
-    left: 50% !important;
-    right: auto !important;
-    top: auto !important;
-    transform: translateX(-50%) !important;
+  .destinations-mobile-scroll::-webkit-scrollbar {
+    display: none;
   }
 }
 

@@ -14,9 +14,11 @@ type DestinationCarouselItem = {
 
 export function DestinationCarousel({ items }: { items: DestinationCarouselItem[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const mobileTrackRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastStepRef = useRef<number>(0);
   const resumeTimerRef = useRef<number | null>(null);
+  const [activeMobileIndex, setActiveMobileIndex] = useState(0);
   const [canScroll, setCanScroll] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const dragStateRef = useRef({
@@ -112,6 +114,19 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
     });
   }
 
+  function updateMobileActiveIndex() {
+    const track = mobileTrackRef.current;
+    const firstCard = track?.firstElementChild as HTMLElement | null;
+
+    if (!track || !firstCard) return;
+
+    const cardWidth = firstCard.getBoundingClientRect().width;
+    const styles = window.getComputedStyle(track);
+    const gap = Number.parseFloat(styles.columnGap || styles.gap || "16") || 16;
+    const nextIndex = Math.round(track.scrollLeft / (cardWidth + gap));
+    setActiveMobileIndex(Math.max(0, Math.min(items.length - 1, nextIndex)));
+  }
+
   useEffect(() => {
     const track = trackRef.current;
 
@@ -189,34 +204,53 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
 
   return (
     <div className="container-premium relative mt-9 sm:mt-12">
-      <div className="grid grid-cols-3 gap-3 lg:hidden">
-        {items.slice(0, 3).map((item) => (
+      <div className="lg:hidden">
+        <div
+          ref={mobileTrackRef}
+          className="destinations-mobile-scroll no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-2"
+          aria-label="Destinations carousel"
+          onScroll={updateMobileActiveIndex}
+        >
+        {items.map((item) => (
           <Link
             key={item.name}
             href={item.href}
-            className="flex min-w-0 flex-col items-center text-center"
+            className="flex w-[100px] shrink-0 snap-center flex-col items-center text-center min-[390px]:w-[104px] min-[414px]:w-[110px]"
           >
-            <span className="relative block size-[100px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)] ring-1 ring-[rgb(201_168_76_/_40%)] min-[390px]:size-[108px]">
+            <span className="relative block size-[100px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)] ring-1 ring-[rgb(201_168_76_/_40%)] min-[390px]:size-[104px] min-[414px]:size-[110px]">
               <Image
                 src={item.image}
                 alt={item.name}
                 fill
-                sizes="(min-width: 390px) 108px, 100px"
+                sizes="(min-width: 414px) 110px, (min-width: 390px) 104px, 100px"
                 draggable={false}
                 className="object-cover"
               />
             </span>
-            <span className="mt-3 max-w-full truncate font-serif text-[1.05rem] font-semibold leading-tight text-[var(--color-navy)]">
+            <span className="mt-3 max-w-full truncate font-serif text-[15px] font-semibold leading-tight text-[var(--color-navy)]">
               {item.name}
             </span>
-            <span className="mt-1 line-clamp-2 max-w-full text-[0.72rem] font-normal leading-4 text-[rgb(6_17_31_/_50%)]">
+            <span className="mt-0.5 line-clamp-2 max-w-full text-[11px] font-normal leading-4 text-[rgb(6_17_31_/_60%)]">
               {item.subtitle}
             </span>
-            <span className="mt-1 text-[0.72rem] font-medium leading-4 text-[var(--color-gold-dark)]">
+            <span className="mt-1 text-[11px] font-medium leading-4 text-[var(--color-gold-dark)]">
               {item.countLabel}
             </span>
           </Link>
         ))}
+        </div>
+
+        <div className="mt-4 flex justify-center gap-1.5">
+          {items.map((item, index) => (
+            <span
+              key={item.name}
+              aria-hidden="true"
+              className={`h-1 rounded-full transition-all duration-300 ${
+                index === activeMobileIndex ? "w-4 bg-[var(--color-gold)]" : "w-1 bg-[rgb(6_17_31_/_20%)]"
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
       {items.length > 6 && canScroll ? (
