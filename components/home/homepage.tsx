@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createElement } from "react";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
 import { HeroImageSlider } from "@/components/home/hero-image-slider";
+import { FavoriteHeartButton } from "@/components/tours/favorite-heart-button";
 import { formatPrice, type Tour } from "@/lib/content";
 import {
   getHomepageCityDestinationsSafe,
@@ -226,45 +227,89 @@ function primaryCategoryLabel(category: string) {
 // Inline JourneyCard — tall, photography-led, homepage-only. Does NOT replace
 // the shared TourCard used by /tours; that file is untouched.
 // ----------------------------------------------------------------------------
+function JourneyMapPinIcon() {
+  return (
+    <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none">
+      <path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M12 12.3a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6Z" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function JourneyClockIcon() {
+  return (
+    <svg aria-hidden="true" className="size-[15px]" viewBox="0 0 24 24" fill="none">
+      <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function JourneyStarIcon() {
+  return (
+    <svg aria-hidden="true" className="size-[15px]" viewBox="0 0 24 24" fill="currentColor">
+      <path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1L12 2Z" />
+    </svg>
+  );
+}
+
 function JourneyCard({ tour, eager = false }: { tour: Tour; eager?: boolean }) {
   return (
-    <Link
-      href={`/tours/${tour.slug}`}
-      className="group reveal-up relative block aspect-[3/4] overflow-hidden bg-[var(--color-navy)] sm:aspect-[4/5]"
-    >
-      <Image
-        src={tour.heroImage}
-        alt={tour.title}
-        fill
-        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-        priority={eager}
-        className="object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-[rgb(6_17_31_/_20%)] to-transparent"
-      />
-      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
-        <p className="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-light)]">
-          {primaryCategoryLabel(tour.category)}
+    <article className="group reveal-up overflow-hidden rounded-xl bg-white shadow-[0_2px_8px_rgb(0_0_0_/_6%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_10%)]">
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Link href={`/tours/${tour.slug}`} className="absolute inset-0">
+          <Image
+            src={tour.heroImage}
+            alt={tour.title}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            priority={eager}
+            className="object-cover transition duration-500 group-hover:scale-105"
+          />
+        </Link>
+        <FavoriteHeartButton className="absolute right-3 top-3 z-10" />
+      </div>
+      <div className="px-4 pt-4">
+        <p className="flex items-center gap-2 text-[13px] text-[var(--color-navy)]/50">
+          <span className="text-[var(--color-navy)]/40">
+            <JourneyMapPinIcon />
+          </span>
+          {tour.city || primaryCategoryLabel(tour.category)}
         </p>
-        <h3 className="mt-3 font-serif text-[1.85rem] font-semibold leading-[1.02] text-white sm:text-[2.2rem]">
+        <Link
+          href={`/tours/${tour.slug}`}
+          className="mt-2 block min-h-[3.2rem] overflow-hidden text-[17px] font-semibold leading-snug text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+        >
           {tour.title}
-        </h3>
-        <div className="mt-5 flex items-center justify-between">
-          <span className="text-xs text-white/74">{formatPrice(tour)}</span>
-          <span className="inline-flex items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-light)]">
-            View
-            <span
-              aria-hidden
-              className="inline-block transition-transform duration-300 group-hover:translate-x-1"
-            >
-              →
-            </span>
+        </Link>
+        <div className="mt-2 flex items-center gap-2 text-sm">
+          <span className="text-[var(--color-gold)]">
+            <JourneyStarIcon />
+          </span>
+          <span className="font-medium text-[var(--color-navy)]">
+            {tour.reviewCount > 0 ? tour.rating.toFixed(1) : "0"}
+          </span>
+          <span className="text-[var(--color-navy)]/50">
+            ({tour.reviewCount > 0 ? `${tour.reviewCount} reviews` : "No Review"})
           </span>
         </div>
       </div>
-    </Link>
+
+      <div className="mx-4 my-3 h-px bg-[rgb(6_17_31_/_8%)]" />
+
+      <div className="flex items-end justify-between gap-3 px-4 pb-4">
+        <p>
+          <span className="block text-[13px] text-[var(--color-navy)]/50">From</span>
+          <span className="text-lg font-bold text-[var(--color-navy)]">{formatPrice(tour)}</span>
+        </p>
+        <p className="flex items-center gap-2 text-[13px] text-[var(--color-navy)]/50">
+          <span className="text-[var(--color-navy)]/40">
+            <JourneyClockIcon />
+          </span>
+          {tour.duration}
+        </p>
+      </div>
+    </article>
   );
 }
 

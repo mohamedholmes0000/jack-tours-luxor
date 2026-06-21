@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { FavoriteHeartButton } from "@/components/tours/favorite-heart-button";
 import type { Tour } from "@/lib/content";
 
 type SortOption = "recommended" | "price-asc" | "price-desc" | "newest";
@@ -73,20 +74,6 @@ function StarIcon() {
   return (
     <svg aria-hidden="true" className="size-[15px]" viewBox="0 0 24 24" fill="currentColor">
       <path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1L12 2Z" />
-    </svg>
-  );
-}
-
-function HeartIcon() {
-  return (
-    <svg aria-hidden="true" className="size-[18px]" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
     </svg>
   );
 }
@@ -215,21 +202,18 @@ function FilterGroup({
 
 function TourCard({ tour }: { tour: Tour }) {
   return (
-    <Link
-      href={`/tours/${tour.slug}`}
-      className="group block overflow-hidden rounded-xl bg-white shadow-[0_2px_8px_rgb(0_0_0_/_6%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_10%)]"
-    >
+    <article className="group overflow-hidden rounded-xl bg-white shadow-[0_2px_8px_rgb(0_0_0_/_6%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_10%)]">
       <div className="relative aspect-[16/9] overflow-hidden md:aspect-[16/10]">
-        <Image
-          src={tour.heroImage}
-          alt={tour.title}
-          fill
-          sizes="(min-width: 1280px) 300px, (min-width: 768px) 33vw, 100vw"
-          className="object-cover transition duration-500 group-hover:scale-105"
-        />
-        <span className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white/80 text-[var(--color-gray-600)] transition group-hover:text-[var(--color-gold)]">
-          <HeartIcon />
-        </span>
+        <Link href={`/tours/${tour.slug}`} className="absolute inset-0">
+          <Image
+            src={tour.heroImage}
+            alt={tour.title}
+            fill
+            sizes="(min-width: 1280px) 300px, (min-width: 768px) 33vw, 100vw"
+            className="object-cover transition duration-500 group-hover:scale-105"
+          />
+        </Link>
+        <FavoriteHeartButton className="absolute right-3 top-3 z-10" />
       </div>
 
       <div className="px-4 pt-4">
@@ -239,28 +223,23 @@ function TourCard({ tour }: { tour: Tour }) {
           </span>
           {tour.city || "Luxor"}
         </p>
-        <p className="mt-2 min-h-[3.2rem] overflow-hidden text-[17px] font-semibold leading-snug text-[var(--color-navy)] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
+        <Link
+          href={`/tours/${tour.slug}`}
+          className="mt-2 block min-h-[3.2rem] overflow-hidden text-[17px] font-semibold leading-snug text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+        >
           {tour.title}
-        </p>
+        </Link>
 
-        <div className="mt-2 flex items-center gap-2">
-          {tour.reviewCount > 0 ? (
-            <>
-              <span className="text-[var(--color-gold)]">
-                <StarIcon />
-              </span>
-              <span className="text-sm font-medium text-[var(--color-navy)]">
-                {tour.rating.toFixed(1)}
-              </span>
-              <span className="text-sm text-[var(--color-navy)]/50">
-                ({tour.reviewCount} reviews)
-              </span>
-            </>
-          ) : (
-            <span className="rounded bg-[var(--color-gold)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]">
-              New
-            </span>
-          )}
+        <div className="mt-2 flex items-center gap-2 text-sm">
+          <span className="text-[var(--color-gold)]">
+            <StarIcon />
+          </span>
+          <span className="font-medium text-[var(--color-navy)]">
+            {tour.reviewCount > 0 ? tour.rating.toFixed(1) : "0"}
+          </span>
+          <span className="text-[var(--color-navy)]/50">
+            ({tour.reviewCount > 0 ? `${tour.reviewCount} reviews` : "No Review"})
+          </span>
         </div>
       </div>
 
@@ -278,7 +257,7 @@ function TourCard({ tour }: { tour: Tour }) {
           {tour.duration}
         </p>
       </div>
-    </Link>
+    </article>
   );
 }
 

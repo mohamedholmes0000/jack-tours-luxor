@@ -12,6 +12,22 @@ type DestinationCarouselItem = {
   countLabel: string;
 };
 
+function ChevronLeftIcon() {
+  return (
+    <svg aria-hidden="true" className="size-5" viewBox="0 0 24 24" fill="none">
+      <path d="m15 18-6-6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ChevronRightIcon() {
+  return (
+    <svg aria-hidden="true" className="size-5" viewBox="0 0 24 24" fill="none">
+      <path d="m9 18 6-6-6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function DestinationCarousel({ items }: { items: DestinationCarouselItem[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const mobileTrackRef = useRef<HTMLDivElement>(null);
@@ -20,6 +36,8 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
   const resumeTimerRef = useRef<number | null>(null);
   const [activeMobileIndex, setActiveMobileIndex] = useState(0);
   const [canScroll, setCanScroll] = useState(false);
+  const [canScrollPrevious, setCanScrollPrevious] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const dragStateRef = useRef({
     isDragging: false,
@@ -97,7 +115,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
       return 0;
     }
 
-    return firstCard ? firstCard.getBoundingClientRect().width + 40 : track.clientWidth * 0.7;
+    return firstCard ? firstCard.getBoundingClientRect().width + 32 : track.clientWidth * 0.7;
   }
 
   function scrollByCard(direction: "previous" | "next") {
@@ -137,13 +155,19 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
     const trackEl = track;
 
     function updateScrollState() {
-      setCanScroll(trackEl.scrollWidth > trackEl.clientWidth + 4);
+      const maxScroll = trackEl.scrollWidth - trackEl.clientWidth;
+
+      setCanScroll(maxScroll > 4);
+      setCanScrollPrevious(trackEl.scrollLeft > 4);
+      setCanScrollNext(trackEl.scrollLeft < maxScroll - 4);
     }
 
     updateScrollState();
+    trackEl.addEventListener("scroll", updateScrollState, { passive: true });
     window.addEventListener("resize", updateScrollState);
 
     return () => {
+      trackEl.removeEventListener("scroll", updateScrollState);
       window.removeEventListener("resize", updateScrollState);
     };
   }, [items.length]);
@@ -203,11 +227,11 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
   }, []);
 
   return (
-    <div className="container-premium relative mt-9 sm:mt-12">
+    <div className="container-premium relative mt-9 max-w-[1280px] sm:mt-12">
       <div className="lg:hidden">
         <div
           ref={mobileTrackRef}
-          className="destinations-mobile-scroll no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-2"
+          className="destinations-mobile-scroll no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-2"
           aria-label="Destinations carousel"
           onScroll={updateMobileActiveIndex}
         >
@@ -215,19 +239,19 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
           <Link
             key={item.name}
             href={item.href}
-            className="flex w-[100px] shrink-0 snap-center flex-col items-center text-center min-[390px]:w-[104px] min-[414px]:w-[110px]"
+            className="flex w-[110px] shrink-0 snap-center flex-col items-center text-center"
           >
-            <span className="relative block size-[100px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)] ring-1 ring-[rgb(201_168_76_/_40%)] min-[390px]:size-[104px] min-[414px]:size-[110px]">
+            <span className="relative block size-[110px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)]">
               <Image
                 src={item.image}
                 alt={item.name}
                 fill
-                sizes="(min-width: 414px) 110px, (min-width: 390px) 104px, 100px"
+                sizes="110px"
                 draggable={false}
                 className="object-cover"
               />
             </span>
-            <span className="mt-3 max-w-full truncate font-serif text-[15px] font-semibold leading-tight text-[var(--color-navy)]">
+            <span className="mt-3 max-w-full truncate font-sans text-[15px] font-bold leading-tight text-[var(--color-navy)]">
               {item.name}
             </span>
             <span className="mt-0.5 line-clamp-2 max-w-full text-[11px] font-normal leading-4 text-[rgb(6_17_31_/_60%)]">
@@ -253,34 +277,32 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
         </div>
       </div>
 
-      {items.length > 6 && canScroll ? (
-        <div className="pointer-events-none absolute inset-y-0 left-0 right-0 z-10 hidden items-center justify-between lg:flex">
+      {canScroll ? (
+        <div className="pointer-events-none absolute left-[-32px] right-[-32px] top-[46px] z-10 hidden items-center justify-between lg:flex">
           <button
             type="button"
             aria-label="Previous destination"
-            className="pointer-events-auto -ml-5 grid size-10 place-items-center rounded-full border border-[rgb(6_17_31_/_20%)] bg-[var(--color-ivory)]/86 text-[var(--color-navy)] shadow-[0_10px_26px_rgb(87_59_22_/_10%)] transition hover:border-[rgb(6_17_31_/_40%)] hover:bg-[rgb(6_17_31_/_5%)]"
+            disabled={!canScrollPrevious}
+            className="pointer-events-auto grid size-12 place-items-center rounded-full bg-white text-[var(--color-navy)] shadow-[0_2px_8px_rgb(0_0_0_/_8%)] transition duration-300 hover:scale-105 hover:shadow-[0_8px_20px_rgb(0_0_0_/_12%)] disabled:pointer-events-none disabled:scale-100 disabled:text-[var(--color-navy)]/25 disabled:shadow-[0_2px_8px_rgb(0_0_0_/_5%)]"
             onClick={() => scrollByCard("previous")}
           >
-            <span aria-hidden className="text-xl leading-none">
-              &lsaquo;
-            </span>
+            <ChevronLeftIcon />
           </button>
           <button
             type="button"
             aria-label="Next destination"
-            className="pointer-events-auto -mr-5 grid size-10 place-items-center rounded-full border border-[rgb(6_17_31_/_20%)] bg-[var(--color-ivory)]/86 text-[var(--color-navy)] shadow-[0_10px_26px_rgb(87_59_22_/_10%)] transition hover:border-[rgb(6_17_31_/_40%)] hover:bg-[rgb(6_17_31_/_5%)]"
+            disabled={!canScrollNext}
+            className="pointer-events-auto grid size-12 place-items-center rounded-full bg-white text-[var(--color-navy)] shadow-[0_2px_8px_rgb(0_0_0_/_8%)] transition duration-300 hover:scale-105 hover:shadow-[0_8px_20px_rgb(0_0_0_/_12%)] disabled:pointer-events-none disabled:scale-100 disabled:text-[var(--color-navy)]/25 disabled:shadow-[0_2px_8px_rgb(0_0_0_/_5%)]"
             onClick={() => scrollByCard("next")}
           >
-            <span aria-hidden className="text-xl leading-none">
-              &rsaquo;
-            </span>
+            <ChevronRightIcon />
           </button>
         </div>
       ) : null}
 
       <div
         ref={trackRef}
-        className={`no-scrollbar hidden w-full cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth active:cursor-grabbing lg:flex lg:gap-8 ${
+        className={`no-scrollbar hidden w-full cursor-grab snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth active:cursor-grabbing lg:flex ${
           canScroll ? "sm:justify-start" : "sm:justify-center"
         }`}
         aria-label="Destinations carousel"
@@ -300,7 +322,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
             key={item.name}
             href={item.href}
             draggable={false}
-            className="group flex w-32 shrink-0 snap-center flex-col items-center text-center outline-none sm:w-[10rem] lg:w-[10.5rem]"
+            className="group flex w-[140px] shrink-0 snap-center flex-col items-center text-center outline-none"
             onDragStart={(event) => event.preventDefault()}
             onClick={(event) => {
               if (shouldSuppressClick()) {
@@ -308,23 +330,23 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
               }
             }}
           >
-            <span className="relative block size-[7.5rem] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_18px_38px_rgb(87_59_22_/_12%)] ring-1 ring-[rgb(201_168_76_/_45%)] transition duration-300 ease-out group-hover:scale-105 group-hover:ring-2 group-hover:ring-[rgb(201_168_76_/_100%)] group-focus-visible:scale-105 group-focus-visible:ring-2 group-focus-visible:ring-[rgb(201_168_76_/_100%)] sm:size-[9rem] lg:size-[10.5rem]">
+            <span className="relative block size-[140px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)] transition duration-300 ease-out group-hover:scale-105 group-focus-visible:scale-105">
               <Image
                 src={item.image}
                 alt={item.name}
                 fill
-                sizes="(min-width: 1024px) 168px, (min-width: 640px) 144px, 120px"
+                sizes="140px"
                 draggable={false}
                 className="object-cover transition duration-500 group-hover:scale-105"
               />
             </span>
-            <span className="mt-4 font-serif text-base font-semibold leading-tight text-[var(--color-navy)]">
+            <span className="mt-3 font-sans text-[18px] font-bold leading-tight text-[var(--color-navy)]">
               {item.name}
             </span>
-            <span className="mt-1 max-w-[10rem] text-[13px] font-normal leading-5 text-[rgb(6_17_31_/_50%)]">
+            <span className="mt-1 max-w-[140px] text-[13px] font-normal leading-5 text-[rgb(6_17_31_/_50%)]">
               {item.subtitle}
             </span>
-            <span className="mt-2 text-xs font-medium leading-5 text-[var(--color-gold-dark)]">
+            <span className="mt-1 text-[13px] font-normal leading-5 text-[rgb(6_17_31_/_60%)]">
               {item.countLabel}
             </span>
           </Link>
