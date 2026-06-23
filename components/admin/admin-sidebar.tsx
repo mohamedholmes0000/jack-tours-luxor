@@ -10,6 +10,8 @@ import { roleLabels } from "@/lib/admin/permissions";
 const links = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/tours", label: "Tours" },
+  { href: "/admin/activities", label: "Activities" },
+  { href: "/admin/hotels", label: "Hotels" },
   { href: "/admin/destinations", label: "Destinations" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/gallery", label: "Gallery" },

@@ -24,7 +24,7 @@ export type PublicSettings = AdminSettingsValues &
 
 const defaultFooterLinks: FooterLink[] = [
   { label: "Tours", url: "/tours" },
-  { label: "Destinations", url: "/destinations" },
+  { label: "Activities", url: "/activities" },
   { label: "Gallery", url: "/gallery" },
   { label: "Blog", url: "/blog" },
   { label: "Trip Planner", url: "/trip-planner" },
@@ -71,8 +71,8 @@ export const defaultSettings: PublicSettings = {
   logoLine2: "EGYPT TOUR",
   navLink1Label: "Tours",
   navLink1Url: "/tours",
-  navLink2Label: "Destinations",
-  navLink2Url: "/destinations",
+  navLink2Label: "Activities",
+  navLink2Url: "/activities",
   navLink3Label: "Gallery",
   navLink3Url: "/gallery",
   navLink4Label: "About",

@@ -11,9 +11,11 @@ type AdminTourFormProps = {
   mode: "create" | "edit";
   id?: string;
   initialValues?: AdminTourValues;
+  contentType?: AdminTourValues["contentType"];
 };
 
 const emptyTour: AdminTourValues = {
+  contentType: "TOUR",
   title: "",
   slug: "",
   category: "Day Tours",
@@ -49,8 +51,16 @@ function cleanValues(values: AdminTourValues): AdminTourValues {
   };
 }
 
-export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
+function contentTypeLabel(contentType: AdminTourValues["contentType"]) {
+  if (contentType === "ACTIVITY") return "Activity";
+  if (contentType === "HOTEL") return "Hotel";
+  return "Tour";
+}
+
+export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR" }: AdminTourFormProps) {
   const router = useRouter();
+  const initialContentType = initialValues?.contentType ?? contentType;
+  const label = contentTypeLabel(initialContentType);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -63,7 +73,7 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
     formState: { errors },
   } = useForm<AdminTourValues>({
     resolver: zodResolver(adminTourSchema),
-    defaultValues: initialValues ?? emptyTour,
+    defaultValues: initialValues ?? { ...emptyTour, contentType: initialContentType },
   });
 
   const itinerary = useFieldArray({ control, name: "itinerary" });
@@ -214,6 +224,13 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
           <FormField label="Category" error={errors.category?.message}>
             <input className={inputClassName} {...register("category")} />
           </FormField>
+          <FormField label="Content type" error={errors.contentType?.message}>
+            <select className={inputClassName} {...register("contentType")}>
+              <option value="TOUR">Tour</option>
+              <option value="ACTIVITY">Activity</option>
+              <option value="HOTEL">Hotel</option>
+            </select>
+          </FormField>
           <FormField label="Duration" error={errors.duration?.message}>
             <input className={inputClassName} {...register("duration")} />
           </FormField>
@@ -312,13 +329,13 @@ export function AdminTourForm({ mode, id, initialValues }: AdminTourFormProps) {
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
         {mode === "edit" ? (
           <button className="btn-secondary" type="button" onClick={onDelete} disabled={isDeleting}>
-            {isDeleting ? "Deleting..." : "Delete Tour"}
+            {isDeleting ? "Deleting..." : `Delete ${label}`}
           </button>
         ) : (
           <span />
         )}
         <button className="btn-primary" type="submit" disabled={isSaving}>
-          {isSaving ? "Saving..." : "Save Tour"}
+          {isSaving ? "Saving..." : `Save ${label}`}
         </button>
       </div>
     </form>

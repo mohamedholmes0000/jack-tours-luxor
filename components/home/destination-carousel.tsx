@@ -227,8 +227,8 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
   }, []);
 
   return (
-    <div className="container-premium relative mt-9 max-w-[1280px] sm:mt-12">
-      <div className="lg:hidden">
+    <div className="container-premium relative mt-8 max-w-[900px] sm:mt-10">
+      <div className="destination-carousel-mobile-fade relative lg:hidden">
         <div
           ref={mobileTrackRef}
           className="destinations-mobile-scroll no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-2"
@@ -239,14 +239,14 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
           <Link
             key={item.name}
             href={item.href}
-            className="flex w-[110px] shrink-0 snap-center flex-col items-center text-center"
+            className="flex w-[38vw] min-w-[128px] max-w-[146px] shrink-0 snap-center flex-col items-center text-center"
           >
-            <span className="relative block size-[110px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)]">
+            <span className="relative block size-[118px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)]">
               <Image
                 src={item.image}
                 alt={item.name}
                 fill
-                sizes="110px"
+                sizes="118px"
                 draggable={false}
                 className="object-cover"
               />

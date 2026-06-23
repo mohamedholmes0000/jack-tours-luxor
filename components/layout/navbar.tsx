@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { MobileNavigation } from "@/components/layout/mobile-navigation";
 import type { PublicSettings } from "@/lib/data/settings";
 
@@ -71,7 +71,11 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
     { href: settings.navLink2Url, label: settings.navLink2Label },
     { href: settings.navLink3Url, label: settings.navLink3Label },
     { href: settings.navLink4Url, label: settings.navLink4Label },
-  ];
+  ].map((item) =>
+    item.label.trim().toLowerCase() === "destinations"
+      ? { href: "/activities", label: "Activities" }
+      : item,
+  );
   const socialLinks = [
     { href: settings.socialFacebook || "#", label: "Facebook" as const },
     { href: settings.socialInstagram || "#", label: "Instagram" as const },
@@ -82,26 +86,32 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    let frameId = 0;
+
     function updateNavState() {
       const threshold = isHomeRoute ? window.innerHeight * 0.6 : 36;
       setIsNavStuck(window.scrollY > threshold);
     }
 
     updateNavState();
+    frameId = window.requestAnimationFrame(updateNavState);
     window.addEventListener("scroll", updateNavState, { passive: true });
     window.addEventListener("resize", updateNavState);
+    window.addEventListener("pageshow", updateNavState);
 
     return () => {
+      window.cancelAnimationFrame(frameId);
       window.removeEventListener("scroll", updateNavState);
       window.removeEventListener("resize", updateNavState);
+      window.removeEventListener("pageshow", updateNavState);
     };
   }, [isHomeRoute]);
 
   return (
     <>
       <div className={`site-header-utility hidden border-b border-white/10 md:block ${isHomeRoute ? "site-header-utility-home" : ""}`}>
-        <div className="container-premium flex h-9 items-center justify-between text-xs font-normal text-white/60">
+        <div className={`container-premium flex items-center justify-between font-normal text-white/60 ${isHomeRoute ? "h-[23px] text-[0.68rem]" : "h-9 text-xs"}`}>
           <div className="flex items-center gap-3">
             <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-flex items-center gap-2 transition hover:text-[var(--color-gold-light)]">
               <PhoneIcon className="size-3.5 text-white/50" />
@@ -131,17 +141,17 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
       </div>
 
       <header className={`site-main-header hidden border-b transition-[background,border-color,box-shadow,backdrop-filter] duration-200 ease-in-out md:block ${isHomeRoute ? "site-main-header-home" : ""} ${isNavStuck ? "header-stuck" : ""}`}>
-        <div className="container-premium grid h-20 grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8">
+        <div className={`container-premium grid grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8 ${isHomeRoute ? "h-[59px]" : "h-[72px]"}`}>
           <Link href="/" className="flex flex-col leading-none">
-            <span className={`font-serif text-[2rem] font-semibold uppercase leading-none tracking-[0.08em] lg:text-[2.25rem] ${isHomeRoute ? "text-[var(--color-gold-light)]" : "text-[var(--color-navy)]"}`}>
+            <span className={`font-serif font-semibold uppercase leading-none tracking-[0.08em] ${isHomeRoute ? "text-[1.75rem] text-[var(--color-gold-light)] lg:text-[1.95rem]" : "text-[1.85rem] text-[var(--color-navy)] lg:text-[2.05rem]"}`}>
               {settings.logoLine1}
             </span>
-            <span className={`mt-1 font-sans text-[0.66rem] font-medium uppercase tracking-[0.2em] lg:text-[0.69rem] ${isHomeRoute ? "text-white/72" : "text-[var(--color-navy)]/70"}`}>
+            <span className={`mt-0.5 font-sans font-medium uppercase tracking-[0.2em] ${isHomeRoute ? "text-[0.56rem] text-white/72 lg:text-[0.6rem]" : "text-[0.62rem] text-[var(--color-navy)]/70 lg:text-[0.65rem]"}`}>
               {settings.logoLine2}
             </span>
           </Link>
 
-          <nav className={`flex items-center gap-6 font-sans text-[0.76rem] font-medium uppercase tracking-[0.08em] lg:gap-12 lg:text-[0.82rem] ${isHomeRoute ? "text-white/86" : "text-[var(--color-navy)]"}`}>
+          <nav className={`flex items-center gap-6 font-sans font-medium uppercase tracking-[0.08em] lg:gap-12 ${isHomeRoute ? "text-[0.78rem] text-white/86" : "text-[0.76rem] text-[var(--color-navy)] lg:text-[0.82rem]"}`}>
           {navItems.map((item) => {
             const active = isActive(item.href);
 
@@ -164,12 +174,12 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
             <Link
               href="/admin"
               aria-label="Admin login"
-              className={`grid size-10 place-items-center rounded-full border transition duration-200 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] ${isHomeRoute ? "border-white/20 bg-white/8 text-white/84" : "border-[rgb(6_17_31_/_16%)] text-[var(--color-navy)]"}`}
+              className={`grid place-items-center rounded-full border transition duration-200 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] ${isHomeRoute ? "size-8 border-white/20 bg-white/8 text-white/84" : "size-10 border-[rgb(6_17_31_/_16%)] text-[var(--color-navy)]"}`}
             >
-              <UserIcon className="size-5" />
+              <UserIcon className={isHomeRoute ? "size-4" : "size-5"} />
             </Link>
             <Link
-              className="inline-flex min-h-10 items-center justify-center rounded-md bg-[var(--color-gold)] px-4 py-2.5 font-sans text-[0.78rem] font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] lg:px-6 lg:text-[0.8rem]"
+              className={`inline-flex items-center justify-center rounded-md bg-[var(--color-gold)] font-sans font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] ${isHomeRoute ? "min-h-[38px] px-4 py-2 text-[0.74rem]" : "min-h-10 px-4 py-2.5 text-[0.78rem] lg:px-6 lg:text-[0.8rem]"}`}
               href="/trip-planner"
             >
               {settings.bookNowLabel}

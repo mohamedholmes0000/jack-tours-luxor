@@ -8,6 +8,8 @@ import type {
   AdminTourValues,
 } from "@/lib/validations";
 
+export type AdminContentType = "TOUR" | "ACTIVITY" | "HOTEL";
+
 function destinationTypeValue(type: string): AdminDestinationValues["type"] {
   if (type === "City") return "CITY";
   if (type === "Coastal / Beach") return "COASTAL";
@@ -52,13 +54,41 @@ export async function getAdminSummary() {
   );
 }
 
-export async function getAdminTours() {
+function fallbackAdminTours(contentType: AdminContentType) {
+  return tours
+    .filter((tour) => (tour.contentType ?? "TOUR") === contentType)
+    .map((tour) => ({
+      id: tour.slug,
+      contentType: tour.contentType ?? "TOUR",
+      slug: tour.slug,
+      title: tour.title,
+      category: tour.category,
+      shortDescription: tour.shortDescription,
+      duration: tour.duration,
+      city: tour.city,
+      rating: tour.rating,
+      reviewCount: tour.reviewCount,
+      groupSize: tour.groupSize,
+      priceFrom: tour.priceFrom,
+      priceCurrency: tour.priceCurrency,
+      heroImage: tour.heroImage,
+      published: true,
+      featured: tour.featured,
+      createdAt: new Date(),
+    }));
+}
+
+export async function getAdminTours(contentType: AdminContentType = "TOUR") {
+  const fallbackTours = fallbackAdminTours(contentType);
+
   return tryDatabase(
     async () => {
       const dbTours = await prisma.tour.findMany({
+        where: { contentType },
         orderBy: { createdAt: "desc" },
         select: {
           id: true,
+          contentType: true,
           slug: true,
           title: true,
           category: true,
@@ -77,45 +107,9 @@ export async function getAdminTours() {
         },
       });
 
-      return dbTours.length
-        ? dbTours
-        : tours.map((tour) => ({
-            id: tour.slug,
-            slug: tour.slug,
-            title: tour.title,
-            category: tour.category,
-            shortDescription: tour.shortDescription,
-            duration: tour.duration,
-            city: tour.city,
-            rating: tour.rating,
-            reviewCount: tour.reviewCount,
-            groupSize: tour.groupSize,
-            priceFrom: tour.priceFrom,
-            priceCurrency: tour.priceCurrency,
-            heroImage: tour.heroImage,
-            published: true,
-            featured: tour.featured,
-            createdAt: new Date(),
-          }));
+      return dbTours.length ? dbTours : fallbackTours;
     },
-    tours.map((tour) => ({
-      id: tour.slug,
-      slug: tour.slug,
-      title: tour.title,
-      category: tour.category,
-      shortDescription: tour.shortDescription,
-      duration: tour.duration,
-      city: tour.city,
-      rating: tour.rating,
-      reviewCount: tour.reviewCount,
-      groupSize: tour.groupSize,
-      priceFrom: tour.priceFrom,
-      priceCurrency: tour.priceCurrency,
-      heroImage: tour.heroImage,
-      published: true,
-      featured: tour.featured,
-      createdAt: new Date(),
-    })),
+    fallbackTours,
   );
 }
 
@@ -238,6 +232,7 @@ export async function getAdminTour(id: string) {
       if (tour) {
         return {
           id: tour.id,
+          contentType: tour.contentType ?? "TOUR",
           title: tour.title,
           slug: tour.slug,
           category: tour.category,
@@ -269,6 +264,7 @@ export async function getAdminTour(id: string) {
       return staticTour
         ? {
             id: staticTour.slug,
+            contentType: staticTour.contentType ?? "TOUR",
             title: staticTour.title,
             slug: staticTour.slug,
             category: staticTour.category,
@@ -299,6 +295,7 @@ export async function getAdminTour(id: string) {
       return staticTour
         ? {
             id: staticTour.slug,
+            contentType: staticTour.contentType ?? "TOUR",
             title: staticTour.title,
             slug: staticTour.slug,
             category: staticTour.category,

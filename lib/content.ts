@@ -1,4 +1,5 @@
 export type Tour = {
+  contentType?: "TOUR" | "ACTIVITY" | "HOTEL";
   slug: string;
   title: string;
   category: string;

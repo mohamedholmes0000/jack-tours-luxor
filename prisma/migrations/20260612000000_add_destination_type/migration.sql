@@ -1,0 +1,8 @@
+DO $$ BEGIN
+  CREATE TYPE "DestinationType" AS ENUM ('CITY', 'SITE', 'COASTAL', 'RIVER_ROUTE');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
+ALTER TABLE "Destination" ADD COLUMN IF NOT EXISTS "type" "DestinationType" NOT NULL DEFAULT 'SITE';
+ALTER TABLE "Destination" ADD COLUMN IF NOT EXISTS "subtitle" TEXT;

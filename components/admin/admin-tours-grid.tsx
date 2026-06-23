@@ -8,6 +8,7 @@ import { safeImageSrc } from "@/lib/images";
 
 export type AdminToursGridTour = {
   id: string;
+  contentType: "TOUR" | "ACTIVITY" | "HOTEL";
   slug: string;
   title: string;
   category: string;
@@ -73,11 +74,17 @@ export function AdminToursGrid({
   canCreate,
   canDelete,
   canEdit,
+  createHref = "/admin/tours/new",
+  emptyTitle = "No tours found",
+  singularLabel = "tour",
 }: {
   tours: AdminToursGridTour[];
   canCreate: boolean;
   canDelete: boolean;
   canEdit: boolean;
+  createHref?: string;
+  emptyTitle?: string;
+  singularLabel?: string;
 }) {
   const router = useRouter();
   const [items, setItems] = useState(tours);
@@ -113,7 +120,7 @@ export function AdminToursGrid({
     const result = (await response.json().catch(() => null)) as { ok?: boolean; message?: string } | null;
 
     if (!response.ok || !result?.ok) {
-      setError(result?.message || "Unable to delete tour.");
+      setError(result?.message || `Unable to delete ${singularLabel}.`);
       setDeletingId(null);
       return;
     }
@@ -172,7 +179,13 @@ export function AdminToursGrid({
         {filteredTours.length ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredTours.map((tour) => {
-              const contentHref = canEdit ? `/admin/tours/${tour.id}` : `/tours/${tour.slug}`;
+              const publicHref =
+                tour.contentType === "ACTIVITY"
+                  ? "/activities"
+                  : tour.contentType === "HOTEL"
+                    ? "/hotels"
+                    : `/tours/${tour.slug}`;
+              const contentHref = canEdit ? `/admin/tours/${tour.id}` : publicHref;
               return (
                 <article
                   key={tour.id}
@@ -194,6 +207,9 @@ export function AdminToursGrid({
                       }`}
                     >
                       {tour.published ? "Published" : "Draft"}
+                    </span>
+                    <span className="absolute bottom-4 left-4 rounded-full bg-[var(--color-navy)]/85 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
+                      {tour.contentType.toLowerCase()}
                     </span>
                     {canEdit ? (
                       <Link
@@ -248,7 +264,7 @@ export function AdminToursGrid({
                         </span>
                       )}
                       <Link
-                        href={`/tours/${tour.slug}`}
+                        href={publicHref}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center justify-center gap-1.5 rounded-md border border-[var(--color-navy)] px-3 py-2 text-xs font-bold uppercase tracking-[0.08em] text-[var(--color-navy)] transition hover:bg-[var(--color-navy)] hover:text-white"
@@ -273,11 +289,11 @@ export function AdminToursGrid({
           </div>
         ) : (
           <div className="rounded-2xl border border-[var(--color-gray-100)] bg-white p-10 text-center shadow-sm">
-            <p className="font-serif text-3xl font-semibold text-[var(--color-navy)]">No tours found</p>
+            <p className="font-serif text-3xl font-semibold text-[var(--color-navy)]">{emptyTitle}</p>
             <p className="mt-2 text-sm text-[var(--color-gray-600)]">Adjust the search or filters to see more catalog items.</p>
             {canCreate ? (
-              <Link className="btn-primary mt-6" href="/admin/tours/new">
-                + Add New Tour
+              <Link className="btn-primary mt-6" href={createHref}>
+                + Add New {singularLabel}
               </Link>
             ) : null}
           </div>
@@ -288,7 +304,7 @@ export function AdminToursGrid({
         <div className="fixed inset-0 z-50 grid place-items-center bg-[var(--color-navy)]/55 p-4">
           <div className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-6 shadow-2xl">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">Confirm delete</p>
-            <h2 className="mt-3 font-serif text-3xl font-semibold text-[var(--color-navy)]">Delete tour?</h2>
+            <h2 className="mt-3 font-serif text-3xl font-semibold text-[var(--color-navy)]">Delete {singularLabel}?</h2>
             <p className="mt-3 text-sm leading-6 text-[var(--color-gray-600)]">
               Are you sure you want to delete &quot;{deleteTarget.title}&quot;? This cannot be undone.
             </p>

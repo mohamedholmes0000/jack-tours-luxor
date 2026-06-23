@@ -20,6 +20,7 @@ import {
 import { safeImageSrc } from "@/lib/images";
 
 const cityNames = ["Luxor", "Aswan", "Cairo", "Hurghada", "Abu Simbel", "Red Sea"];
+export type PublicContentType = "TOUR" | "ACTIVITY" | "HOTEL";
 
 const destinationTypeLabels = {
   CITY: "City",
@@ -51,6 +52,7 @@ function inferTourCity(parts: string[]) {
 
 function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number]): Tour {
   return {
+    contentType: tour.contentType ?? "TOUR",
     slug: tour.slug,
     title: tour.title,
     category: tour.category,
@@ -179,6 +181,7 @@ export async function getTourCountByCity(city: string): Promise<number> {
     async () =>
       prisma.tour.count({
         where: {
+          contentType: "TOUR",
           published: true,
           city: {
             equals: trimmedCity,
@@ -260,16 +263,18 @@ export async function getHomepageCityDestinationsSafe() {
   );
 }
 
-export async function getToursSafe() {
+export async function getToursSafe(contentType: PublicContentType = "TOUR") {
+  const fallbackTours = tours.filter((tour) => (tour.contentType ?? "TOUR") === contentType);
+
   return tryDatabase(
     async () => {
       const dbTours = await prisma.tour.findMany({
-        where: { published: true },
+        where: { contentType, published: true },
         orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
       });
-      return dbTours.length ? dbTours.map(mapTour) : tours;
+      return dbTours.length ? dbTours.map(mapTour) : fallbackTours;
     },
-    tours,
+    fallbackTours,
   );
 }
 

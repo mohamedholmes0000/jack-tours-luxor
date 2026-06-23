@@ -57,6 +57,7 @@ export const tourInquirySchema = z.object({
 });
 
 export const adminTourSchema = z.object({
+  contentType: z.enum(["TOUR", "ACTIVITY", "HOTEL"]),
   title: z.string().trim().min(3, "Add a tour title."),
   slug: z
     .string()

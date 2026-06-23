@@ -28,23 +28,24 @@ enum AdminRole {
 }
 
 model Tour {
-  id               String   @id @default(cuid())
-  slug             String   @unique
+  id               String      @id @default(cuid())
+  contentType      ContentType @default(TOUR)
+  slug             String      @unique
   title            String
   category         String
   shortDescription String
-  overview         String   @db.Text
+  overview         String      @db.Text
   highlights       String[]
   duration         String
   city             String?
-  rating           Float?   @default(0)
-  reviewCount      Int?     @default(0)
+  rating           Float?      @default(0)
+  reviewCount      Int?        @default(0)
   groupSize        String
   departurePoint   String?
   meetingPoint     String?
   languages        String[]
   priceFrom        Float?
-  priceCurrency    String   @default("USD")
+  priceCurrency    String      @default("USD")
   included         String[]
   excluded         String[]
   itinerary        Json?
@@ -54,10 +55,16 @@ model Tour {
   metaTitle        String?
   metaDescription  String?
   ogImage          String?
-  published        Boolean  @default(false)
-  featured         Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  published        Boolean     @default(false)
+  featured         Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+enum ContentType {
+  TOUR
+  ACTIVITY
+  HOTEL
 }
 
 model Destination {

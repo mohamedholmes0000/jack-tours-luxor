@@ -1,0 +1,7 @@
+DO $$ BEGIN
+  CREATE TYPE "ContentType" AS ENUM ('TOUR', 'ACTIVITY', 'HOTEL');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
+ALTER TABLE "Tour" ADD COLUMN IF NOT EXISTS "contentType" "ContentType" NOT NULL DEFAULT 'TOUR';

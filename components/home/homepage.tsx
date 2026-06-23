@@ -2,9 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createElement } from "react";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
-import { HeroImageSlider } from "@/components/home/hero-image-slider";
-import { FavoriteHeartButton } from "@/components/tours/favorite-heart-button";
-import { formatPrice, type Tour } from "@/lib/content";
+import { FeaturedJourneysTabs } from "@/components/home/featured-journeys-tabs";
 import {
   getHomepageCityDestinationsSafe,
   getHomepageSettingsSafe,
@@ -21,13 +19,6 @@ import { safeImageSrc } from "@/lib/images";
 // ============================================================================
 
 const fallbackHeroImage = "/photos/karnak.jpg";
-
-const defaultHeroSliderImages = [
-  "/photos/karnak.jpg",
-  "/photos/hatshepsut.jpg",
-  "/photos/felucca.jpg",
-  "/photos/luxor-temple.jpg",
-];
 
 const brandStoryImage = "/photos/hatshepsut.jpg";
 
@@ -105,6 +96,11 @@ const approvedHeroHeadlineAccent = "composed.";
 const approvedHeroSubheadline =
   "Tailor-made Egypt journeys with private guides, elegant pacing, and calm planning from a Luxor-based team.";
 
+const simplifiedHeroEyebrow = "Private Egypt Tours • Based in Luxor";
+const simplifiedHeroHeadline = "Private Egypt Tours, Tailored from Luxor";
+const simplifiedHeroSubheadline =
+  "Plan calm, private journeys across Egypt with trusted local experts, elegant pacing, and seamless WhatsApp support.";
+
 function cleanSettingText(value: string | undefined) {
   return (value ?? "")
     .replaceAll("آ·", "·")
@@ -128,6 +124,33 @@ function cleanHeroText(settings: Awaited<ReturnType<typeof getPublicSettings>>) 
         ? approvedHeroSubheadline
         : subheadline,
   };
+}
+
+function isLegacyHeroHeadline(value: string) {
+  const normalized = value.toLowerCase();
+
+  return (
+    !normalized ||
+    normalized.includes("egypt, privately") ||
+    normalized.includes("privatelycomposed") ||
+    normalized.includes("privately composed")
+  );
+}
+
+function isLegacyHeroEyebrow(value: string) {
+  const normalized = value.toLowerCase();
+
+  return !normalized || normalized.includes("est. luxor") || normalized.includes("est luxor");
+}
+
+function isLegacyHeroSubheadline(value: string) {
+  const normalized = value.toLowerCase();
+
+  return (
+    !normalized ||
+    normalized.includes("luxury private egypt tours") ||
+    normalized.includes("tailor-made egypt journeys with private guides")
+  );
 }
 
 function splitAccentText(
@@ -183,173 +206,103 @@ function splitAccentText(
   };
 }
 
-function splitHeroHeadline(headline: string, accent: string | undefined) {
-  return splitAccentText(headline, accent, {
-    fallbackHeadline: `${approvedHeroHeadline} ${approvedHeroHeadlineAccent}`,
-  });
-}
-
-function normalizeHeroTrustBadges(value: string[]) {
-  const fallback = [
-    "Local Egypt Travel Experts",
-    "Private Tailor-Made Tours",
-    "WhatsApp Support 24/7",
-  ];
-
-  return [0, 1, 2].map((index) => cleanSettingText(value[index]) || fallback[index]);
-}
-
-function HeroTrustIcon({ index }: { index: number }) {
-  const paths = [
-    "M12 4l2.2 5.2 5.3.4-4 3.5 1.2 5.2L12 15.6 7.3 18.3l1.2-5.2-4-3.5 5.3-.4L12 4Z",
-    "M5 16c4.8-7.4 9.2-7.4 14 0M7 16h10M12 5v13M8.5 8.5 12 5l3.5 3.5",
-    "M12 4a7 7 0 0 1 7 7c0 5-7 9-7 9s-7-4-7-9a7 7 0 0 1 7-7Zm0 4v4l3 2",
-  ];
-
+function SearchField({
+  label,
+  name,
+  options,
+}: {
+  label: string;
+  name: string;
+  options: string[];
+}) {
   return (
-    <svg aria-hidden="true" className="size-7" viewBox="0 0 24 24" fill="none">
-      <path
-        d={paths[index] || paths[0]}
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.45"
-      />
-    </svg>
+    <label className="flex min-h-[58px] flex-col justify-center border-b border-[rgb(6_17_31_/_8%)] px-4 py-3 md:border-b-0 md:border-r md:px-5">
+      <span className="font-sans text-[0.7rem] font-medium uppercase tracking-[0.1em] text-[var(--color-gold-dark)]">
+        {label}
+      </span>
+      <select
+        name={name}
+        className="mt-1 w-full appearance-none bg-transparent font-sans text-sm font-medium text-[var(--color-navy)] outline-none"
+        defaultValue=""
+      >
+        <option value="">Select</option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
-function primaryCategoryLabel(category: string) {
-  return category.replace(/\s*·\s*Custom$/i, "").replace(/\s*\/\s*Custom$/i, "").trim();
-}
-
-// ----------------------------------------------------------------------------
-// Inline JourneyCard — tall, photography-led, homepage-only. Does NOT replace
-// the shared TourCard used by /tours; that file is untouched.
-// ----------------------------------------------------------------------------
-function JourneyMapPinIcon() {
+function HomeSearchPanel() {
   return (
-    <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none">
-      <path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M12 12.3a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6Z" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
-  );
-}
+    <div className="container-premium relative z-20 -mt-8 sm:-mt-10 lg:-mt-12">
+      <div className="home-search-panel relative mx-auto max-w-6xl">
+        <input className="home-search-radio" type="radio" id="home-search-tours" name="home-search-tab" defaultChecked />
+        <input className="home-search-radio" type="radio" id="home-search-destinations" name="home-search-tab" />
+        <input className="home-search-radio" type="radio" id="home-search-plan" name="home-search-tab" />
 
-function JourneyClockIcon() {
-  return (
-    <svg aria-hidden="true" className="size-[15px]" viewBox="0 0 24 24" fill="none">
-      <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+        <div className="home-search-tabs flex items-end gap-1 pl-0 sm:pl-3">
+          <label htmlFor="home-search-tours">Tours</label>
+          <label htmlFor="home-search-destinations">Destinations</label>
+          <label htmlFor="home-search-plan">Plan Trip</label>
+        </div>
 
-function JourneyStarIcon() {
-  return (
-    <svg aria-hidden="true" className="size-[15px]" viewBox="0 0 24 24" fill="currentColor">
-      <path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1L12 2Z" />
-    </svg>
-  );
-}
+        <div className="home-search-card overflow-hidden rounded-b-2xl rounded-tr-2xl border border-[rgb(214_173_84_/_18%)] bg-[rgba(255,252,244,0.98)] shadow-[0_18px_42px_rgb(6_17_31_/_12%)] backdrop-blur-sm">
+          <form action="/tours" method="get" className="home-search-content home-search-content-tours md:grid-cols-[1fr_1fr_1fr_auto]">
+            <SearchField label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Abu Simbel", "Red Sea"]} />
+            <SearchField label="Travel Style" name="style" options={["Private Day Tour", "Nile Cruise", "Multi-Day Journey", "Luxury"]} />
+            <SearchField label="Duration" name="duration" options={["Half Day", "Full Day", "2-3 Days", "4+ Days"]} />
+            <button type="submit" className="home-search-button">Search</button>
+          </form>
 
-function JourneyCard({ tour, eager = false }: { tour: Tour; eager?: boolean }) {
-  return (
-    <article className="group reveal-up overflow-hidden rounded-xl bg-white shadow-[0_2px_8px_rgb(0_0_0_/_6%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_10%)]">
-      <div className="relative aspect-[16/10] overflow-hidden">
-        <Link href={`/tours/${tour.slug}`} className="absolute inset-0">
-          <Image
-            src={tour.heroImage}
-            alt={tour.title}
-            fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            priority={eager}
-            className="object-cover transition duration-500 group-hover:scale-105"
-          />
-        </Link>
-        <FavoriteHeartButton className="absolute right-3 top-3 z-10" />
-      </div>
-      <div className="px-4 pt-4">
-        <p className="flex items-center gap-2 text-[13px] text-[var(--color-navy)]/50">
-          <span className="text-[var(--color-navy)]/40">
-            <JourneyMapPinIcon />
-          </span>
-          {tour.city || primaryCategoryLabel(tour.category)}
-        </p>
-        <Link
-          href={`/tours/${tour.slug}`}
-          className="mt-2 block min-h-[3.2rem] overflow-hidden text-[17px] font-semibold leading-snug text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
-        >
-          {tour.title}
-        </Link>
-        <div className="mt-2 flex items-center gap-2 text-sm">
-          <span className="text-[var(--color-gold)]">
-            <JourneyStarIcon />
-          </span>
-          <span className="font-medium text-[var(--color-navy)]">
-            {tour.reviewCount > 0 ? tour.rating.toFixed(1) : "0"}
-          </span>
-          <span className="text-[var(--color-navy)]/50">
-            ({tour.reviewCount > 0 ? `${tour.reviewCount} reviews` : "No Review"})
-          </span>
+          <form action="/destinations" method="get" className="home-search-content home-search-content-destinations md:grid-cols-[1fr_1fr_auto]">
+            <SearchField label="Choose Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Abu Simbel", "Hurghada"]} />
+            <SearchField label="Experience Type" name="experience" options={["Temples & Tombs", "Nile & Nubia", "Pyramids", "Red Sea", "Culture"]} />
+            <button type="submit" className="home-search-button">Search</button>
+          </form>
+
+          <form action="/trip-planner" method="get" className="home-search-content home-search-content-plan md:grid-cols-[1fr_1fr_auto]">
+            <SearchField label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Classic Egypt", "Custom Route"]} />
+            <SearchField label="Travelers" name="travelers" options={["1 Traveler", "2 Travelers", "3-4 Travelers", "5+ Travelers"]} />
+            <button type="submit" className="home-search-button">Start Planning</button>
+          </form>
         </div>
       </div>
-
-      <div className="mx-4 my-3 h-px bg-[rgb(6_17_31_/_8%)]" />
-
-      <div className="flex items-end justify-between gap-3 px-4 pb-4">
-        <p>
-          <span className="block text-[13px] text-[var(--color-navy)]/50">From</span>
-          <span className="text-lg font-bold text-[var(--color-navy)]">{formatPrice(tour)}</span>
-        </p>
-        <p className="flex items-center gap-2 text-[13px] text-[var(--color-navy)]/50">
-          <span className="text-[var(--color-navy)]/40">
-            <JourneyClockIcon />
-          </span>
-          {tour.duration}
-        </p>
-      </div>
-    </article>
+    </div>
   );
 }
 
 // ============================================================================
 
 export async function Homepage() {
-  const [safeTours, settings, homepageSettings] = await Promise.all([
-    getToursSafe(),
+  const [safeTours, safeActivities, safeHotels, settings, homepageSettings, topDestinations] = await Promise.all([
+    getToursSafe("TOUR"),
+    getToursSafe("ACTIVITY"),
+    getToursSafe("HOTEL"),
     getPublicSettings(),
     getHomepageSettingsSafe(),
+    getHomepageCityDestinationsSafe(),
   ]);
-  const destinationCities = await getHomepageCityDestinationsSafe();
-  const featuredTours = safeTours.filter((tour) => tour.featured).slice(0, 3);
+  const featuredTours = safeTours.slice(0, 3);
+  const featuredActivities = safeActivities.slice(0, 3);
+  const featuredHotels = safeHotels.slice(0, 3);
   const legacyHeroText = cleanHeroText(settings);
   const heroImage = safeImageSrc(homepageSettings.heroBackgroundImage, fallbackHeroImage);
   const heroCtaLabel = homepageSettings.heroPrimaryCtaLabel || "Plan My Egypt Journey";
   const heroCtaHref = homepageSettings.heroPrimaryCtaHref || "/trip-planner";
-  const heroSecondaryLabel = homepageSettings.heroSecondaryLinkLabel || "Or Book Now";
-  const heroSecondaryHref = homepageSettings.heroSecondaryLinkHref || "/trip-planner";
-  const heroSlides = Array.from(new Set([heroImage, ...defaultHeroSliderImages]))
-    .filter(Boolean)
-    .map((src, index) => ({
-      alt: [
-        "Karnak temple columns at first light in Luxor",
-        "Hatshepsut Temple terraces on the West Bank",
-        "A felucca sailing on the Nile",
-        "Luxor Temple at golden hour",
-      ][index] || "Private Egypt travel scene",
-      src,
-    }));
-  const heroHeadline = splitHeroHeadline(
-    homepageSettings.heroHeadline || `${legacyHeroText.headline} ${legacyHeroText.accent}`,
-    homepageSettings.heroHeadlineAccent,
-  );
+  const rawHeroHeadline = cleanSettingText(homepageSettings.heroHeadline || legacyHeroText.headline);
+  const rawHeroSubheadline = cleanSettingText(homepageSettings.heroSubheadline || legacyHeroText.subheadline);
+  const rawHeroEyebrow = cleanSettingText(homepageSettings.heroEyebrow || legacyHeroText.eyebrow);
   const heroText = {
-    eyebrow: cleanSettingText(homepageSettings.heroEyebrow) || legacyHeroText.eyebrow,
-    subheadline:
-      cleanSettingText(homepageSettings.heroSubheadline) || legacyHeroText.subheadline,
+    eyebrow: isLegacyHeroEyebrow(rawHeroEyebrow) ? simplifiedHeroEyebrow : rawHeroEyebrow,
+    headline: isLegacyHeroHeadline(rawHeroHeadline) ? simplifiedHeroHeadline : rawHeroHeadline,
+    subheadline: isLegacyHeroSubheadline(rawHeroSubheadline)
+      ? simplifiedHeroSubheadline
+      : rawHeroSubheadline,
   };
-  const microTrustLine = normalizeHeroTrustBadges(homepageSettings.heroTrustBadges);
   const whyUs = {
     ctaHref: homepageSettings.whyCtaHref || "/trip-planner",
     ctaLabel: homepageSettings.whyCtaLabel || "Plan Your Journey",
@@ -386,17 +339,7 @@ export async function Homepage() {
     homepageSettings.finalCtaHeadingAccent,
     { appendMissingAccent: true },
   );
-  const destinations = {
-    eyebrow: homepageSettings.destinationsEyebrow || "Where we travel",
-    linkHref: homepageSettings.destinationsViewAllHref || "/destinations",
-    linkLabel: homepageSettings.destinationsViewAllLabel || "All destinations →",
-    visible: homepageSettings.destinationsVisible,
-  };
-  const destinationsHeading = splitAccentText(
-    homepageSettings.destinationsHeading || "From the Nile,",
-    homepageSettings.destinationsHeadingAccent,
-    { appendMissingAccent: true },
-  );
+  const destinationsVisible = homepageSettings.destinationsVisible;
   const featured = {
     description: cleanSettingText(homepageSettings.featuredDescription),
     eyebrow: homepageSettings.featuredEyebrow || "Featured journeys",
@@ -448,78 +391,38 @@ export async function Homepage() {
       {homepageSettings.heroVisible ? (
         <section data-home-hero="true" className="relative isolate order-1 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
-          <HeroImageSlider images={heroSlides} />
+          <Image
+            src={heroImage}
+            alt="Luxor temple columns in warm Egypt light"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
         </div>
         {/* Bottom-only legibility scrim — keep the photo breathing. */}
         <div
           aria-hidden
-          className="absolute inset-x-0 bottom-0 h-[86%] bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.72)] to-transparent sm:h-[66%] sm:via-[rgba(6,17,31,0.54)]"
+          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,17,31,0.82),rgba(6,17,31,0.52)_46%,rgba(6,17,31,0.2)),linear-gradient(0deg,rgba(6,17,31,0.48),rgba(6,17,31,0.16))]"
         />
         {/* Top eyebrow strip — tiny, restrained. */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_18%,rgba(255,223,166,0.2),transparent_34%),linear-gradient(90deg,rgba(6,17,31,0.5),rgba(6,17,31,0.12)_48%,rgba(6,17,31,0.38))]" />
-        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[rgba(6,17,31,0.5)] to-transparent sm:h-32" />
-
-        <div className="container-premium relative flex min-h-[100svh] flex-col justify-end pb-7 pt-44 sm:pb-12 md:pb-16 lg:pb-20">
-          <div className="max-w-[21.5rem] sm:max-w-md lg:max-w-3xl">
-            <p className="eyebrow mb-4 text-[var(--color-gold-light)] sm:mb-5">
+        <div className="container-premium relative flex min-h-[500px] flex-col justify-center py-10 text-left md:min-h-[610px] md:items-center md:py-16 md:text-center">
+          <div className="max-w-[38rem] md:mx-auto md:max-w-[48rem]">
+            <p className="eyebrow mb-3 text-[var(--color-gold-light)] sm:mb-4">
               {heroText.eyebrow}
             </p>
-            <h1 className="font-serif text-[clamp(3.05rem,14vw,6.35rem)] font-semibold leading-[0.98] text-white drop-shadow-[0_10px_30px_rgb(0_0_0_/_38%)] sm:text-[clamp(3.4rem,8vw,6.5rem)]">
-              {heroHeadline.before}
-              {heroHeadline.showAccent ? (
-                <span className="font-accent-serif italic text-[var(--color-gold-light)] drop-shadow-[0_10px_28px_rgb(0_0_0_/_34%)]">
-                  {heroHeadline.accent}
-                </span>
-              ) : null}
-              {heroHeadline.after}
+            <h1 className="font-serif text-[clamp(2.2rem,8.2vw,3.3rem)] font-semibold leading-[1.04] text-white drop-shadow-[0_10px_30px_rgb(0_0_0_/_30%)] md:text-[clamp(3.25rem,4.2vw,3.875rem)]">
+              {heroText.headline}
             </h1>
-            <p className="mt-4 max-w-md text-[0.98rem] leading-7 text-white/86 sm:mt-7 sm:text-lg sm:leading-8 lg:max-w-lg">
+            <p className="hero-subheadline mt-3 max-w-[31rem] text-[0.96rem] leading-6 text-white/84 sm:text-base md:mx-auto md:mt-4 md:max-w-[36rem] md:text-[1.05rem] md:leading-7">
               {heroText.subheadline}
             </p>
-            <div className="mt-6 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
+            <div className="mt-5 flex flex-col items-stretch sm:mt-6 md:items-center">
               <Link className="btn-primary hero-primary-cta" href={heroCtaHref}>
                 <span>{heroCtaLabel}</span>
               </Link>
-              <Link
-                className="group hidden items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85 sm:inline-flex"
-                href={heroSecondaryHref}
-              >
-                <span className="h-px w-8 bg-[var(--color-gold-light)] transition-all duration-300 group-hover:w-12" />
-                {heroSecondaryLabel}
-              </Link>
             </div>
 
-            {/* Compact reassurance row directly below the CTAs. */}
-            <ul className="hero-trust-list mt-7 divide-y divide-white/18 border-y border-white/18 text-white/86 sm:mt-8 lg:max-w-2xl">
-              {microTrustLine.map((item, index) => (
-                <li key={item} className="hero-trust-row flex items-center gap-4 py-3.5 sm:py-4">
-                  <span className="hero-trust-icon grid size-12 shrink-0 place-items-center rounded-2xl border border-white/18 bg-white/8 text-[var(--color-gold-light)] shadow-[inset_0_1px_0_rgb(255_255_255_/_14%)] backdrop-blur-sm">
-                    <HeroTrustIcon index={index} />
-                  </span>
-                  <span className="hero-trust-label min-w-0 flex-1 font-sans text-[0.83rem] font-medium uppercase tracking-[0.18em] text-white">
-                    {cleanSettingText(item)}
-                  </span>
-                  <span aria-hidden className="hero-trust-arrow text-2xl leading-none text-[var(--color-gold-light)]">
-                    →
-                  </span>
-                  {false ? (
-                    <span
-                      aria-hidden
-                      className="text-[var(--color-gold-light)]"
-                      style={{ whiteSpace: "nowrap" }}
-                    >
-                      {" · "}
-                    </span>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Tiny scroll cue, desktop-only — corner detail. */}
-          <div className="absolute bottom-8 right-6 hidden flex-col items-center gap-2 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-white/60 lg:flex">
-            <span>Scroll</span>
-            <span aria-hidden className="scroll-cue h-7 w-px bg-white/50" />
           </div>
         </div>
         </section>
@@ -528,34 +431,21 @@ export async function Homepage() {
       {/* ============================================================
           2 · DESTINATIONS MARQUEE — auto-scrolling cinematic strip.
       ============================================================ */}
-      {destinations.visible ? (
-      <section className="relative order-2 overflow-hidden bg-[var(--color-ivory)] py-14 text-[var(--color-navy)] sm:py-20">
-        <div className="container-premium reveal-up">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div className="max-w-xl">
-              <p className="eyebrow text-[var(--color-gold-dark)]">
-                {destinations.eyebrow}
-              </p>
-              <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.08] sm:text-[2.25rem] md:text-[2.625rem]">
-                {destinationsHeading.before}
-                {destinationsHeading.showAccent ? (
-                  <span className="font-accent-serif italic text-[var(--color-gold-dark)]">
-                    {destinationsHeading.accent}
-                  </span>
-                ) : null}
-                {destinationsHeading.after}
-              </h2>
-            </div>
-            <Link
-              href={destinations.linkHref}
-              className="self-start text-[0.8125rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)] sm:self-auto"
-            >
-              {destinations.linkLabel}
-            </Link>
-          </div>
-        </div>
+      {destinationsVisible ? (
+      <section className="relative order-2 bg-[var(--color-ivory)] pb-8 text-[var(--color-navy)] sm:pb-10">
+        <HomeSearchPanel />
+      </section>
+      ) : null}
 
-        <DestinationCarousel items={destinationCities} />
+      {destinationsVisible ? (
+      <section className="order-3 bg-white py-10 text-[var(--color-navy)] sm:py-12 lg:py-14">
+        <div className="container-premium text-center">
+          <p className="eyebrow text-[var(--color-gold-dark)]">Where we travel</p>
+          <h2 className="mt-3 font-serif text-[2.2rem] font-semibold leading-none text-[var(--color-navy)] sm:text-[2.6rem]">
+            Top destinations
+          </h2>
+        </div>
+        <DestinationCarousel items={topDestinations} />
       </section>
       ) : null}
 
@@ -581,36 +471,34 @@ export async function Homepage() {
           numbering; visual order is what matters.)
       ============================================================ */}
       {featured.visible ? (
-      <section className="order-3 bg-[var(--color-ivory)] py-14 sm:py-20">
+      <section className="order-4 bg-[var(--color-ivory)] py-10 sm:py-12 lg:py-14">
         <div className="container-premium">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="reveal-up max-w-xl">
-              <p className="eyebrow">{featured.eyebrow}</p>
-              <h2 className="mt-4 font-serif text-[1.9rem] font-bold leading-[1.06] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
+          <div className="reveal-up mx-auto max-w-3xl text-center">
+            <p className="eyebrow">{featured.eyebrow}</p>
+            <h2 className="mt-3 font-serif text-[2rem] font-semibold leading-[1.08] text-[var(--color-navy)] sm:text-[2.35rem] md:text-[2.65rem]">
                 {featuredHeading.before}
                 {featuredHeading.showAccent ? (
-                  <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
+                  <span className="font-accent-serif ml-2 italic text-[var(--color-gold-dark)]">
                     {featuredHeading.accent}
                   </span>
                 ) : null}
                 {featuredHeading.after}
-              </h2>
-              {featured.description ? (
-                <p className="mt-5 max-w-xl text-base leading-7 text-[var(--color-gray-700)]">
-                  {featured.description}
-                </p>
-              ) : null}
-            </div>
-            <Link className="btn-secondary self-start sm:self-auto" href={featured.linkHref}>
+            </h2>
+            {featured.description ? (
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[var(--color-navy)]/65">
+                {featured.description}
+              </p>
+            ) : null}
+            <Link className="mt-5 inline-flex font-sans text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)]" href={featured.linkHref}>
               {featured.linkLabel}
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-5 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-            {featuredTours.map((tour, idx) => (
-              <JourneyCard key={tour.slug} tour={tour} eager={idx === 0} />
-            ))}
-          </div>
+          <FeaturedJourneysTabs
+            activities={featuredActivities}
+            hotels={featuredHotels}
+            tours={featuredTours}
+          />
         </div>
       </section>
       ) : null}
@@ -619,14 +507,13 @@ export async function Homepage() {
           4 · WHY JACK — editorial split, no boxy cards.
       ============================================================ */}
       {whyUs.visible ? (
-      <section className="order-4 bg-[var(--color-ivory)] py-14 lg:py-20">
+      <section className="order-5 bg-[var(--color-ivory)] py-10 lg:py-16">
         <div className="container-premium">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-            <div className="reveal-up max-w-xl">
+          <div className="reveal-up mx-auto max-w-3xl text-left sm:text-center">
               <p className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--color-gold)]">
                 {whyUs.eyebrow}
               </p>
-              <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.5vw,2.8rem)] font-semibold leading-[1.15] text-[var(--color-navy)]">
+              <h2 className="mt-3 text-[clamp(1.8rem,3vw,2.35rem)] font-semibold leading-[1.12] text-[var(--color-navy)]">
                 {whyUsHeading.before}
                 {whyUsHeading.showAccent ? (
                   <span className="font-accent-serif italic text-[var(--color-gold)]">
@@ -635,111 +522,33 @@ export async function Homepage() {
                 ) : null}
                 {whyUsHeading.after}
               </h2>
-              <p className="mt-5 max-w-[480px] text-base font-normal leading-[1.7] text-[var(--color-navy)]/70">
+              <p className="mx-auto mt-4 max-w-2xl text-sm font-normal leading-6 text-[var(--color-navy)]/68 sm:text-base">
                 {whyUs.description}
               </p>
               <Link
                 href={whyUs.ctaHref}
-                className="mt-6 inline-flex rounded-md bg-[var(--color-gold)] px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_12px_30px_rgb(201_168_76_/_22%)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-gold-light)]"
+                className="mt-5 inline-flex rounded-md bg-[var(--color-gold)] px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_10px_22px_rgb(201_168_76_/_18%)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-gold-light)]"
               >
                 {whyUs.ctaLabel}
               </Link>
-            </div>
-
-            <div className="why-us-mobile-image reveal-up relative mx-auto mt-8 h-[280px] w-[calc(100vw-32px)] overflow-hidden rounded-2xl shadow-[0_8px_24px_rgb(0_0_0_/_12%)] lg:hidden">
-              <Image
-                src={whyUs.image1}
-                alt="Egypt luxury experience"
-                fill
-                sizes="calc(100vw - 32px)"
-                className="ken-burns object-cover"
-              />
-            </div>
-
-            <div className="why-us-collage reveal-up relative isolate mx-auto hidden h-[300px] w-full max-w-[300px] lg:block lg:h-[440px] lg:max-w-[560px]">
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 560 440"
-                className="pointer-events-none absolute inset-0 z-0 hidden h-full w-full lg:block"
-              >
-                <path
-                  d="M246 92 C 322 92 332 154 390 164 C 470 178 470 250 386 272 C 316 290 280 332 234 366"
-                  fill="none"
-                  stroke="rgb(201 168 76 / 0.6)"
-                  strokeWidth="2"
-                  strokeDasharray="7 9"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 32 32"
-                className="pointer-events-none absolute left-[288px] top-12 z-20 hidden h-8 w-8 text-[var(--color-gold)] lg:block"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 15 29 5l-9 25-5-11-12-4Z" />
-                <path d="m15 19-6 9" />
-              </svg>
-
-              <div
-                className="why-us-collage-card why-us-collage-card-1 absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
-                  lg:left-6 lg:top-0 lg:h-[190px] lg:w-[260px] lg:rounded-2xl"
-              >
-                <Image
-                  src={whyUs.image1}
-                  alt="Karnak temple columns in Luxor"
-                  fill
-                  sizes="(min-width: 1024px) 260px, 140px"
-                  className="object-cover"
-                />
-              </div>
-              <div
-                className="why-us-collage-card why-us-collage-card-2 absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
-                  lg:right-8 lg:top-16 lg:h-[300px] lg:w-[238px] lg:rounded-2xl"
-              >
-                <Image
-                  src={whyUs.image2}
-                  alt="Hatshepsut temple facade"
-                  fill
-                  sizes="(min-width: 1024px) 238px, 140px"
-                  className="object-cover"
-                />
-              </div>
-              <div
-                className="why-us-collage-card why-us-collage-card-3 absolute z-10 overflow-hidden shadow-[0_14px_34px_rgb(0_0_0_/_14%)] ring-1 ring-[rgb(201_168_76_/_35%)]
-                  lg:bottom-0 lg:left-24 lg:h-[190px] lg:w-[250px] lg:rounded-2xl lg:translate-x-0"
-              >
-                <Image
-                  src={whyUs.image3}
-                  alt="Felucca sailing on the Nile"
-                  fill
-                  sizes="(min-width: 1024px) 250px, 140px"
-                  className="object-cover"
-                />
-              </div>
-            </div>
           </div>
 
-          <div className="mt-12 lg:mt-16">
-            <h3 className="mb-8 text-center text-sm font-medium uppercase tracking-[0.1em] text-[var(--color-navy)]/50">
+          <div className="mt-8 lg:mt-10">
+            <h3 className="mb-5 text-center text-xs font-medium uppercase tracking-[0.1em] text-[var(--color-navy)]/50">
               {whyUs.includedHeading}
             </h3>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
-              {whyUs.services.map((service) => (
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
+              {whyUs.services.slice(0, 4).map((service) => (
                   <div
                     key={`${service.icon}-${service.label}`}
-                    className="min-h-[140px] rounded-xl bg-white px-4 py-6 text-center shadow-[0_2px_8px_rgb(0_0_0_/_4%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_8%)]"
+                    className="rounded-xl border border-[rgb(214_173_84_/_18%)] bg-white px-3 py-3 text-center shadow-[0_2px_8px_rgb(0_0_0_/_4%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgb(0_0_0_/_8%)] sm:px-4 sm:py-4"
                   >
                     {createElement(getLucideIcon(service.icon), {
                       "aria-hidden": true,
-                      className: "mx-auto h-9 w-9 text-[var(--color-gold)]",
-                      strokeWidth: 2.4,
+                      className: "mx-auto h-5 w-5 text-[var(--color-gold)] sm:h-6 sm:w-6",
+                      strokeWidth: 2.2,
                     })}
-                    <p className="mt-3 text-sm font-semibold leading-[1.3] text-[var(--color-navy)]">
+                    <p className="mt-2 text-xs font-semibold leading-[1.3] text-[var(--color-navy)] sm:text-sm">
                       {service.label}
                     </p>
                   </div>
@@ -753,7 +562,7 @@ export async function Homepage() {
       {/* ============================================================
           5 · BRAND STORY — image left, drop-capped paragraph right.
       ============================================================ */}
-      {ourWorld.visible ? (
+      {false && ourWorld.visible ? (
       <section className="order-5 bg-[var(--color-ivory)] py-14 sm:py-20">
         <div className="container-premium grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:items-stretch lg:gap-16">
           <figure className="reveal-up relative aspect-[4/5] w-full overflow-hidden shadow-[0_28px_80px_rgb(87_59_22_/_20%)] sm:aspect-[3/4] lg:aspect-auto lg:min-h-[36rem]">
@@ -813,7 +622,7 @@ export async function Homepage() {
       {/* ============================================================
           9 · FULL-BLEED STATS — single photograph + corner stats.
       ============================================================ */}
-      {homepageStats.visible ? (
+      {false && homepageStats.visible ? (
       <section className="relative isolate order-6 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
@@ -855,10 +664,10 @@ export async function Homepage() {
          10 · EDITORIAL PAUSE — pure ivory.
       ============================================================ */}
       {testimonialsHeader.visible ? (
-      <section className="cartouche-pause order-7 bg-[var(--color-ivory)]">
+      <section className="order-7 bg-[var(--color-ivory)] py-10 sm:py-14 lg:py-16">
         <div className="container-premium reveal-up">
           <p className="eyebrow text-[var(--color-gold-dark)]">{testimonialsHeader.eyebrow}</p>
-          <p className="mt-6 font-serif text-[1.9rem] font-bold leading-[1.18] text-[var(--color-navy)] sm:text-[2.25rem] md:text-[2.625rem]">
+          <p className="mt-3 max-w-2xl font-serif text-[1.75rem] font-semibold leading-[1.12] text-[var(--color-navy)] sm:text-[2.15rem] md:text-[2.35rem]">
             {testimonialsHeading.before}
             {testimonialsHeading.showAccent ? (
               <span className="font-accent-serif block italic text-[var(--color-gold-dark)]">
@@ -867,6 +676,24 @@ export async function Homepage() {
             ) : null}
             {testimonialsHeading.after}
           </p>
+          <div className="mt-7 max-w-2xl rounded-xl border border-[rgb(214_173_84_/_18%)] bg-white px-5 py-5 shadow-[0_3px_14px_rgb(6_17_31_/_6%)] sm:px-6">
+            <div aria-hidden className="mb-3 flex gap-1 text-sm text-[var(--color-gold)]">
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+            </div>
+            <blockquote className="font-sans text-sm leading-6 text-[var(--color-navy)]/75 sm:text-base">
+              {testimonial.quote}
+            </blockquote>
+            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-dark)]">
+              {testimonial.name}
+              <span className="ml-2 font-medium text-[var(--color-navy)]/45">
+                {testimonial.origin}
+              </span>
+            </p>
+          </div>
         </div>
       </section>
       ) : null}
@@ -874,6 +701,7 @@ export async function Homepage() {
       {/* ============================================================
          11 · PHOTOGRAPHIC TESTIMONIAL — full bleed, quote overlay.
       ============================================================ */}
+      {false ? (
       <section className="relative isolate order-8 overflow-hidden bg-[var(--color-navy)] text-white">
         <div className="absolute inset-0">
           <Image
@@ -911,31 +739,19 @@ export async function Homepage() {
           </div>
         </div>
       </section>
+      ) : null}
 
       {/* ============================================================
          12 · FINAL CTA — immersive Nile sunset, single ask.
       ============================================================ */}
       {finalCta.visible ? (
-      <section className="relative isolate order-9 overflow-hidden bg-[var(--color-navy)] text-white">
-        <div className="absolute inset-0">
-          <Image
-            src={finalCta.backgroundImage}
-            alt="Felucca on the Nile at sunset between Luxor and Aswan"
-            fill
-            sizes="100vw"
-            className="ken-burns object-cover opacity-65"
-          />
-        </div>
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-[#06111f] via-[rgba(6,17,31,0.65)] to-[rgba(6,17,31,0.25)]"
-        />
-        <div className="container-premium relative flex min-h-[72vh] flex-col justify-end py-20 sm:min-h-[80vh] sm:py-20">
-          <div className="reveal-up max-w-2xl">
+      <section className="order-8 bg-[var(--color-navy)] py-12 text-white sm:py-16">
+        <div className="container-premium">
+          <div className="reveal-up mx-auto max-w-2xl text-left sm:text-center">
             <p className="eyebrow text-[var(--color-gold-light)]">
               {finalCta.eyebrow}
             </p>
-            <h2 className="mt-4 font-serif text-[2rem] font-bold leading-[1.04] sm:text-[2.5rem] md:text-[2.625rem]">
+            <h2 className="mt-3 font-serif text-[1.85rem] font-semibold leading-[1.08] sm:text-[2.25rem] md:text-[2.45rem]">
               {finalCtaHeading.before}
               {finalCtaHeading.showAccent ? (
                 <span className="font-accent-serif block italic text-[var(--color-gold-light)]">
@@ -944,22 +760,15 @@ export async function Homepage() {
               ) : null}
               {finalCtaHeading.after}
             </h2>
-            <p className="mt-5 max-w-xl text-base leading-7 text-white/80 sm:mt-7 sm:text-lg sm:leading-8">
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-white/75 sm:text-base">
               {finalCta.description}
             </p>
-            <div className="mt-7 flex flex-col items-start gap-4 sm:mt-9 sm:flex-row sm:items-center">
+            <div className="mt-6 flex flex-col items-start sm:items-center">
               <Link
                 className="btn-primary"
                 href={finalCta.primaryHref}
               >
                 {finalCta.primaryLabel}
-              </Link>
-              <Link
-                className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85"
-                href={finalCta.secondaryHref}
-              >
-                <span className="h-px w-8 bg-[var(--color-gold-light)] transition-all duration-300 group-hover:w-12" />
-                {finalCta.secondaryLabel}
               </Link>
             </div>
           </div>

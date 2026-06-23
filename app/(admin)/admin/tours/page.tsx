@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 export default async function AdminToursPage() {
-  const tours = await getAdminTours();
+  const tours = await getAdminTours("TOUR");
   const currentUser = await getCurrentAdminUser();
   const role = currentUser?.role || "VIEWER";
   const canCreateTours = canWriteAdminResource(role, "tours", "create");
@@ -17,6 +17,7 @@ export default async function AdminToursPage() {
   const canDeleteTours = canWriteAdminResource(role, "tours", "delete");
   const tourCards: AdminToursGridTour[] = tours.map((tour) => ({
     id: tour.id,
+    contentType: tour.contentType,
     slug: tour.slug,
     title: tour.title,
     category: tour.category || "Custom",
@@ -57,7 +58,15 @@ export default async function AdminToursPage() {
 
       <div className="mt-6 h-px w-full bg-[rgb(214_173_84_/_35%)]" />
 
-      <AdminToursGrid tours={tourCards} canCreate={canCreateTours} canDelete={canDeleteTours} canEdit={canEditTours} />
+      <AdminToursGrid
+        tours={tourCards}
+        canCreate={canCreateTours}
+        canDelete={canDeleteTours}
+        canEdit={canEditTours}
+        createHref="/admin/tours/new"
+        emptyTitle="No tours found"
+        singularLabel="Tour"
+      />
     </div>
   );
 }
