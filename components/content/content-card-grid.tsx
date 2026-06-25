@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Clock, MapPin, Star } from "lucide-react";
+import { FavoriteHeartButton } from "@/components/tours/favorite-heart-button";
 import { formatPrice, type Tour } from "@/lib/content";
 
 export function ContentCardGrid({
@@ -35,6 +36,7 @@ export function ContentCardGrid({
             className="overflow-hidden rounded-2xl bg-white shadow-[0_10px_30px_rgb(6_17_31_/_8%)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgb(6_17_31_/_14%)]"
           >
             <div className="relative h-56 overflow-hidden bg-[var(--color-sand)]">
+              <FavoriteHeartButton className="absolute right-3 top-3 z-10" />
               <Image
                 src={item.heroImage}
                 alt={item.title}

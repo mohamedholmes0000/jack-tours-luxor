@@ -20,6 +20,7 @@
   --shadow-luxury: 0 24px 70px rgb(0 0 0 / 28%);
   --background: var(--color-gray-50);
   --foreground: var(--color-gray-900);
+  --font-accent: var(--font-heading);
 }
 
 @theme inline {
@@ -85,20 +86,48 @@ select {
   width: min(100% - 2rem, 1440px);
 }
 
+.public-site,
+.public-home-shell,
+body:has(.public-site) .site-header-utility,
+body:has(.public-site) .site-main-header,
+body:has(.public-site) footer {
+  --font-body: var(--font-modern);
+  --font-heading: var(--font-modern);
+  --font-sans: var(--font-modern);
+  --font-serif: var(--font-modern);
+  font-family: var(--font-modern), Arial, Helvetica, sans-serif;
+}
+
+.public-site p,
+.public-site li,
+.public-site a,
+.public-site button,
+.public-site input,
+.public-site textarea,
+.public-site select,
+body:has(.public-site) .site-main-header,
+body:has(.public-site) .site-header-utility,
+body:has(.public-site) footer {
+  letter-spacing: -0.01em;
+}
+
 .public-site section:not([data-home-hero]) h2 {
   font-size: clamp(2rem, 3.5vw, 2.8rem);
-  line-height: 1.12;
+  letter-spacing: -0.022em;
+  line-height: 1.1;
 }
 
 .public-site h1 {
   font-size: clamp(2.8rem, 7vw, 6rem);
   font-weight: 600;
-  line-height: 1.06;
+  letter-spacing: -0.028em;
+  line-height: 1.04;
 }
 
 .public-site h3 {
   font-size: clamp(1.4rem, 2vw, 1.8rem);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.014em;
   line-height: 1.14;
 }
 
@@ -150,6 +179,13 @@ select {
   text-transform: uppercase;
 }
 
+.public-site .eyebrow {
+  font-family: var(--font-modern), Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
 .luxury-card {
   background: linear-gradient(180deg, rgb(255 255 255 / 8%), rgb(255 255 255 / 4%));
   border: 1px solid rgb(214 173 84 / 24%);
@@ -157,7 +193,7 @@ select {
 }
 
 .font-accent-serif {
-  font-family: var(--font-heading), Georgia, serif;
+  font-family: var(--font-accent), Georgia, serif;
 }
 
 .site-header-utility {
@@ -292,26 +328,27 @@ select {
 
 .home-search-tabs label {
   align-items: center;
-  background: var(--color-navy);
-  border: 1px solid rgb(214 173 84 / 24%);
+  background: rgb(255 255 255 / 94%);
+  border: 1px solid rgb(6 17 31 / 10%);
   border-bottom: 0;
-  border-radius: 0.85rem 0.85rem 0 0;
-  color: rgb(255 255 255 / 82%);
+  border-radius: 0.58rem 0.58rem 0 0;
+  color: var(--color-navy);
   cursor: pointer;
   display: inline-flex;
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   font-weight: 600;
   justify-content: center;
-  letter-spacing: 0.06em;
-  min-height: 2.55rem;
-  padding: 0.72rem 1.25rem;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  min-height: 2.8rem;
+  min-width: 6.6rem;
+  padding: 0.72rem 1.45rem;
   transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
 }
 
 .home-search-tabs label:hover {
-  color: var(--color-gold-light);
+  border-color: rgb(6 17 31 / 18%);
+  color: var(--color-gold-dark);
 }
 
 .home-search-content {
@@ -319,16 +356,16 @@ select {
 }
 
 #home-search-tours:checked ~ .home-search-tabs label[for="home-search-tours"],
-#home-search-destinations:checked ~ .home-search-tabs label[for="home-search-destinations"],
-#home-search-plan:checked ~ .home-search-tabs label[for="home-search-plan"] {
-  background: var(--color-gold);
-  border-color: var(--color-gold);
-  color: var(--color-navy);
+#home-search-activities:checked ~ .home-search-tabs label[for="home-search-activities"],
+#home-search-hotels:checked ~ .home-search-tabs label[for="home-search-hotels"] {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+  color: #fff;
 }
 
 #home-search-tours:checked ~ .home-search-card .home-search-content-tours,
-#home-search-destinations:checked ~ .home-search-card .home-search-content-destinations,
-#home-search-plan:checked ~ .home-search-card .home-search-content-plan {
+#home-search-activities:checked ~ .home-search-card .home-search-content-activities,
+#home-search-hotels:checked ~ .home-search-card .home-search-content-hotels {
   display: grid;
 }
 
@@ -345,9 +382,9 @@ select {
   justify-content: center;
   letter-spacing: 0.05em;
   margin: 0.75rem;
-  min-height: 2.8rem;
-  min-width: 8.75rem;
-  padding: 0.85rem 1.4rem;
+  min-height: 3.05rem;
+  min-width: 9.25rem;
+  padding: 0.9rem 1.55rem;
   text-transform: uppercase;
   transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
@@ -387,9 +424,10 @@ select {
 
   .home-search-tabs label {
     flex: 1 0 auto;
-    font-size: 0.66rem;
-    min-height: 2.35rem;
-    padding: 0.65rem 0.8rem;
+    font-size: 0.76rem;
+    min-height: 2.45rem;
+    min-width: 5.8rem;
+    padding: 0.62rem 0.9rem;
   }
 
   .home-search-button {
@@ -424,9 +462,9 @@ select {
     grid-template-columns: 1fr 1fr 1fr auto;
   }
 
-  .home-search-content-destinations,
-  .home-search-content-plan {
-    grid-template-columns: 1fr 1fr auto;
+  .home-search-content-activities,
+  .home-search-content-hotels {
+    grid-template-columns: 1fr 1fr 1fr auto;
   }
 }
 

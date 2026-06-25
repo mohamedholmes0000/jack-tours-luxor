@@ -600,6 +600,7 @@ async function main() {
       headerNavLinks: [
         { label: "Tours", url: "/tours" },
         { label: "Activities", url: "/activities" },
+        { label: "Hotels", url: "/hotels" },
         { label: "Gallery", url: "/gallery" },
         { label: "About", url: "/about" },
       ],
@@ -649,6 +650,7 @@ async function main() {
       headerNavLinks: [
         { label: "Tours", url: "/tours" },
         { label: "Activities", url: "/activities" },
+        { label: "Hotels", url: "/hotels" },
         { label: "Gallery", url: "/gallery" },
         { label: "About", url: "/about" },
       ],

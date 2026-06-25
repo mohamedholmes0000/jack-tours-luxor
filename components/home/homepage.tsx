@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createElement } from "react";
+import { CalendarDays, MapPin, SlidersHorizontal, Users, type LucideIcon } from "lucide-react";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
 import { FeaturedJourneysTabs } from "@/components/home/featured-journeys-tabs";
 import {
@@ -207,31 +208,40 @@ function splitAccentText(
 }
 
 function SearchField({
+  icon: Icon,
   label,
   name,
   options,
+  placeholder = "Select",
 }: {
+  icon: LucideIcon;
   label: string;
   name: string;
   options: string[];
+  placeholder?: string;
 }) {
   return (
-    <label className="flex min-h-[58px] flex-col justify-center border-b border-[rgb(6_17_31_/_8%)] px-4 py-3 md:border-b-0 md:border-r md:px-5">
-      <span className="font-sans text-[0.7rem] font-medium uppercase tracking-[0.1em] text-[var(--color-gold-dark)]">
-        {label}
+    <label className="home-search-field flex min-h-[64px] items-center gap-3 border-b border-[rgb(6_17_31_/_10%)] px-5 py-3 md:border-b-0 md:border-r md:px-6">
+      <span className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--color-navy)]/38">
+        <Icon aria-hidden="true" className="size-4" strokeWidth={1.7} />
       </span>
-      <select
-        name={name}
-        className="mt-1 w-full appearance-none bg-transparent font-sans text-sm font-medium text-[var(--color-navy)] outline-none"
-        defaultValue=""
-      >
-        <option value="">Select</option>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
+      <span className="min-w-0 flex-1">
+        <span className="block font-sans text-[0.72rem] font-medium text-[var(--color-navy)]/45">
+          {label}
+        </span>
+        <select
+          name={name}
+          className="mt-1 w-full appearance-none bg-transparent font-sans text-sm font-medium text-[var(--color-navy)] outline-none"
+          defaultValue=""
+        >
+          <option value="">{placeholder}</option>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </span>
     </label>
   );
 }
@@ -241,33 +251,35 @@ function HomeSearchPanel() {
     <div className="container-premium relative z-20 -mt-8 sm:-mt-10 lg:-mt-12">
       <div className="home-search-panel relative mx-auto max-w-6xl">
         <input className="home-search-radio" type="radio" id="home-search-tours" name="home-search-tab" defaultChecked />
-        <input className="home-search-radio" type="radio" id="home-search-destinations" name="home-search-tab" />
-        <input className="home-search-radio" type="radio" id="home-search-plan" name="home-search-tab" />
+        <input className="home-search-radio" type="radio" id="home-search-activities" name="home-search-tab" />
+        <input className="home-search-radio" type="radio" id="home-search-hotels" name="home-search-tab" />
 
-        <div className="home-search-tabs flex items-end gap-1 pl-0 sm:pl-3">
-          <label htmlFor="home-search-tours">Tours</label>
-          <label htmlFor="home-search-destinations">Destinations</label>
-          <label htmlFor="home-search-plan">Plan Trip</label>
+        <div className="home-search-tabs flex items-end gap-0 pl-0 sm:pl-2">
+          <label htmlFor="home-search-tours">Tour</label>
+          <label htmlFor="home-search-activities">Activity</label>
+          <label htmlFor="home-search-hotels">Hotel</label>
         </div>
 
-        <div className="home-search-card overflow-hidden rounded-b-2xl rounded-tr-2xl border border-[rgb(214_173_84_/_18%)] bg-[rgba(255,252,244,0.98)] shadow-[0_18px_42px_rgb(6_17_31_/_12%)] backdrop-blur-sm">
+        <div className="home-search-card overflow-hidden rounded-b-2xl rounded-tr-2xl border border-[rgb(6_17_31_/_8%)] bg-white shadow-[0_20px_46px_rgb(6_17_31_/_11%)]">
           <form action="/tours" method="get" className="home-search-content home-search-content-tours md:grid-cols-[1fr_1fr_1fr_auto]">
-            <SearchField label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Abu Simbel", "Red Sea"]} />
-            <SearchField label="Travel Style" name="style" options={["Private Day Tour", "Nile Cruise", "Multi-Day Journey", "Luxury"]} />
-            <SearchField label="Duration" name="duration" options={["Half Day", "Full Day", "2-3 Days", "4+ Days"]} />
+            <SearchField icon={MapPin} label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Abu Simbel", "Red Sea"]} placeholder="Where are you going?" />
+            <SearchField icon={CalendarDays} label="When" name="duration" options={["Half Day", "Full Day", "2-3 Days", "4+ Days"]} placeholder="Choose timing" />
+            <SearchField icon={SlidersHorizontal} label="More" name="style" options={["Private Day Tour", "Nile Cruise", "Multi-Day Journey", "Luxury"]} placeholder="More" />
             <button type="submit" className="home-search-button">Search</button>
           </form>
 
-          <form action="/destinations" method="get" className="home-search-content home-search-content-destinations md:grid-cols-[1fr_1fr_auto]">
-            <SearchField label="Choose Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Abu Simbel", "Hurghada"]} />
-            <SearchField label="Experience Type" name="experience" options={["Temples & Tombs", "Nile & Nubia", "Pyramids", "Red Sea", "Culture"]} />
+          <form action="/activities" method="get" className="home-search-content home-search-content-activities md:grid-cols-[1fr_1fr_1fr_auto]">
+            <SearchField icon={MapPin} label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Abu Simbel", "Hurghada"]} placeholder="Where are you going?" />
+            <SearchField icon={CalendarDays} label="When" name="date" options={["Today", "Tomorrow", "This Week", "Custom Date"]} placeholder="Choose timing" />
+            <SearchField icon={SlidersHorizontal} label="More" name="experience" options={["Temples & Tombs", "Nile & Nubia", "Pyramids", "Red Sea", "Culture"]} placeholder="More" />
             <button type="submit" className="home-search-button">Search</button>
           </form>
 
-          <form action="/trip-planner" method="get" className="home-search-content home-search-content-plan md:grid-cols-[1fr_1fr_auto]">
-            <SearchField label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Classic Egypt", "Custom Route"]} />
-            <SearchField label="Travelers" name="travelers" options={["1 Traveler", "2 Travelers", "3-4 Travelers", "5+ Travelers"]} />
-            <button type="submit" className="home-search-button">Start Planning</button>
+          <form action="/hotels" method="get" className="home-search-content home-search-content-hotels md:grid-cols-[1fr_1fr_1fr_auto]">
+            <SearchField icon={MapPin} label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Hurghada", "Custom Route"]} placeholder="Where are you staying?" />
+            <SearchField icon={Users} label="Guests" name="guests" options={["1 Traveler", "2 Travelers", "3-4 Travelers", "5+ Travelers"]} placeholder="Travelers" />
+            <SearchField icon={SlidersHorizontal} label="More" name="style" options={["Nile View", "Boutique Stay", "Beach Resort", "Cruise Hotel"]} placeholder="More" />
+            <button type="submit" className="home-search-button">Search</button>
           </form>
         </div>
       </div>
@@ -286,9 +298,9 @@ export async function Homepage() {
     getHomepageSettingsSafe(),
     getHomepageCityDestinationsSafe(),
   ]);
-  const featuredTours = safeTours.slice(0, 3);
-  const featuredActivities = safeActivities.slice(0, 3);
-  const featuredHotels = safeHotels.slice(0, 3);
+  const featuredTours = safeTours;
+  const featuredActivities = safeActivities;
+  const featuredHotels = safeHotels;
   const legacyHeroText = cleanHeroText(settings);
   const heroImage = safeImageSrc(homepageSettings.heroBackgroundImage, fallbackHeroImage);
   const heroCtaLabel = homepageSettings.heroPrimaryCtaLabel || "Plan My Egypt Journey";
@@ -489,13 +501,12 @@ export async function Homepage() {
                 {featured.description}
               </p>
             ) : null}
-            <Link className="mt-5 inline-flex font-sans text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)]" href={featured.linkHref}>
-              {featured.linkLabel}
-            </Link>
           </div>
 
           <FeaturedJourneysTabs
             activities={featuredActivities}
+            defaultViewAllHref={featured.linkHref}
+            defaultViewAllLabel={featured.linkLabel}
             hotels={featuredHotels}
             tours={featuredTours}
           />
@@ -506,8 +517,81 @@ export async function Homepage() {
       {/* ============================================================
           4 · WHY JACK — editorial split, no boxy cards.
       ============================================================ */}
+      <section className="order-5 overflow-hidden bg-white py-12 text-[var(--color-navy)] sm:py-16 lg:py-20">
+        <div className="container-premium grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-16">
+          <div className="reveal-up max-w-xl">
+            <p className="eyebrow text-[var(--color-gold-dark)]">Private planning</p>
+            <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,3.1rem)] font-semibold leading-[1.08] text-[var(--color-navy)]">
+              Customize Your Egypt Trip, Your Way
+            </h2>
+            <p className="mt-5 max-w-lg font-sans text-[0.98rem] leading-7 text-[var(--color-navy)]/68">
+              Share your dates, interests, budget, preferred places, and travel style.
+              Jack Egypt Tour will help shape a private Egypt route with local care,
+              flexible pacing, and easy WhatsApp support from first idea to final detail.
+            </p>
+            <Link
+              href="/trip-planner"
+              className="mt-7 inline-flex min-h-12 items-center justify-center rounded-md bg-[var(--color-gold)] px-7 font-sans text-[0.76rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)] shadow-[0_16px_32px_rgb(201_168_76_/_20%)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-gold-light)]"
+            >
+              Plan Your Trip
+            </Link>
+          </div>
+
+          <div className="reveal-up relative mx-auto grid w-full max-w-[640px] grid-cols-[0.95fr_1fr] gap-4 sm:gap-5">
+            <div className="pointer-events-none absolute left-[22%] top-[8%] hidden h-[72%] w-[58%] sm:block">
+              <svg
+                aria-hidden="true"
+                className="h-full w-full text-[var(--color-gold)]/45"
+                fill="none"
+                viewBox="0 0 420 280"
+              >
+                <path
+                  d="M38 200 C98 118 156 258 214 152 C270 48 326 108 382 38"
+                  stroke="currentColor"
+                  strokeDasharray="7 11"
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                />
+                <circle cx="382" cy="38" r="7" fill="currentColor" />
+              </svg>
+            </div>
+
+            <figure className="relative z-10 mt-10 aspect-[4/5] overflow-hidden rounded-[1.6rem] shadow-[0_24px_55px_rgb(6_17_31_/_16%)] sm:mt-14">
+              <Image
+                src="/photos/karnak.jpg"
+                alt="Karnak temple columns in Luxor"
+                fill
+                sizes="(min-width: 1024px) 280px, 46vw"
+                className="object-cover"
+              />
+            </figure>
+
+            <div className="relative z-10 space-y-4 sm:space-y-5">
+              <figure className="relative aspect-[5/4] overflow-hidden rounded-[1.6rem] shadow-[0_22px_50px_rgb(6_17_31_/_14%)]">
+                <Image
+                  src="/photos/pyramids.jpg"
+                  alt="Pyramids near Cairo in warm light"
+                  fill
+                  sizes="(min-width: 1024px) 300px, 48vw"
+                  className="object-cover"
+                />
+              </figure>
+              <figure className="relative ml-8 aspect-[5/4] overflow-hidden rounded-[1.6rem] shadow-[0_22px_50px_rgb(6_17_31_/_14%)] sm:ml-12">
+                <Image
+                  src="/photos/felucca.jpg"
+                  alt="Felucca sailing on the Nile"
+                  fill
+                  sizes="(min-width: 1024px) 270px, 42vw"
+                  className="object-cover"
+                />
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {whyUs.visible ? (
-      <section className="order-5 bg-[var(--color-ivory)] py-10 lg:py-16">
+      <section className="order-6 bg-[var(--color-ivory)] py-10 lg:py-16">
         <div className="container-premium">
           <div className="reveal-up mx-auto max-w-3xl text-left sm:text-center">
               <p className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--color-gold)]">

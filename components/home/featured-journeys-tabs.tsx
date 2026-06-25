@@ -55,7 +55,7 @@ function FeaturedCard({ item }: { item: Tour }) {
             className="object-cover transition duration-700 group-hover:scale-105"
           />
         </Link>
-        <FavoriteHeartButton className="absolute right-3 top-3 z-10 border-white/65 bg-black/10 text-white shadow-sm backdrop-blur-sm hover:bg-white hover:text-[var(--color-gold-dark)]" />
+        <FavoriteHeartButton className="absolute right-3 top-3 z-10" />
       </div>
       <div className="flex flex-1 flex-col px-4 py-4">
         <p className="flex items-center gap-1.5 text-[12px] text-[var(--color-navy)]/50">
@@ -109,10 +109,14 @@ function EmptyState() {
 
 export function FeaturedJourneysTabs({
   activities,
+  defaultViewAllHref = "/tours",
+  defaultViewAllLabel = "View all tours",
   hotels,
   tours,
 }: {
   activities: Tour[];
+  defaultViewAllHref?: string;
+  defaultViewAllLabel?: string;
   hotels: Tour[];
   tours: Tour[];
 }) {
@@ -122,6 +126,17 @@ export function FeaturedJourneysTabs({
     if (activeTab === "HOTEL") return hotels;
     return tours;
   }, [activeTab, activities, hotels, tours]);
+  const viewAllLink = useMemo(() => {
+    if (activeTab === "ACTIVITY") {
+      return { href: "/activities", label: "View all activities" };
+    }
+
+    if (activeTab === "HOTEL") {
+      return { href: "/hotels", label: "View all hotels" };
+    }
+
+    return { href: defaultViewAllHref, label: defaultViewAllLabel };
+  }, [activeTab, defaultViewAllHref, defaultViewAllLabel]);
 
   return (
     <>
@@ -145,6 +160,14 @@ export function FeaturedJourneysTabs({
             </button>
           );
         })}
+      </div>
+      <div className="mt-4 text-center">
+        <Link
+          className="inline-flex font-sans text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)]"
+          href={viewAllLink.href}
+        >
+          {viewAllLink.label}
+        </Link>
       </div>
 
       {activeItems.length ? (

@@ -61,21 +61,40 @@ function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor"
   );
 }
 
+function buildHeaderNavItems(items: Array<{ href: string; label: string }>) {
+  const normalizedItems = items.map((item) =>
+    item.label.trim().toLowerCase() === "destinations"
+      ? { href: "/activities", label: "Activities" }
+      : item,
+  );
+
+  if (normalizedItems.some((item) => item.href === "/hotels" || item.label.trim().toLowerCase() === "hotels")) {
+    return normalizedItems;
+  }
+
+  const activitiesIndex = normalizedItems.findIndex(
+    (item) => item.href === "/activities" || item.label.trim().toLowerCase() === "activities",
+  );
+  const insertIndex = activitiesIndex >= 0 ? activitiesIndex + 1 : 2;
+
+  return [
+    ...normalizedItems.slice(0, insertIndex),
+    { href: "/hotels", label: "Hotels" },
+    ...normalizedItems.slice(insertIndex),
+  ];
+}
+
 export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolean; settings: PublicSettings }) {
   const pathname = usePathname();
   const [isNavStuck, setIsNavStuck] = useState(false);
   const phone = settings.phone || "(+20) XXX XXX XXXX";
   const email = settings.email || "admin@jacktoursluxor.com";
-  const navItems = [
+  const navItems = buildHeaderNavItems([
     { href: settings.navLink1Url, label: settings.navLink1Label },
     { href: settings.navLink2Url, label: settings.navLink2Label },
     { href: settings.navLink3Url, label: settings.navLink3Label },
     { href: settings.navLink4Url, label: settings.navLink4Label },
-  ].map((item) =>
-    item.label.trim().toLowerCase() === "destinations"
-      ? { href: "/activities", label: "Activities" }
-      : item,
-  );
+  ]);
   const socialLinks = [
     { href: settings.socialFacebook || "#", label: "Facebook" as const },
     { href: settings.socialInstagram || "#", label: "Instagram" as const },
