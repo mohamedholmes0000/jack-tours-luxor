@@ -87,7 +87,7 @@ function buildHeaderNavItems(items: Array<{ href: string; label: string }>) {
 export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolean; settings: PublicSettings }) {
   const pathname = usePathname();
   const [isNavStuck, setIsNavStuck] = useState(false);
-  const phone = settings.phone || "(+20) XXX XXX XXXX";
+  const phone = settings.phone || "+20 1096586292";
   const email = settings.email || "admin@jacktoursluxor.com";
   const navItems = buildHeaderNavItems([
     { href: settings.navLink1Url, label: settings.navLink1Label },
@@ -96,10 +96,10 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
     { href: settings.navLink4Url, label: settings.navLink4Label },
   ]);
   const socialLinks = [
-    { href: settings.socialFacebook || "#", label: "Facebook" as const },
-    { href: settings.socialInstagram || "#", label: "Instagram" as const },
-    { href: settings.socialTripadvisor || "#", label: "TripAdvisor" as const },
-  ];
+    { href: settings.socialFacebook, label: "Facebook" as const },
+    { href: settings.socialInstagram, label: "Instagram" as const },
+    { href: settings.socialTripadvisor, label: "TripAdvisor" as const },
+  ].filter((link) => link.href);
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);

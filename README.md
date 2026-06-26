@@ -23,7 +23,7 @@ DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
 NEXTAUTH_SECRET="generate-a-long-random-secret"
 NEXTAUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
-NEXT_PUBLIC_WHATSAPP_NUMBER="+20XXXXXXXXXX"
+NEXT_PUBLIC_WHATSAPP_NUMBER="201096586292"
 ```
 
 `NEXTAUTH_SECRET` is required for admin sessions in production. Generate a strong value before deploying.

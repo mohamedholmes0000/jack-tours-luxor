@@ -1,5 +1,6 @@
 const DEFAULT_MESSAGE =
   "Hello Jack Egypt Tour, I am interested in planning a trip to Egypt.";
+const DEFAULT_WHATSAPP_NUMBER = "201096586292";
 
 export type TripPlannerMessageInput = {
   arrivalDate: string;
@@ -34,11 +35,12 @@ export type ContactMessageInput = {
 };
 
 export function buildWhatsAppUrlForNumber(message = DEFAULT_MESSAGE, number?: string): string {
-  const configuredNumber = number ?? process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
-  const phone = configuredNumber.replace(/[^\d]/g, "");
+  const configuredNumber = number ?? process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? DEFAULT_WHATSAPP_NUMBER;
+  const parsedPhone = configuredNumber.replace(/[^\d]/g, "");
+  const phone = parsedPhone.length >= 8 ? parsedPhone : DEFAULT_WHATSAPP_NUMBER;
   const text = encodeURIComponent(message);
 
-  return phone ? `https://wa.me/${phone}?text=${text}` : `https://wa.me/?text=${text}`;
+  return `https://wa.me/${phone}?text=${text}`;
 }
 
 export function buildWhatsAppUrl(message = DEFAULT_MESSAGE): string {

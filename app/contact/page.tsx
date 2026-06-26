@@ -72,7 +72,7 @@ function ContactInfoCard({
 
 export default async function ContactPage() {
   const settings = await getPublicSettings();
-  const whatsappNumber = settings.whatsappNumber || settings.phone || "+20 XXX XXX XXXX";
+  const whatsappNumber = settings.whatsappNumber || "201096586292";
   const email = settings.email || "admin@jacktoursluxor.com";
   const address = settings.address || "Luxor, Upper Egypt";
   const mapLocation = settings.contactMapLocation || address || "Luxor, Egypt";

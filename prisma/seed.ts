@@ -166,8 +166,8 @@ async function main() {
 
   const settings = {
     companyName: "Jack Egypt Tour",
-    phone: "+20XXXXXXXXXX",
-    whatsappNumber: "+20XXXXXXXXXX",
+    phone: "+20 1096586292",
+    whatsappNumber: "201096586292",
     email: "info@jackegypttour.com",
     address: "Luxor, Egypt",
     defaultMetaTitle: "Jack Egypt Tour | Luxury Egypt Private Tours",
@@ -544,10 +544,10 @@ async function main() {
   await prisma.globalSettings.upsert({
     where: { id: "global" },
     update: {
-      whatsappNumber: "+20XXXXXXXXXX",
-      globalWhatsappNumber: "+20XXXXXXXXXX",
-      phone: "+20XXXXXXXXXX",
-      globalPhoneNumber: "+20XXXXXXXXXX",
+      whatsappNumber: "201096586292",
+      globalWhatsappNumber: "201096586292",
+      phone: "+20 1096586292",
+      globalPhoneNumber: "+20 1096586292",
       email: "info@jackegypttour.com",
       globalEmail: "info@jackegypttour.com",
       address: "Luxor, Egypt",
@@ -567,10 +567,10 @@ async function main() {
     },
     create: {
       id: "global",
-      whatsappNumber: "+20XXXXXXXXXX",
-      globalWhatsappNumber: "+20XXXXXXXXXX",
-      phone: "+20XXXXXXXXXX",
-      globalPhoneNumber: "+20XXXXXXXXXX",
+      whatsappNumber: "201096586292",
+      globalWhatsappNumber: "201096586292",
+      phone: "+20 1096586292",
+      globalPhoneNumber: "+20 1096586292",
       email: "info@jackegypttour.com",
       globalEmail: "info@jackegypttour.com",
       address: "Luxor, Egypt",

@@ -32,6 +32,26 @@ const defaultFooterLinks: FooterLink[] = [
   { label: "FAQ", url: "/faq" },
 ];
 
+const REAL_PHONE_DISPLAY = "+20 1096586292";
+const REAL_WHATSAPP_NUMBER = "201096586292";
+
+function isPlaceholderContact(value: string | null | undefined) {
+  if (!value) return true;
+  const normalized = value.toLowerCase().trim();
+  const digits = normalized.replace(/[^\d]/g, "");
+
+  return (
+    normalized.includes("xxxx") ||
+    normalized.includes("xxx") ||
+    normalized.includes("placeholder") ||
+    digits.length < 8
+  );
+}
+
+function realOrConfigured(value: string | null | undefined, fallback: string) {
+  return isPlaceholderContact(value) ? fallback : value!.trim();
+}
+
 export const defaultSettings: PublicSettings = {
   address: "Luxor, Egypt",
   bookNowHref: "/trip-planner",
@@ -53,8 +73,8 @@ export const defaultSettings: PublicSettings = {
     "Luxury Egypt tours, Nile cruise planning, and practical DMC support from a Luxor-based team.",
   footerTagline: "Luxor-based luxury tours",
   globalEmail: "info@jackegypttour.com",
-  globalPhoneNumber: "+20XXXXXXXXXX",
-  globalWhatsappNumber: "+20XXXXXXXXXX",
+  globalPhoneNumber: REAL_PHONE_DISPLAY,
+  globalWhatsappNumber: REAL_WHATSAPP_NUMBER,
   homepageHeroEyebrow: "Private Egypt · est. Luxor",
   homepageHeroHeadline: "Egypt, privately",
   homepageHeroHeadlineAccent: "composed.",
@@ -77,14 +97,14 @@ export const defaultSettings: PublicSettings = {
   navLink3Url: "/gallery",
   navLink4Label: "About",
   navLink4Url: "/about",
-  phone: "+20XXXXXXXXXX",
+  phone: REAL_PHONE_DISPLAY,
   socialFacebook: "",
   socialInstagram: "",
   socialTripadvisor: "",
   socialTwitter: "",
   socialYoutube: "",
   tripAdvisorUrl: "",
-  whatsappNumber: "+20XXXXXXXXXX",
+  whatsappNumber: REAL_WHATSAPP_NUMBER,
 };
 
 function parseFooterLinks(value: unknown): FooterLink[] {
@@ -126,16 +146,16 @@ export async function getPublicSettings(): Promise<PublicSettings> {
       ]);
 
       const legacySettings = mapSiteSettings(rows);
-      const whatsappNumber =
+      const whatsappNumber = realOrConfigured(
         globalSettings?.globalWhatsappNumber ||
-        globalSettings?.whatsappNumber ||
-        legacySettings.whatsappNumber ||
-        defaultSettings.whatsappNumber;
-      const phone =
-        globalSettings?.globalPhoneNumber ||
-        globalSettings?.phone ||
-        legacySettings.phone ||
-        defaultSettings.phone;
+          globalSettings?.whatsappNumber ||
+          legacySettings.whatsappNumber,
+        REAL_WHATSAPP_NUMBER,
+      );
+      const phone = realOrConfigured(
+        globalSettings?.globalPhoneNumber || globalSettings?.phone || legacySettings.phone,
+        REAL_PHONE_DISPLAY,
+      );
       const email =
         globalSettings?.globalEmail ||
         globalSettings?.email ||

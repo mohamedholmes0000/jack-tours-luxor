@@ -43,7 +43,7 @@ export function GlobalSettingsForm({ initialValues }: { initialValues: AdminGlob
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">Contact</p>
           <div className="mt-4 grid gap-5 md:grid-cols-2">
             <FormField label="WhatsApp number">
-              <input className={inputClassName} value={values.globalWhatsappNumber || ""} onChange={(event) => update("globalWhatsappNumber", event.target.value)} placeholder="+20XXXXXXXXX" />
+              <input className={inputClassName} value={values.globalWhatsappNumber || ""} onChange={(event) => update("globalWhatsappNumber", event.target.value)} placeholder="201096586292" />
               <p className="mt-2 text-xs text-[var(--color-gray-600)]">Used in ALL Book Now buttons site-wide</p>
             </FormField>
             <FormField label="Phone number">

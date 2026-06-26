@@ -84,7 +84,7 @@ export function MobileNavigation({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const phone = settings.phone || "(+20) XXX XXX XXXX";
+  const phone = settings.phone || "+20 1096586292";
   const phoneHref = phone.replace(/[^\d+]/g, "");
   const email = settings.email || "admin@jacktoursluxor.com";
   const navItems = buildMobileNavItems([
@@ -96,10 +96,10 @@ export function MobileNavigation({
     { href: "/contact", label: "Contact" },
   ]);
   const socialLinks = [
-    { href: settings.socialFacebook || "#", label: "Facebook" as const },
-    { href: settings.socialInstagram || "#", label: "Instagram" as const },
-    { href: settings.socialTripadvisor || "#", label: "TripAdvisor" as const },
-  ];
+    { href: settings.socialFacebook, label: "Facebook" as const },
+    { href: settings.socialInstagram, label: "Instagram" as const },
+    { href: settings.socialTripadvisor, label: "TripAdvisor" as const },
+  ].filter((link) => link.href);
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
