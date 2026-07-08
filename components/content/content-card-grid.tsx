@@ -4,6 +4,18 @@ import { Clock, MapPin, Star } from "lucide-react";
 import { FavoriteHeartButton } from "@/components/tours/favorite-heart-button";
 import { formatPrice, type Tour } from "@/lib/content";
 
+function contentHref(item: Tour, emptyLabel: string) {
+  if (item.contentType === "ACTIVITY" || emptyLabel.toLowerCase() === "activity") {
+    return `/activities/${item.slug}`;
+  }
+
+  if (item.contentType === "HOTEL" || emptyLabel.toLowerCase() === "hotel") {
+    return `/hotels/${item.slug}`;
+  }
+
+  return `/tours/${item.slug}`;
+}
+
 export function ContentCardGrid({
   emptyLabel,
   items,
@@ -30,29 +42,36 @@ export function ContentCardGrid({
   return (
     <div className="container-premium py-12">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => (
+        {items.map((item) => {
+          const href = contentHref(item, emptyLabel);
+
+          return (
           <article
             key={item.slug}
             className="overflow-hidden rounded-2xl bg-white shadow-[0_10px_30px_rgb(6_17_31_/_8%)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgb(6_17_31_/_14%)]"
           >
             <div className="relative h-56 overflow-hidden bg-[var(--color-sand)]">
               <FavoriteHeartButton className="absolute right-3 top-3 z-10" />
-              <Image
-                src={item.heroImage}
-                alt={item.title}
-                fill
-                sizes="(min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw"
-                className="object-cover transition duration-700 hover:scale-105"
-              />
+              <Link href={href} className="block h-full">
+                <Image
+                  src={item.heroImage}
+                  alt={item.title}
+                  fill
+                  sizes="(min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw"
+                  className="object-cover transition duration-700 hover:scale-105"
+                />
+              </Link>
             </div>
             <div className="p-5">
               <p className="flex items-center gap-1.5 text-xs text-[var(--color-navy)]/55">
                 <MapPin className="h-3.5 w-3.5" />
                 {item.city || "Egypt"}
               </p>
-              <h2 className="mt-2 line-clamp-2 font-serif text-2xl font-semibold leading-tight text-[var(--color-navy)]">
-                {item.title}
-              </h2>
+              <Link href={href}>
+                <h2 className="mt-2 line-clamp-2 font-serif text-2xl font-semibold leading-tight text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)]">
+                  {item.title}
+                </h2>
+              </Link>
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-[var(--color-gray-600)]">
                 {item.shortDescription}
               </p>
@@ -75,13 +94,14 @@ export function ContentCardGrid({
               </div>
               <Link
                 className="mt-5 inline-flex w-full items-center justify-center rounded-md bg-[var(--color-gold)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)] transition hover:bg-[var(--color-gold-light)]"
-                href={`/trip-planner?interest=${encodeURIComponent(item.slug)}`}
+                href={href}
               >
-                Plan this {emptyLabel.toLowerCase()}
+                View {emptyLabel.toLowerCase()}
               </Link>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

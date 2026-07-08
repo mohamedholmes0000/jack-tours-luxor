@@ -41,7 +41,12 @@ function MapPinIcon() {
 }
 
 function FeaturedCard({ item }: { item: Tour }) {
-  const href = item.contentType === "TOUR" ? `/tours/${item.slug}` : `/trip-planner?interest=${encodeURIComponent(item.slug)}`;
+  const href =
+    item.contentType === "ACTIVITY"
+      ? `/activities/${item.slug}`
+      : item.contentType === "HOTEL"
+        ? `/hotels/${item.slug}`
+        : `/tours/${item.slug}`;
 
   return (
     <article className="group flex h-full max-w-[350px] snap-start flex-col overflow-hidden rounded-xl bg-white text-left shadow-[0_8px_26px_rgb(6_17_31_/_8%)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgb(6_17_31_/_13%)]">
