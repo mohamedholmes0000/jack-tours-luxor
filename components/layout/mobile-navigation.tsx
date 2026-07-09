@@ -56,20 +56,23 @@ function buildMobileNavItems(items: Array<{ href: string; label: string }>) {
       ? { href: "/activities", label: "Activities" }
       : item,
   );
+  const withoutHome = normalizedItems.filter(
+    (item) => item.href !== "/" && item.label.trim().toLowerCase() !== "home",
+  );
+  const withoutHotels = withoutHome.filter(
+    (item) => item.href !== "/hotels" && item.label.trim().toLowerCase() !== "hotels",
+  );
+  const itemsWithHome = [{ href: "/", label: "Home" }, ...withoutHotels];
 
-  if (normalizedItems.some((item) => item.href === "/hotels" || item.label.trim().toLowerCase() === "hotels")) {
-    return normalizedItems;
-  }
-
-  const activitiesIndex = normalizedItems.findIndex(
+  const activitiesIndex = itemsWithHome.findIndex(
     (item) => item.href === "/activities" || item.label.trim().toLowerCase() === "activities",
   );
-  const insertIndex = activitiesIndex >= 0 ? activitiesIndex + 1 : 2;
+  const insertIndex = activitiesIndex >= 0 ? activitiesIndex + 1 : 3;
 
   return [
-    ...normalizedItems.slice(0, insertIndex),
+    ...itemsWithHome.slice(0, insertIndex),
     { href: "/hotels", label: "Hotels" },
-    ...normalizedItems.slice(insertIndex),
+    ...itemsWithHome.slice(insertIndex),
   ];
 }
 

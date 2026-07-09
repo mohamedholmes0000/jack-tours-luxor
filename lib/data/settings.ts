@@ -23,8 +23,10 @@ export type PublicSettings = AdminSettingsValues &
   AdminContactMapValues;
 
 const defaultFooterLinks: FooterLink[] = [
+  { label: "Home", url: "/" },
   { label: "Tours", url: "/tours" },
   { label: "Activities", url: "/activities" },
+  { label: "Hotels", url: "/hotels" },
   { label: "Gallery", url: "/gallery" },
   { label: "Blog", url: "/blog" },
   { label: "Trip Planner", url: "/trip-planner" },
@@ -125,7 +127,13 @@ function parseFooterLinks(value: unknown): FooterLink[] {
     })
     .filter(Boolean) as FooterLink[];
 
-  return links.length ? links : defaultFooterLinks;
+  if (!links.length) return defaultFooterLinks;
+
+  const withoutHome = links.filter(
+    (link) => link.url !== "/" && link.label.trim().toLowerCase() !== "home",
+  );
+
+  return [{ label: "Home", url: "/" }, ...withoutHome];
 }
 
 function mapSiteSettings(rows: Array<{ key: string; value: string }>) {
