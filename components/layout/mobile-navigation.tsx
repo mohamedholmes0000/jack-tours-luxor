@@ -185,7 +185,7 @@ export function MobileNavigation({
 
             <Link
               className={`inline-flex shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] font-sans font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_8px_18px_rgb(214_173_84_/_16%)] transition hover:bg-[var(--color-gold-light)] justify-self-end ${isHomeRoute ? "min-h-[34px] px-2.5 py-1 text-[0.6rem]" : "min-h-9 px-3 py-1.5 text-[0.64rem]"}`}
-              href="/trip-planner"
+              href={settings.bookNowHref}
             >
               {settings.bookNowLabel}
             </Link>

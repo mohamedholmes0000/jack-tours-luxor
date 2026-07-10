@@ -56,6 +56,9 @@ export function HeaderFooterSettingsForm({ initialValues }: { initialValues: Pub
 
   return (
     <form className="space-y-5" onSubmit={save}>
+      <p className="rounded-xl border border-[rgb(214_173_84_/_24%)] bg-[var(--color-ivory)] p-4 text-sm leading-6 text-[var(--color-gray-600)]">
+        Live source for public logo text, header navigation labels/URLs, Book Now label, footer explore links, footer description, and copyright. Contact details and social links come from Global Settings.
+      </p>
       <section className="rounded-2xl border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">
         <button
           className="flex w-full items-center justify-between text-left"

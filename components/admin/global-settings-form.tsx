@@ -39,6 +39,9 @@ export function GlobalSettingsForm({ initialValues }: { initialValues: AdminGlob
   return (
     <form className="rounded-2xl border border-[var(--color-gray-100)] bg-white p-5 shadow-sm" onSubmit={submit}>
       <div className="grid gap-6">
+        <p className="rounded-xl border border-[rgb(214_173_84_/_24%)] bg-[var(--color-ivory)] p-4 text-sm leading-6 text-[var(--color-gray-600)]">
+          Live source for public phone, WhatsApp, email, and social links. Header utility bar, footer contact column, contact CTAs, and WhatsApp links read from these values with safe fallbacks.
+        </p>
         <section>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">Contact</p>
           <div className="mt-4 grid gap-5 md:grid-cols-2">

@@ -202,7 +202,7 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
             </Link>
             <Link
               className={`inline-flex items-center justify-center rounded-md bg-[var(--color-gold)] font-sans font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] ${isHomeRoute ? "min-h-[38px] px-4 py-2 text-[0.74rem]" : "min-h-10 px-4 py-2.5 text-[0.78rem] lg:px-6 lg:text-[0.8rem]"}`}
-              href="/trip-planner"
+              href={settings.bookNowHref}
             >
               {settings.bookNowLabel}
             </Link>

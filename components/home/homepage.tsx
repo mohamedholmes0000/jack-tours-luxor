@@ -127,33 +127,6 @@ function cleanHeroText(settings: Awaited<ReturnType<typeof getPublicSettings>>) 
   };
 }
 
-function isLegacyHeroHeadline(value: string) {
-  const normalized = value.toLowerCase();
-
-  return (
-    !normalized ||
-    normalized.includes("egypt, privately") ||
-    normalized.includes("privatelycomposed") ||
-    normalized.includes("privately composed")
-  );
-}
-
-function isLegacyHeroEyebrow(value: string) {
-  const normalized = value.toLowerCase();
-
-  return !normalized || normalized.includes("est. luxor") || normalized.includes("est luxor");
-}
-
-function isLegacyHeroSubheadline(value: string) {
-  const normalized = value.toLowerCase();
-
-  return (
-    !normalized ||
-    normalized.includes("luxury private egypt tours") ||
-    normalized.includes("tailor-made egypt journeys with private guides")
-  );
-}
-
 function splitAccentText(
   headline: string | undefined,
   accent: string | undefined,
@@ -309,12 +282,11 @@ export async function Homepage() {
   const rawHeroSubheadline = cleanSettingText(homepageSettings.heroSubheadline || legacyHeroText.subheadline);
   const rawHeroEyebrow = cleanSettingText(homepageSettings.heroEyebrow || legacyHeroText.eyebrow);
   const heroText = {
-    eyebrow: isLegacyHeroEyebrow(rawHeroEyebrow) ? simplifiedHeroEyebrow : rawHeroEyebrow,
-    headline: isLegacyHeroHeadline(rawHeroHeadline) ? simplifiedHeroHeadline : rawHeroHeadline,
-    subheadline: isLegacyHeroSubheadline(rawHeroSubheadline)
-      ? simplifiedHeroSubheadline
-      : rawHeroSubheadline,
+    eyebrow: rawHeroEyebrow || simplifiedHeroEyebrow,
+    headline: rawHeroHeadline || simplifiedHeroHeadline,
+    subheadline: rawHeroSubheadline || simplifiedHeroSubheadline,
   };
+  const heroHeading = splitAccentText(heroText.headline, homepageSettings.heroHeadlineAccent || legacyHeroText.accent);
   const whyUs = {
     ctaHref: homepageSettings.whyCtaHref || "/trip-planner",
     ctaLabel: homepageSettings.whyCtaLabel || "Plan Your Journey",
@@ -352,6 +324,16 @@ export async function Homepage() {
     { appendMissingAccent: true },
   );
   const destinationsVisible = homepageSettings.destinationsVisible;
+  const destinationsHeader = {
+    eyebrow: homepageSettings.destinationsEyebrow || "Where we travel",
+    linkHref: homepageSettings.destinationsViewAllHref || "/destinations",
+    linkLabel: homepageSettings.destinationsViewAllLabel || "All destinations →",
+  };
+  const destinationsHeading = splitAccentText(
+    homepageSettings.destinationsHeading || "Top destinations",
+    homepageSettings.destinationsHeadingAccent,
+    { appendMissingAccent: true },
+  );
   const featured = {
     description: cleanSettingText(homepageSettings.featuredDescription),
     eyebrow: homepageSettings.featuredEyebrow || "Featured journeys",
@@ -424,7 +406,13 @@ export async function Homepage() {
               {heroText.eyebrow}
             </p>
             <h1 className="font-serif text-[clamp(2.2rem,8.2vw,3.3rem)] font-semibold leading-[1.04] text-white drop-shadow-[0_10px_30px_rgb(0_0_0_/_30%)] md:text-[clamp(3.25rem,4.2vw,3.875rem)]">
-              {heroText.headline}
+              {heroHeading.before}
+              {heroHeading.showAccent ? (
+                <span className="font-accent-serif italic text-[var(--color-gold-light)]">
+                  {heroHeading.accent}
+                </span>
+              ) : null}
+              {heroHeading.after}
             </h1>
             <p className="hero-subheadline mt-3 max-w-[31rem] text-[0.96rem] leading-6 text-white/84 sm:text-base md:mx-auto md:mt-4 md:max-w-[36rem] md:text-[1.05rem] md:leading-7">
               {heroText.subheadline}
@@ -452,10 +440,22 @@ export async function Homepage() {
       {destinationsVisible ? (
       <section className="order-3 bg-white py-10 text-[var(--color-navy)] sm:py-12 lg:py-14">
         <div className="container-premium text-center">
-          <p className="eyebrow text-[var(--color-gold-dark)]">Where we travel</p>
+          <p className="eyebrow text-[var(--color-gold-dark)]">{destinationsHeader.eyebrow}</p>
           <h2 className="mt-3 font-serif text-[2.2rem] font-semibold leading-none text-[var(--color-navy)] sm:text-[2.6rem]">
-            Top destinations
+            {destinationsHeading.before}
+            {destinationsHeading.showAccent ? (
+              <span className="font-accent-serif ml-2 italic text-[var(--color-gold-dark)]">
+                {destinationsHeading.accent}
+              </span>
+            ) : null}
+            {destinationsHeading.after}
           </h2>
+          <Link
+            className="mt-4 inline-flex text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)] transition hover:text-[var(--color-navy)]"
+            href={destinationsHeader.linkHref}
+          >
+            {destinationsHeader.linkLabel}
+          </Link>
         </div>
         <DestinationCarousel items={topDestinations} />
       </section>

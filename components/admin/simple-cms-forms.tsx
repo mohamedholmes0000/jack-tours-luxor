@@ -344,6 +344,9 @@ export function SettingsForm({ initialValues }: { initialValues: AdminSettingsVa
   ];
   return (
     <form className="grid gap-4 border border-[var(--color-gray-100)] bg-white p-5 md:grid-cols-2" onSubmit={form.handleSubmit(submit)}>
+      <p className="rounded-xl border border-[rgb(214_173_84_/_24%)] bg-[var(--color-ivory)] p-4 text-sm leading-6 text-[var(--color-gray-600)] md:col-span-2">
+        Legacy fallback settings. Live phone, WhatsApp, email, and social links are managed in Global Settings. Live logo, navigation, and footer copy are managed in Header/Footer settings. Homepage hero controls are managed in Pages / Homepage.
+      </p>
       {fields.map(([name, label]) => <FormField key={name} label={label}><input className={inputClassName} {...form.register(name)} /></FormField>)}
       <div className="md:col-span-2"><Result message={state.message} error={state.error} /></div>
       <button className="btn-primary md:col-span-2" disabled={state.loading}>Save Settings</button>

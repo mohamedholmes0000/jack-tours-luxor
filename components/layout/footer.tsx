@@ -21,9 +21,9 @@ export function Footer({ settings }: { settings: PublicSettings }) {
           </p>
           <Link
             className="btn-secondary mt-6"
-            href="/trip-planner"
+            href={settings.bookNowHref}
           >
-            Book Now
+            {settings.bookNowLabel}
           </Link>
         </div>
         <div className="relative">

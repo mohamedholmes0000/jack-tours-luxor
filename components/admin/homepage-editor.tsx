@@ -400,7 +400,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       {error ? <p className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</p> : null}
 
       <SectionCard
-        description="Hero image, headline, CTAs, and micro trust row."
+        description="Live hero image, eyebrow, headline, subheadline, and primary CTA."
         open={openSections.hero}
         title="Hero"
         onToggle={() => setOpenSections((current) => ({ ...current, hero: !current.hero }))}
@@ -419,16 +419,21 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
               <TextInput disabled={!canEdit} label="Italic accent words" value={values.heroHeadlineAccent} onChange={(value) => setField("heroHeadlineAccent", value)} />
               <TextInput disabled={!canEdit} label="Primary CTA label" value={values.heroPrimaryCtaLabel} onChange={(value) => setField("heroPrimaryCtaLabel", value)} />
               <TextInput disabled={!canEdit} label="Primary CTA link" value={values.heroPrimaryCtaHref} onChange={(value) => setField("heroPrimaryCtaHref", value)} />
-              <TextInput disabled={!canEdit} label="Secondary link label" value={values.heroSecondaryLinkLabel} onChange={(value) => setField("heroSecondaryLinkLabel", value)} />
-              <TextInput disabled={!canEdit} label="Secondary link URL" value={values.heroSecondaryLinkHref} onChange={(value) => setField("heroSecondaryLinkHref", value)} />
             </div>
             <TextArea disabled={!canEdit} label="Subheadline paragraph" value={values.heroSubheadline} onChange={(value) => setField("heroSubheadline", value)} />
+            <InfoBanner>
+              Secondary hero link and trust badge fields are not active in the current public hero layout. They are shown read-only so the CMS does not imply they affect the live site.
+            </InfoBanner>
+            <div className="grid gap-5 md:grid-cols-2">
+              <TextInput disabled label="Secondary link label (not active)" value={values.heroSecondaryLinkLabel} onChange={(value) => setField("heroSecondaryLinkLabel", value)} />
+              <TextInput disabled label="Secondary link URL (not active)" value={values.heroSecondaryLinkHref} onChange={(value) => setField("heroSecondaryLinkHref", value)} />
+            </div>
             <div className="grid gap-5 md:grid-cols-3">
               {[0, 1, 2].map((index) => (
                 <TextInput
                   key={index}
-                  disabled={!canEdit}
-                  label={`Trust badge ${index + 1}`}
+                  disabled
+                  label={`Trust badge ${index + 1} (not active)`}
                   value={values.heroTrustBadges[index]}
                   onChange={(value) => {
                     const next = [...values.heroTrustBadges];
@@ -452,7 +457,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       >
         <div className="grid gap-5">
           <InfoBanner>
-            Destination cards are managed separately at{" "}
+            This heading and view-all link are live on the homepage. Destination circle data comes from Destination records when available, with static fallback cards and tour counts from published content. Destination detail copy is still partly static/fallback. Manage cards at{" "}
             <Link className="font-bold text-[var(--color-gold-dark)]" href="/admin/destinations">
               Manage destinations →
             </Link>
@@ -560,42 +565,47 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
-        description="Brand story copy, image, and signature details."
+        description="Not active on the current public homepage layout."
         open={openSections.ourWorld}
         title="Our World"
         onToggle={() => setOpenSections((current) => ({ ...current, ourWorld: !current.ourWorld }))}
       >
+        <InfoBanner>
+          Not active on the public site yet. The current homepage uses the separate Customize Your Trip block in this position, so these fields are read-only until the Our World section is re-enabled.
+        </InfoBanner>
         <div className="grid gap-6 lg:grid-cols-[minmax(280px,420px)_1fr]">
           <ImageUploadField
-            disabled={!canEdit}
+            disabled
             label="Image"
             value={values.ourWorldImage}
             onChange={(value) => setField("ourWorldImage", value)}
           />
           <div className="grid gap-5">
             <div className="grid gap-5 md:grid-cols-2">
-              <TextInput disabled={!canEdit} label="Eyebrow text" value={values.ourWorldEyebrow} onChange={(value) => setField("ourWorldEyebrow", value)} />
-              <TextInput disabled={!canEdit} label="Heading text" value={values.ourWorldHeading} onChange={(value) => setField("ourWorldHeading", value)} />
-              <TextInput disabled={!canEdit} label="Italic accent words" value={values.ourWorldHeadingAccent} onChange={(value) => setField("ourWorldHeadingAccent", value)} />
-              <TextInput disabled={!canEdit} label="Signature text" value={values.ourWorldReadMoreLabel} onChange={(value) => setField("ourWorldReadMoreLabel", value)} />
-              <TextInput disabled={!canEdit} label="Signature location" value={values.ourWorldReadMoreHref} onChange={(value) => setField("ourWorldReadMoreHref", value)} />
+              <TextInput disabled label="Eyebrow text" value={values.ourWorldEyebrow} onChange={(value) => setField("ourWorldEyebrow", value)} />
+              <TextInput disabled label="Heading text" value={values.ourWorldHeading} onChange={(value) => setField("ourWorldHeading", value)} />
+              <TextInput disabled label="Italic accent words" value={values.ourWorldHeadingAccent} onChange={(value) => setField("ourWorldHeadingAccent", value)} />
+              <TextInput disabled label="Signature text" value={values.ourWorldReadMoreLabel} onChange={(value) => setField("ourWorldReadMoreLabel", value)} />
+              <TextInput disabled label="Signature location" value={values.ourWorldReadMoreHref} onChange={(value) => setField("ourWorldReadMoreHref", value)} />
             </div>
-            <TextArea disabled={!canEdit} label="Body paragraph" rows={5} value={values.ourWorldBody} onChange={(value) => setField("ourWorldBody", value)} />
-            <Toggle checked={values.ourWorldVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("ourWorldVisible", value)} />
+            <TextArea disabled label="Body paragraph" rows={5} value={values.ourWorldBody} onChange={(value) => setField("ourWorldBody", value)} />
+            <Toggle checked={values.ourWorldVisible} disabled label="Section visible" onChange={(value) => setField("ourWorldVisible", value)} />
           </div>
         </div>
-        {saveButton("ourWorld")}
       </SectionCard>
 
       <SectionCard
-        description="Background image and four trust statistics."
+        description="Not active on the current public homepage layout."
         open={openSections.stats}
         title="Stats"
         onToggle={() => setOpenSections((current) => ({ ...current, stats: !current.stats }))}
       >
+        <InfoBanner>
+          Not active on the public site yet. Stats are preserved in the CMS for a future section, but the current homepage layout does not render them.
+        </InfoBanner>
         <div className="grid gap-6 lg:grid-cols-[minmax(280px,420px)_1fr]">
           <ImageUploadField
-            disabled={!canEdit}
+            disabled
             label="Background image"
             value={values.statsBackgroundImage}
             onChange={(value) => setField("statsBackgroundImage", value)}
@@ -605,7 +615,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
               {values.statsItems.map((stat, index) => (
                 <div key={index} className="grid gap-4 rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)] p-4">
                   <TextInput
-                    disabled={!canEdit}
+                    disabled
                     label={`Stat ${index + 1} value`}
                     value={stat.value}
                     onChange={(value) => {
@@ -615,7 +625,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
                     }}
                   />
                   <TextInput
-                    disabled={!canEdit}
+                    disabled
                     label={`Stat ${index + 1} label`}
                     value={stat.label}
                     onChange={(label) => {
@@ -627,10 +637,9 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
                 </div>
               ))}
             </div>
-            <Toggle checked={values.statsVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("statsVisible", value)} />
+            <Toggle checked={values.statsVisible} disabled label="Section visible" onChange={(value) => setField("statsVisible", value)} />
           </div>
         </div>
-        {saveButton("stats")}
       </SectionCard>
 
       <SectionCard
@@ -651,15 +660,18 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
-        description="Final booking call-to-action image, copy, and links."
+        description="Live final booking CTA copy and primary button."
         open={openSections.finalCta}
         title="Final CTA"
         onToggle={() => setOpenSections((current) => ({ ...current, finalCta: !current.finalCta }))}
       >
+        <InfoBanner>
+          Eyebrow, heading, description, visibility, and primary button are live. Background image and secondary link are not used by the current compact CTA layout.
+        </InfoBanner>
         <div className="grid gap-6 lg:grid-cols-[minmax(280px,420px)_1fr]">
           <ImageUploadField
-            disabled={!canEdit}
-            label="Background image"
+            disabled
+            label="Background image (not active)"
             value={values.finalCtaBackgroundImage}
             onChange={(value) => setField("finalCtaBackgroundImage", value)}
           />
@@ -670,8 +682,8 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
               <TextInput disabled={!canEdit} label="Italic accent words" value={values.finalCtaHeadingAccent} onChange={(value) => setField("finalCtaHeadingAccent", value)} />
               <TextInput disabled={!canEdit} label="Primary button label" value={values.finalCtaPrimaryButtonLabel} onChange={(value) => setField("finalCtaPrimaryButtonLabel", value)} />
               <TextInput disabled={!canEdit} label="Primary button link" value={values.finalCtaPrimaryButtonHref} onChange={(value) => setField("finalCtaPrimaryButtonHref", value)} />
-              <TextInput disabled={!canEdit} label="Secondary link label" value={values.finalCtaSecondaryLinkLabel} onChange={(value) => setField("finalCtaSecondaryLinkLabel", value)} />
-              <TextInput disabled={!canEdit} label="Secondary link URL" value={values.finalCtaSecondaryLinkHref} onChange={(value) => setField("finalCtaSecondaryLinkHref", value)} />
+              <TextInput disabled label="Secondary link label (not active)" value={values.finalCtaSecondaryLinkLabel} onChange={(value) => setField("finalCtaSecondaryLinkLabel", value)} />
+              <TextInput disabled label="Secondary link URL (not active)" value={values.finalCtaSecondaryLinkHref} onChange={(value) => setField("finalCtaSecondaryLinkHref", value)} />
             </div>
             <TextArea disabled={!canEdit} label="Description paragraph" value={values.finalCtaDescription} onChange={(value) => setField("finalCtaDescription", value)} />
             <Toggle checked={values.finalCtaVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("finalCtaVisible", value)} />
