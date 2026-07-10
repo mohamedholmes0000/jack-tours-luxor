@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { createElement, useMemo, useRef, useState } from "react";
+import { createElement, useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
 } from "lucide-react";
@@ -12,9 +12,10 @@ import {
   type HomepageEditorValues,
 } from "@/lib/homepage-settings";
 import { getLucideIcon } from "@/lib/icons";
-import { safeImageSrc } from "@/lib/images";
+import { isAllowedAdminImageSrc, safeImageSrc } from "@/lib/images";
 
 type SectionKey =
+  | "customizeTrip"
   | "destinations"
   | "featured"
   | "finalCta"
@@ -31,6 +32,100 @@ type ImageField =
   | "whyCollageImage1"
   | "whyCollageImage2"
   | "whyCollageImage3";
+
+const allowedHomepageImageTypes = ["image/jpeg", "image/png", "image/webp"];
+const homepageCropAspectRatio = 16 / 10;
+const homepageCropMaxWidth = 1800;
+
+function validateHomepageImageFile(file: File) {
+  if (!allowedHomepageImageTypes.includes(file.type)) {
+    return "Use a JPG, PNG, or WebP image.";
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    return "Image must be 5MB or smaller.";
+  }
+
+  return null;
+}
+
+function loadImageFromFile(file: File) {
+  return new Promise<{ image: HTMLImageElement; objectUrl: string }>((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new window.Image();
+    image.onload = () => resolve({ image, objectUrl });
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Unable to read this image for cropping."));
+    };
+    image.src = objectUrl;
+  });
+}
+
+async function createInteractiveHomepageCrop(
+  file: File,
+  crop: {
+    frameHeight: number;
+    frameWidth: number;
+    offsetX: number;
+    offsetY: number;
+    zoom: number;
+  },
+) {
+  const { image, objectUrl } = await loadImageFromFile(file);
+
+  try {
+    const sourceWidth = image.naturalWidth;
+    const sourceHeight = image.naturalHeight;
+
+    if (!sourceWidth || !sourceHeight) {
+      throw new Error("Unable to read this image size.");
+    }
+
+    const outputWidth = homepageCropMaxWidth;
+    const outputHeight = Math.round(outputWidth / homepageCropAspectRatio);
+    const canvas = document.createElement("canvas");
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
+
+    const context = canvas.getContext("2d");
+    if (!context) {
+      throw new Error("Unable to prepare the crop canvas.");
+    }
+
+    context.fillStyle = "#f8f3e8";
+    context.fillRect(0, 0, outputWidth, outputHeight);
+
+    const safeFrameWidth = crop.frameWidth || outputWidth;
+    const safeFrameHeight = crop.frameHeight || outputHeight;
+    const previewToOutput = outputWidth / safeFrameWidth;
+    const outputOffsetX = crop.offsetX * previewToOutput;
+    const outputOffsetY = crop.offsetY * (outputHeight / safeFrameHeight);
+    const coverScale = Math.max(outputWidth / sourceWidth, outputHeight / sourceHeight) * crop.zoom;
+    const renderedWidth = sourceWidth * coverScale;
+    const renderedHeight = sourceHeight * coverScale;
+    const imageX = (outputWidth - renderedWidth) / 2 + outputOffsetX;
+    const imageY = (outputHeight - renderedHeight) / 2 + outputOffsetY;
+
+    context.drawImage(image, imageX, imageY, renderedWidth, renderedHeight);
+
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (result) => {
+          if (result) resolve(result);
+          else reject(new Error("Unable to create the cropped image."));
+        },
+        "image/jpeg",
+        0.9,
+      );
+    });
+
+    const filename = `${file.name.replace(/\.[^.]+$/, "") || "homepage-image"}-crop.jpg`;
+    return new File([blob], filename, { type: "image/jpeg" });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
 
 function TextInput({
   disabled,
@@ -184,29 +279,114 @@ function IconPicker({
 
 function ImageUploadField({
   disabled,
+  helperText,
   label,
   onChange,
+  showActions = true,
   value,
 }: {
   disabled: boolean;
+  helperText?: string;
   label: string;
   onChange: (value: string) => void;
+  showActions?: boolean;
   value?: string;
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const cropFrameRef = useRef<HTMLDivElement | null>(null);
+  const dragStateRef = useRef<{
+    pointerId: number;
+    startOffsetX: number;
+    startOffsetY: number;
+    startX: number;
+    startY: number;
+  } | null>(null);
+  const [cropPreviewUrl, setCropPreviewUrl] = useState<string | null>(null);
+  const [pendingCropFile, setPendingCropFile] = useState<File | null>(null);
+  const [cropFrameSize, setCropFrameSize] = useState({ height: 400, width: 640 });
+  const [cropImageSize, setCropImageSize] = useState<{ height: number; width: number } | null>(null);
+  const [cropOffset, setCropOffset] = useState({ x: 0, y: 0 });
+  const [cropZoom, setCropZoom] = useState(1);
+  const [cropping, setCropping] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failedPreviewSrc, setFailedPreviewSrc] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const rawValue = value?.trim() || "";
+  const previewSrc = rawValue ? safeImageSrc(rawValue) : "";
+  const previewIsUnsupported = Boolean(rawValue && !isAllowedAdminImageSrc(rawValue));
+  const previewFailed = Boolean(rawValue && failedPreviewSrc === previewSrc);
 
-  async function uploadFile(file: File) {
+  useEffect(() => {
+    return () => {
+      if (cropPreviewUrl) URL.revokeObjectURL(cropPreviewUrl);
+    };
+  }, [cropPreviewUrl]);
+
+  function clearCropStep() {
+    if (cropPreviewUrl) URL.revokeObjectURL(cropPreviewUrl);
+    setCropPreviewUrl(null);
+    setPendingCropFile(null);
+    setCropImageSize(null);
+    setCropOffset({ x: 0, y: 0 });
+    setCropZoom(1);
+    setCropping(false);
+  }
+
+  function measureCropFrame() {
+    const rect = cropFrameRef.current?.getBoundingClientRect();
+    if (!rect?.width || !rect.height) return cropFrameSize;
+    const nextSize = { height: rect.height, width: rect.width };
+    setCropFrameSize(nextSize);
+    return nextSize;
+  }
+
+  function clampCropOffset(
+    offset: { x: number; y: number },
+    zoom = cropZoom,
+    frameSize = cropFrameSize,
+    imageSize = cropImageSize,
+  ) {
+    if (!imageSize) return offset;
+
+    const displayScale = Math.max(frameSize.width / imageSize.width, frameSize.height / imageSize.height) * zoom;
+    const renderedWidth = imageSize.width * displayScale;
+    const renderedHeight = imageSize.height * displayScale;
+    const maxX = Math.max(0, (renderedWidth - frameSize.width) / 2);
+    const maxY = Math.max(0, (renderedHeight - frameSize.height) / 2);
+
+    return {
+      x: Math.min(maxX, Math.max(-maxX, offset.x)),
+      y: Math.min(maxY, Math.max(-maxY, offset.y)),
+    };
+  }
+
+  function updateCropOffset(offset: { x: number; y: number }, zoom = cropZoom) {
+    setCropOffset(clampCropOffset(offset, zoom, measureCropFrame()));
+  }
+
+  function openCropStep(file: File) {
     setError(null);
+    const validationError = validateHomepageImageFile(file);
 
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setError("Use a JPG, PNG, or WebP image.");
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Image must be 5MB or smaller.");
+    if (cropPreviewUrl) URL.revokeObjectURL(cropPreviewUrl);
+    setPendingCropFile(file);
+    setCropPreviewUrl(URL.createObjectURL(file));
+    setCropImageSize(null);
+    setCropOffset({ x: 0, y: 0 });
+    setCropZoom(1);
+  }
+
+  async function uploadFile(file: File) {
+    setError(null);
+    const validationError = validateHomepageImageFile(file);
+
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -223,9 +403,39 @@ function ImageUploadField({
         return;
       }
 
+      if (!isAllowedAdminImageSrc(result.url)) {
+        setError("Upload returned an unsupported image source. Use Cloudinary, /api/uploads, /uploads, /photos, /images, or a trusted remote image URL.");
+        return;
+      }
+
+      setFailedPreviewSrc(null);
       onChange(result.url);
+      clearCropStep();
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function cropAndUpload() {
+    if (!pendingCropFile) return;
+
+    setCropping(true);
+    setError(null);
+
+    try {
+      const frameSize = measureCropFrame();
+      const croppedFile = await createInteractiveHomepageCrop(pendingCropFile, {
+        frameHeight: frameSize.height,
+        frameWidth: frameSize.width,
+        offsetX: cropOffset.x,
+        offsetY: cropOffset.y,
+        zoom: cropZoom,
+      });
+      await uploadFile(croppedFile);
+    } catch (cropError) {
+      setError(cropError instanceof Error ? cropError.message : "Unable to crop this image.");
+    } finally {
+      setCropping(false);
     }
   }
 
@@ -243,15 +453,40 @@ function ImageUploadField({
           event.preventDefault();
           if (disabled) return;
           const file = event.dataTransfer.files[0];
-          if (file) void uploadFile(file);
+          if (file) openCropStep(file);
         }}
         onKeyDown={(event) => {
           if (!disabled && (event.key === "Enter" || event.key === " ")) inputRef.current?.click();
         }}
-        className="relative grid min-h-52 cursor-pointer place-items-center overflow-hidden rounded-xl border border-dashed border-[rgb(214_173_84_/_45%)] bg-[var(--color-ivory)] text-center transition hover:border-[var(--color-gold)]"
+        className={`relative grid min-h-52 place-items-center overflow-hidden rounded-xl border border-dashed border-[rgb(214_173_84_/_45%)] bg-[var(--color-ivory)] text-center transition ${
+          disabled ? "cursor-default opacity-80" : "cursor-pointer hover:border-[var(--color-gold)]"
+        }`}
       >
-        {value ? (
-          <Image src={safeImageSrc(value)} alt={label} fill sizes="480px" className="object-cover" />
+        {rawValue && !previewIsUnsupported && !previewFailed ? (
+          <Image
+            src={previewSrc}
+            alt={label}
+            fill
+            unoptimized
+            sizes="480px"
+            className="object-cover"
+            onError={() => setFailedPreviewSrc(previewSrc)}
+            onLoad={() => {
+              if (failedPreviewSrc === previewSrc) setFailedPreviewSrc(null);
+            }}
+          />
+        ) : rawValue ? (
+          <div className="px-6">
+            <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">Image preview unavailable</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-gray-600)]">
+              {previewIsUnsupported
+                ? "This saved image source is not supported by the public image allowlist."
+                : "The saved image could not be loaded. Replace it with a supported image."}
+            </p>
+            <code className="mt-3 block break-all rounded-lg bg-white/70 px-3 py-2 text-left text-xs text-[var(--color-gray-600)]">
+              Saved path: {rawValue}
+            </code>
+          </div>
         ) : (
           <div className="px-6">
             <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">Upload image</p>
@@ -272,19 +507,130 @@ function ImageUploadField({
         disabled={disabled}
         onChange={(event) => {
           const file = event.target.files?.[0];
-          if (file) void uploadFile(file);
+          if (file) openCropStep(file);
           event.target.value = "";
         }}
       />
-      <div className="flex flex-wrap gap-2">
-        <button className="btn-secondary" disabled={disabled} type="button" onClick={() => inputRef.current?.click()}>
-          Replace
-        </button>
-        <button className="btn-secondary" disabled={disabled || !value} type="button" onClick={() => onChange("")}>
-          Remove
-        </button>
-      </div>
+      {helperText ? <p className="text-xs leading-5 text-[var(--color-gray-600)]">{helperText}</p> : null}
+      {showActions ? (
+        <div className="flex flex-wrap gap-2">
+          <button className="btn-secondary" disabled={disabled} type="button" onClick={() => inputRef.current?.click()}>
+            Replace
+          </button>
+          <button className="btn-secondary" disabled={disabled || !value} type="button" onClick={() => onChange("")}>
+            Remove
+          </button>
+        </div>
+      ) : null}
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {pendingCropFile && cropPreviewUrl ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-[var(--color-navy)]/70 px-4 py-6">
+          <div className="w-full max-w-2xl rounded-3xl bg-white p-5 shadow-2xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">Crop image</p>
+                <p className="mt-1 text-sm leading-6 text-[var(--color-gray-600)]">
+                  Drag the image to choose the visible area, then adjust zoom. The crop frame is 16:10.
+                </p>
+              </div>
+              <button className="btn-secondary" disabled={uploading || cropping} type="button" onClick={clearCropStep}>
+                Cancel
+              </button>
+            </div>
+            <div
+              ref={cropFrameRef}
+              className="relative mt-5 aspect-[16/10] touch-none overflow-hidden rounded-2xl border border-[rgb(214_173_84_/_35%)] bg-[var(--color-ivory)]"
+              onPointerDown={(event) => {
+                if (uploading || cropping) return;
+                measureCropFrame();
+                dragStateRef.current = {
+                  pointerId: event.pointerId,
+                  startOffsetX: cropOffset.x,
+                  startOffsetY: cropOffset.y,
+                  startX: event.clientX,
+                  startY: event.clientY,
+                };
+                event.currentTarget.setPointerCapture(event.pointerId);
+              }}
+              onPointerMove={(event) => {
+                const dragState = dragStateRef.current;
+                if (!dragState || dragState.pointerId !== event.pointerId) return;
+                updateCropOffset({
+                  x: dragState.startOffsetX + event.clientX - dragState.startX,
+                  y: dragState.startOffsetY + event.clientY - dragState.startY,
+                });
+              }}
+              onPointerUp={(event) => {
+                if (dragStateRef.current?.pointerId === event.pointerId) {
+                  dragStateRef.current = null;
+                  event.currentTarget.releasePointerCapture(event.pointerId);
+                }
+              }}
+              onPointerCancel={() => {
+                dragStateRef.current = null;
+              }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- Crop preview uses a temporary blob: URL before upload. */}
+              <img
+                src={cropPreviewUrl}
+                alt="Crop preview"
+                draggable={false}
+                className="absolute left-1/2 top-1/2 max-w-none select-none"
+                style={
+                  cropImageSize
+                    ? {
+                        height:
+                          cropImageSize.height *
+                          Math.max(cropFrameSize.width / cropImageSize.width, cropFrameSize.height / cropImageSize.height) *
+                          cropZoom,
+                        transform: `translate(-50%, -50%) translate(${cropOffset.x}px, ${cropOffset.y}px)`,
+                        width:
+                          cropImageSize.width *
+                          Math.max(cropFrameSize.width / cropImageSize.width, cropFrameSize.height / cropImageSize.height) *
+                          cropZoom,
+                      }
+                    : { height: "100%", objectFit: "cover", width: "100%" }
+                }
+                onLoad={(event) => {
+                  const image = event.currentTarget;
+                  const frameSize = measureCropFrame();
+                  const imageSize = { height: image.naturalHeight, width: image.naturalWidth };
+                  setCropImageSize(imageSize);
+                  setCropOffset(clampCropOffset({ x: 0, y: 0 }, cropZoom, frameSize, imageSize));
+                }}
+              />
+              <div aria-hidden className="pointer-events-none absolute inset-0 ring-2 ring-inset ring-white/80" />
+              <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_54%,rgba(6,17,31,0.16))]" />
+            </div>
+            <label className="mt-4 grid gap-2 text-sm font-semibold text-[var(--color-navy)]">
+              Zoom
+              <input
+                className="accent-[var(--color-gold)]"
+                disabled={uploading || cropping}
+                max="2.5"
+                min="1"
+                step="0.01"
+                type="range"
+                value={cropZoom}
+                onChange={(event) => {
+                  const nextZoom = Number(event.target.value);
+                  setCropZoom(nextZoom);
+                  updateCropOffset(cropOffset, nextZoom);
+                }}
+              />
+            </label>
+            <p className="mt-3 break-all text-xs leading-5 text-[var(--color-gray-600)]">Selected file: {pendingCropFile.name}</p>
+            <div className="mt-5 flex flex-wrap justify-end gap-3">
+              <button className="btn-secondary" disabled={uploading || cropping} type="button" onClick={() => inputRef.current?.click()}>
+                Choose Different
+              </button>
+              <button className="btn-primary" disabled={uploading || cropping} type="button" onClick={() => void cropAndUpload()}>
+                {uploading || cropping ? "Processing..." : "Crop & Upload"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -329,6 +675,7 @@ function InfoBanner({ children }: { children: React.ReactNode }) {
 }
 
 const sectionLabels: Record<SectionKey, string> = {
+  customizeTrip: "Customize Trip",
   destinations: "Destinations Header",
   featured: "Featured Journeys Header",
   finalCta: "Final CTA",
@@ -342,6 +689,7 @@ const sectionLabels: Record<SectionKey, string> = {
 export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; initialValues: HomepageEditorValues }) {
   const [values, setValues] = useState(initialValues);
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
+    customizeTrip: false,
     destinations: false,
     featured: false,
     finalCta: false,
@@ -502,7 +850,53 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
-        description="Story copy, collage images, and included services."
+        description="Text status and image used by the public Customize Your Egypt Trip section."
+        open={openSections.customizeTrip}
+        title="Customize Trip"
+        onToggle={() => setOpenSections((current) => ({ ...current, customizeTrip: !current.customizeTrip }))}
+      >
+        <div className="grid gap-5">
+          <InfoBanner>
+            This controls the public Customize Your Egypt Trip section. Text is saved in safe homepage SiteSetting keys, and the current public layout uses one featured image for a cleaner mobile layout.
+          </InfoBanner>
+          <div className="grid gap-5 md:grid-cols-2">
+            <TextInput disabled={!canEdit} label="Eyebrow text" value={values.customizeTripEyebrow} onChange={(value) => setField("customizeTripEyebrow", value)} />
+            <TextInput disabled={!canEdit} label="Heading text" value={values.customizeTripHeading} onChange={(value) => setField("customizeTripHeading", value)} />
+            <TextInput disabled={!canEdit} label="CTA button label" value={values.customizeTripCtaLabel} onChange={(value) => setField("customizeTripCtaLabel", value)} />
+            <TextInput disabled={!canEdit} label="CTA button link" value={values.customizeTripCtaHref} onChange={(value) => setField("customizeTripCtaHref", value)} />
+          </div>
+          <TextArea
+            disabled={!canEdit}
+            label="Description paragraph"
+            value={values.customizeTripDescription}
+            onChange={(value) => setField("customizeTripDescription", value)}
+          />
+          <div className="grid gap-5 md:grid-cols-3">
+            <ImageUploadField
+              disabled={!canEdit}
+              helperText="Shown on the current public homepage. Recommended: landscape image, 16:10 or 4:3. You can crop before saving. The public card crops with object-fit: cover."
+              label="Featured image"
+              value={values.whyCollageImage1}
+              onChange={(value) => setField("whyCollageImage1", value)}
+            />
+            {(["whyCollageImage2", "whyCollageImage3"] as ImageField[]).map((field, index) => (
+              <ImageUploadField
+                key={field}
+                disabled
+                helperText="Preserved for future use. Not shown on the current public homepage."
+                label={`Extra collage image ${index + 2} (not active)`}
+                showActions={false}
+                value={values[field]}
+                onChange={(value) => setField(field, value)}
+              />
+            ))}
+          </div>
+        </div>
+        {saveButton("customizeTrip")}
+      </SectionCard>
+
+      <SectionCard
+        description="Why Us copy, CTA, and included services."
         open={openSections.why}
         title="Why Us"
         onToggle={() => setOpenSections((current) => ({ ...current, why: !current.why }))}
@@ -517,17 +911,6 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
             <TextInput disabled={!canEdit} label="Included services heading" value={values.whyIncludedHeading} onChange={(value) => setField("whyIncludedHeading", value)} />
           </div>
           <TextArea disabled={!canEdit} label="Description paragraph" value={values.whyDescription} onChange={(value) => setField("whyDescription", value)} />
-          <div className="grid gap-5 md:grid-cols-3">
-            {(["whyCollageImage1", "whyCollageImage2", "whyCollageImage3"] as ImageField[]).map((field, index) => (
-              <ImageUploadField
-                key={field}
-                disabled={!canEdit}
-                label={`Collage image ${index + 1}`}
-                value={values[field]}
-                onChange={(value) => setField(field, value)}
-              />
-            ))}
-          </div>
           <div>
             <p className="mb-4 font-serif text-2xl font-semibold text-[var(--color-navy)]">Included Services</p>
             <div className="grid gap-4 md:grid-cols-2">

@@ -48,6 +48,14 @@ export type HomepageStatItem = {
 
 export type HomepageEditorValues = z.infer<typeof homepageEditorSchema>;
 
+export const customizeTripSiteSettingKeys = {
+  customizeTripCtaHref: "homepage.customizeTrip.ctaHref",
+  customizeTripCtaLabel: "homepage.customizeTrip.ctaLabel",
+  customizeTripDescription: "homepage.customizeTrip.description",
+  customizeTripEyebrow: "homepage.customizeTrip.eyebrow",
+  customizeTripHeading: "homepage.customizeTrip.heading",
+} as const;
+
 const serviceItemSchema = z.object({
   icon: z.string().trim().min(1),
   label: z.string().trim().min(1),
@@ -69,6 +77,11 @@ const optionalHomepageImageSource = z.preprocess(
 );
 
 export const homepageEditorSchema = z.object({
+  customizeTripCtaHref: optionalHomepageText,
+  customizeTripCtaLabel: optionalHomepageText,
+  customizeTripDescription: optionalHomepageText,
+  customizeTripEyebrow: optionalHomepageText,
+  customizeTripHeading: optionalHomepageText,
   heroVisible: z.boolean(),
   heroBackgroundImage: optionalHomepageImageSource,
   heroEyebrow: optionalHomepageText,
@@ -135,6 +148,12 @@ export const homepageEditorSchema = z.object({
 export const homepageEditorPatchSchema = homepageEditorSchema.partial();
 
 export const defaultHomepageEditorValues: HomepageEditorValues = {
+  customizeTripCtaHref: "/trip-planner",
+  customizeTripCtaLabel: "Plan Your Trip",
+  customizeTripDescription:
+    "Share your dates, interests, budget, preferred places, and travel style. Jack Egypt Tour will help shape a private Egypt route with local care, flexible pacing, and easy WhatsApp support from first idea to final detail.",
+  customizeTripEyebrow: "Private planning",
+  customizeTripHeading: "Customize Your Egypt Trip, Your Way",
   destinationsEyebrow: "Where we travel",
   destinationsHeading: "From the Nile,",
   destinationsHeadingAccent: "outward.",

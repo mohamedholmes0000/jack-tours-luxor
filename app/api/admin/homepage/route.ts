@@ -4,7 +4,7 @@ import { requireAdminApi } from "@/lib/api/admin-guard";
 import { getAdminHomepageSettings } from "@/lib/data/admin";
 import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
 import {
-  defaultHomepageEditorValues,
+  customizeTripSiteSettingKeys,
   homepageEditorPatchSchema,
   homepageEditorSchema,
 } from "@/lib/homepage-settings";
@@ -46,6 +46,13 @@ export async function PUT(request: Request) {
     ...currentValues,
     ...omitUndefined(parsed.data),
   });
+  const customizeTripSettings = {
+    [customizeTripSiteSettingKeys.customizeTripCtaHref]: values.customizeTripCtaHref || "",
+    [customizeTripSiteSettingKeys.customizeTripCtaLabel]: values.customizeTripCtaLabel || "",
+    [customizeTripSiteSettingKeys.customizeTripDescription]: values.customizeTripDescription || "",
+    [customizeTripSiteSettingKeys.customizeTripEyebrow]: values.customizeTripEyebrow || "",
+    [customizeTripSiteSettingKeys.customizeTripHeading]: values.customizeTripHeading || "",
+  };
   const updateData = {
     destinationsEyebrow: values.destinationsEyebrow || null,
     destinationsHeading: values.destinationsHeading || null,
@@ -111,15 +118,23 @@ export async function PUT(request: Request) {
   };
 
   try {
-    await prisma.homepageSettings.upsert({
-      where: { id: "homepage" },
-      update: updateData,
-      create: {
-        id: "homepage",
-        ...defaultHomepageEditorValues,
-        ...updateData,
-      },
-    });
+    await prisma.$transaction([
+      prisma.homepageSettings.upsert({
+        where: { id: "homepage" },
+        update: updateData,
+        create: {
+          id: "homepage",
+          ...updateData,
+        },
+      }),
+      ...Object.entries(customizeTripSettings).map(([key, value]) =>
+        prisma.siteSetting.upsert({
+          where: { key },
+          update: { value },
+          create: { key, value },
+        }),
+      ),
+    ]);
 
     revalidatePath("/");
     return NextResponse.json({ ok: true });

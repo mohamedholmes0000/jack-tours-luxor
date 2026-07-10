@@ -301,6 +301,16 @@ export async function Homepage() {
     services: homepageSettings.whyServices,
     visible: homepageSettings.whyVisible,
   };
+  const customizeTrip = {
+    ctaHref: homepageSettings.customizeTripCtaHref || "/trip-planner",
+    ctaLabel: homepageSettings.customizeTripCtaLabel || "Plan Your Trip",
+    description:
+      homepageSettings.customizeTripDescription ||
+      "Share your dates, interests, budget, preferred places, and travel style. Jack Egypt Tour will help shape a private Egypt route with local care, flexible pacing, and easy WhatsApp support from first idea to final detail.",
+    eyebrow: homepageSettings.customizeTripEyebrow || "Private planning",
+    heading: homepageSettings.customizeTripHeading || "Customize Your Egypt Trip, Your Way",
+    image: whyUs.image1,
+  };
   const whyUsHeading = splitAccentText(
     homepageSettings.whyHeading || "Everything you need for a",
     homepageSettings.whyHeadingAccent,
@@ -520,72 +530,36 @@ export async function Homepage() {
       <section className="order-5 overflow-hidden bg-white py-12 text-[var(--color-navy)] sm:py-16 lg:py-20">
         <div className="container-premium grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-16">
           <div className="reveal-up max-w-xl">
-            <p className="eyebrow text-[var(--color-gold-dark)]">Private planning</p>
+            <p className="eyebrow text-[var(--color-gold-dark)]">{customizeTrip.eyebrow}</p>
             <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,3.1rem)] font-semibold leading-[1.08] text-[var(--color-navy)]">
-              Customize Your Egypt Trip, Your Way
+              {customizeTrip.heading}
             </h2>
             <p className="mt-5 max-w-lg font-sans text-[0.98rem] leading-7 text-[var(--color-navy)]/68">
-              Share your dates, interests, budget, preferred places, and travel style.
-              Jack Egypt Tour will help shape a private Egypt route with local care,
-              flexible pacing, and easy WhatsApp support from first idea to final detail.
+              {customizeTrip.description}
             </p>
             <Link
-              href="/trip-planner"
+              href={customizeTrip.ctaHref}
               className="mt-7 inline-flex min-h-12 items-center justify-center rounded-md bg-[var(--color-gold)] px-7 font-sans text-[0.76rem] font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)] shadow-[0_16px_32px_rgb(201_168_76_/_20%)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--color-gold-light)]"
             >
-              Plan Your Trip
+              {customizeTrip.ctaLabel}
             </Link>
           </div>
 
-          <div className="reveal-up relative mx-auto grid w-full max-w-[640px] grid-cols-[0.95fr_1fr] gap-4 sm:gap-5">
-            <div className="pointer-events-none absolute left-[22%] top-[8%] hidden h-[72%] w-[58%] sm:block">
-              <svg
-                aria-hidden="true"
-                className="h-full w-full text-[var(--color-gold)]/45"
-                fill="none"
-                viewBox="0 0 420 280"
-              >
-                <path
-                  d="M38 200 C98 118 156 258 214 152 C270 48 326 108 382 38"
-                  stroke="currentColor"
-                  strokeDasharray="7 11"
-                  strokeLinecap="round"
-                  strokeWidth="2"
-                />
-                <circle cx="382" cy="38" r="7" fill="currentColor" />
-              </svg>
-            </div>
-
-            <figure className="relative z-10 mt-10 aspect-[4/5] overflow-hidden rounded-[1.6rem] shadow-[0_24px_55px_rgb(6_17_31_/_16%)] sm:mt-14">
+          <div className="reveal-up mx-auto w-full max-w-[620px] lg:ml-auto">
+            <figure className="relative aspect-[4/3] max-h-[420px] overflow-hidden rounded-[1.7rem] border border-[rgb(214_173_84_/_18%)] bg-[var(--color-ivory)] shadow-[0_28px_70px_rgb(6_17_31_/_16%)] sm:aspect-[16/11] lg:aspect-[5/4]">
               <Image
-                src="/photos/karnak.jpg"
-                alt="Karnak temple columns in Luxor"
+                src={customizeTrip.image}
+                alt="Private Egypt journey planned by Jack Egypt Tour"
                 fill
-                sizes="(min-width: 1024px) 280px, 46vw"
+                unoptimized={customizeTrip.image.startsWith("/uploads/") || customizeTrip.image.startsWith("/api/uploads/")}
+                sizes="(min-width: 1024px) 48vw, 100vw"
                 className="object-cover"
               />
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(6,17,31,0.18))]"
+              />
             </figure>
-
-            <div className="relative z-10 space-y-4 sm:space-y-5">
-              <figure className="relative aspect-[5/4] overflow-hidden rounded-[1.6rem] shadow-[0_22px_50px_rgb(6_17_31_/_14%)]">
-                <Image
-                  src="/photos/pyramids.jpg"
-                  alt="Pyramids near Cairo in warm light"
-                  fill
-                  sizes="(min-width: 1024px) 300px, 48vw"
-                  className="object-cover"
-                />
-              </figure>
-              <figure className="relative ml-8 aspect-[5/4] overflow-hidden rounded-[1.6rem] shadow-[0_22px_50px_rgb(6_17_31_/_14%)] sm:ml-12">
-                <Image
-                  src="/photos/felucca.jpg"
-                  alt="Felucca sailing on the Nile"
-                  fill
-                  sizes="(min-width: 1024px) 270px, 42vw"
-                  className="object-cover"
-                />
-              </figure>
-            </div>
           </div>
         </div>
       </section>

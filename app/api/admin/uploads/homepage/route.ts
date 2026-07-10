@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/api/admin-guard";
 import { uploadAdminImage } from "@/lib/admin-upload";
+import { hasCloudinaryConfig } from "@/lib/cloudinary";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,16 @@ export async function POST(request: Request) {
   }
 
   try {
+    if (process.env.VERCEL && !hasCloudinaryConfig()) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "Cloudinary is required for image uploads on Vercel. Local /uploads paths are only safe in local development.",
+        },
+        { status: 500 },
+      );
+    }
+
     const uploaded = await uploadAdminImage(file, "homepage");
     return NextResponse.json({ ok: true, ...uploaded });
   } catch (error) {

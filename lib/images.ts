@@ -3,7 +3,7 @@ export const DEFAULT_SAFE_IMAGE = "/photos/karnak.jpg";
 export const trustedRemoteImageHosts = ["images.unsplash.com", "i.ibb.co", "res.cloudinary.com"] as const;
 
 const trustedRemoteImageHostSet = new Set<string>(trustedRemoteImageHosts);
-const safeLocalImagePrefixes = ["/photos/", "/images/", "/uploads/"];
+const safeLocalImagePrefixes = ["/photos/", "/images/", "/uploads/", "/api/uploads/"];
 
 export function isSafeLocalImagePath(value: string) {
   return safeLocalImagePrefixes.some((prefix) => value.startsWith(prefix));

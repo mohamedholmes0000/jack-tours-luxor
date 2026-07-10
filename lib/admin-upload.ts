@@ -51,6 +51,6 @@ export async function uploadAdminImage(file: File, folder: string): Promise<Admi
 
   return {
     storage: "local",
-    url: `/uploads/${folder}/${filename}`,
+    url: `/api/uploads/${folder}/${filename}`,
   };
 }

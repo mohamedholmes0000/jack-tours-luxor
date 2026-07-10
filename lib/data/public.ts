@@ -14,6 +14,7 @@ import {
 } from "@/lib/content";
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
 import {
+  customizeTripSiteSettingKeys,
   mapHomepageSettingsToEditorValues,
   type HomepageEditorValues,
 } from "@/lib/homepage-settings";
@@ -782,8 +783,19 @@ export async function getGalleryAlbumBySlugSafe(slug: string): Promise<GalleryAl
 export async function getHomepageSettingsSafe(): Promise<HomepageEditorValues> {
   return tryDatabase(
     async () => {
-      const settings = await prisma.homepageSettings.findUnique({ where: { id: "homepage" } });
-      return mapHomepageSettingsToEditorValues(settings);
+      const [settings, customizeTripRows] = await Promise.all([
+        prisma.homepageSettings.findUnique({ where: { id: "homepage" } }),
+        prisma.siteSetting.findMany({
+          where: { key: { in: Object.values(customizeTripSiteSettingKeys) } },
+        }),
+      ]);
+      const customizeTripSettings = customizeTripRows.reduce<Record<string, string>>((settingsMap, row) => {
+        const matchingEntry = Object.entries(customizeTripSiteSettingKeys).find(([, key]) => key === row.key);
+        if (matchingEntry) settingsMap[matchingEntry[0]] = row.value;
+        return settingsMap;
+      }, {});
+
+      return mapHomepageSettingsToEditorValues({ ...settings, ...customizeTripSettings });
     },
     mapHomepageSettingsToEditorValues(null),
   );
