@@ -59,6 +59,8 @@ export function canWriteAdminResource(role: AdminRole, resource: AdminResource, 
 export function resourceFromPath(pathname: string): AdminResource {
   if (pathname.startsWith("/admin/users")) return "users";
   if (pathname.startsWith("/admin/tours")) return "tours";
+  if (pathname.startsWith("/admin/activities")) return "tours";
+  if (pathname.startsWith("/admin/hotels")) return "tours";
   if (pathname.startsWith("/admin/destinations")) return "destinations";
   if (pathname.startsWith("/admin/gallery")) return "gallery";
   if (pathname.startsWith("/admin/blog")) return "blog";

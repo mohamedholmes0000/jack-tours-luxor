@@ -66,7 +66,11 @@ export async function POST(request: Request) {
   );
 
   if (!saved) {
-    console.info("Inquiry received without database persistence:", data);
+    console.error("Inquiry persistence failed. No success response returned.", data);
+    return NextResponse.json(
+      { ok: false, persisted: false, message: "Inquiry could not be saved. Please try again." },
+      { status: 503 },
+    );
   }
 
   return NextResponse.json({ ok: true, persisted: saved });

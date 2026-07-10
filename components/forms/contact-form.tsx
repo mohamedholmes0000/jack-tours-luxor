@@ -63,7 +63,7 @@ export function ContactForm() {
       });
 
       if (!response.ok) {
-        setMessage("Message received locally. Please email us if you do not hear back soon.");
+        setMessage("We couldn't send your message. Please try again or contact us on WhatsApp.");
         return;
       }
 
@@ -71,7 +71,7 @@ export function ContactForm() {
       reset();
     } catch (error) {
       console.warn("Inquiry API unavailable.", error);
-      setMessage("Message received locally. Please email us if you do not hear back soon.");
+      setMessage("We couldn't send your message. Please try again or contact us on WhatsApp.");
     } finally {
       setIsSending(false);
     }

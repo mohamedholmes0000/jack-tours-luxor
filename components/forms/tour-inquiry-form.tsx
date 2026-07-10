@@ -15,6 +15,7 @@ type TourInquiryFormProps = {
 
 export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInquiryFormProps) {
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const {
     register,
@@ -29,10 +30,11 @@ export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInq
 
   async function onSubmit(values: TourInquiryValues) {
     setIsSending(true);
+    setErrorMessage(null);
     const url = buildWhatsAppUrlForNumber(buildTourInquiryMessage({ ...values, tourTitle }), whatsappNumber);
 
     try {
-      await fetch("/api/inquiries", {
+      const response = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -45,8 +47,17 @@ export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInq
           message: `Tour: ${tourTitle}\nPreferred date: ${values.preferredDate}\nNotes: ${values.notes ?? ""}`,
         }),
       });
+
+      if (!response.ok) {
+        setErrorMessage("We couldn't send your inquiry. Please try again or contact us on WhatsApp.");
+        setIsSending(false);
+        return;
+      }
     } catch (error) {
-      console.warn("Inquiry API unavailable; continuing to WhatsApp.", error);
+      console.warn("Inquiry API unavailable.", error);
+      setErrorMessage("We couldn't send your inquiry. Please try again or contact us on WhatsApp.");
+      setIsSending(false);
+      return;
     }
 
     setSuccessUrl(url);
@@ -106,6 +117,11 @@ export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInq
               {isSending ? "Preparing..." : "Send Inquiry on WhatsApp"}
             </button>
           </div>
+          {errorMessage ? (
+            <p className="border border-red-200 bg-red-50 p-4 text-sm text-red-700 md:col-span-2">
+              {errorMessage}
+            </p>
+          ) : null}
         </form>
       )}
     </div>

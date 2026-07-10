@@ -5,20 +5,20 @@ import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Home } from "lucide-react";
 import type { AdminRole } from "@prisma/client";
-import { roleLabels } from "@/lib/admin/permissions";
+import { canAccessAdminResource, roleLabels, type AdminResource } from "@/lib/admin/permissions";
 
 const links = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/tours", label: "Tours" },
-  { href: "/admin/activities", label: "Activities" },
-  { href: "/admin/hotels", label: "Hotels" },
-  { href: "/admin/destinations", label: "Destinations" },
-  { href: "/admin/blog", label: "Blog" },
-  { href: "/admin/gallery", label: "Gallery" },
-  { href: "/admin/faqs", label: "FAQs" },
-  { href: "/admin/inquiries", label: "Inquiries" },
-  { href: "/admin/settings", label: "Settings" },
-];
+  { href: "/admin", label: "Dashboard", resource: "dashboard" },
+  { href: "/admin/tours", label: "Tours", resource: "tours" },
+  { href: "/admin/activities", label: "Activities", resource: "tours" },
+  { href: "/admin/hotels", label: "Hotels", resource: "tours" },
+  { href: "/admin/destinations", label: "Destinations", resource: "destinations" },
+  { href: "/admin/blog", label: "Blog", resource: "blog" },
+  { href: "/admin/gallery", label: "Gallery", resource: "gallery" },
+  { href: "/admin/faqs", label: "FAQs", resource: "faqs" },
+  { href: "/admin/inquiries", label: "Inquiries", resource: "inquiries" },
+  { href: "/admin/settings", label: "Settings", resource: "settings" },
+] satisfies Array<{ href: string; label: string; resource: AdminResource }>;
 
 type AdminSidebarUser = {
   name?: string | null;
@@ -101,6 +101,8 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
   const usersActive = pathname === "/admin/users" || pathname.startsWith("/admin/users/");
   const homepageActive = pathname === "/admin/pages/homepage";
   const contactPageActive = pathname === "/admin/pages/contact";
+  const canAccessPages = canAccessAdminResource(role, "pages");
+  const visibleLinks = links.filter((link) => canAccessAdminResource(role, link.resource));
 
   return (
     <aside className="flex flex-col border-r border-[var(--color-gray-100)] bg-white p-5 lg:min-h-screen">
@@ -113,35 +115,37 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
         </span>
       </Link>
       <nav className="mt-8 grid gap-2">
-        <div className="mb-2">
-          <p className="mb-2 px-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-gray-600)]">
-            Pages
-          </p>
-          <Link
-            href="/admin/pages/homepage"
-            aria-current={homepageActive ? "page" : undefined}
-            className={`flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
-              homepageActive
-                ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
-                : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
-            }`}
-          >
-            <Home className="h-4 w-4" />
-            Homepage
-          </Link>
-          <Link
-            href="/admin/pages/contact"
-            aria-current={contactPageActive ? "page" : undefined}
-            className={`mt-2 flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
-              contactPageActive
-                ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
-                : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
-            }`}
-          >
-            Contact Page
-          </Link>
-        </div>
-        {links.map((link) => (
+        {canAccessPages ? (
+          <div className="mb-2">
+            <p className="mb-2 px-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-gray-600)]">
+              Pages
+            </p>
+            <Link
+              href="/admin/pages/homepage"
+              aria-current={homepageActive ? "page" : undefined}
+              className={`flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
+                homepageActive
+                  ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
+                  : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
+              }`}
+            >
+              <Home className="h-4 w-4" />
+              Homepage
+            </Link>
+            <Link
+              href="/admin/pages/contact"
+              aria-current={contactPageActive ? "page" : undefined}
+              className={`mt-2 flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
+                contactPageActive
+                  ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
+                  : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
+              }`}
+            >
+              Contact Page
+            </Link>
+          </div>
+        ) : null}
+        {visibleLinks.map((link) => (
           <Link
             key={link.href}
             href={link.href}

@@ -12,6 +12,7 @@ type AdminTourFormProps = {
   id?: string;
   initialValues?: AdminTourValues;
   contentType?: AdminTourValues["contentType"];
+  returnHref?: string;
 };
 
 const emptyTour: AdminTourValues = {
@@ -57,10 +58,17 @@ function contentTypeLabel(contentType: AdminTourValues["contentType"]) {
   return "Tour";
 }
 
-export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR" }: AdminTourFormProps) {
+function listHrefForContentType(contentType: AdminTourValues["contentType"]) {
+  if (contentType === "ACTIVITY") return "/admin/activities";
+  if (contentType === "HOTEL") return "/admin/hotels";
+  return "/admin/tours";
+}
+
+export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR", returnHref }: AdminTourFormProps) {
   const router = useRouter();
   const initialContentType = initialValues?.contentType ?? contentType;
   const label = contentTypeLabel(initialContentType);
+  const listingHref = returnHref ?? listHrefForContentType(initialContentType);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -121,7 +129,7 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR" }:
       return;
     }
 
-    if (!window.confirm("Delete this tour? This action cannot be undone.")) {
+    if (!window.confirm(`Delete this ${label.toLowerCase()}? This action cannot be undone.`)) {
       return;
     }
 
@@ -138,7 +146,7 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR" }:
         return;
       }
 
-      router.push("/admin/tours");
+      router.push(listingHref);
       router.refresh();
     } catch (deleteError) {
       console.warn(deleteError);

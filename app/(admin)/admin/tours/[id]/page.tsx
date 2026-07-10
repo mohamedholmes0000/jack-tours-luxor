@@ -10,8 +10,20 @@ type EditTourPageProps = {
 };
 
 export const metadata = {
-  title: "Edit Tour",
+  title: "Edit Content",
 };
+
+function contentTypeLabel(contentType: "TOUR" | "ACTIVITY" | "HOTEL") {
+  if (contentType === "ACTIVITY") return "activity";
+  if (contentType === "HOTEL") return "hotel";
+  return "tour";
+}
+
+function listHrefForContentType(contentType: "TOUR" | "ACTIVITY" | "HOTEL") {
+  if (contentType === "ACTIVITY") return "/admin/activities";
+  if (contentType === "HOTEL") return "/admin/hotels";
+  return "/admin/tours";
+}
 
 export default async function EditTourPage({ params }: EditTourPageProps) {
   const { id } = await params;
@@ -22,22 +34,25 @@ export default async function EditTourPage({ params }: EditTourPageProps) {
     notFound();
   }
 
+  const label = contentTypeLabel(tour.contentType);
+  const backHref = listHrefForContentType(tour.contentType);
+
   return (
     <div>
       <div className="mb-8">
-        <Link className="text-sm font-bold text-[var(--color-gold)]" href="/admin/tours">
-          Back to tours
+        <Link className="text-sm font-bold text-[var(--color-gold)]" href={backHref}>
+          Back to {label === "activity" ? "activities" : `${label}s`}
         </Link>
         <h1 className="mt-3 font-serif text-5xl font-semibold text-[var(--color-navy)]">
-          Edit tour
+          Edit {label}
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--color-gray-600)]">
-          Editing static fallback tours is visible in the form, but saving requires a configured
+          Editing static fallback {label}s is visible in the form, but saving requires a configured
           database.
         </p>
       </div>
       {!hasDb ? <DatabaseNotice /> : null}
-      <AdminTourForm mode="edit" id={id} initialValues={tour} />
+      <AdminTourForm mode="edit" id={id} initialValues={tour} returnHref={backHref} />
     </div>
   );
 }

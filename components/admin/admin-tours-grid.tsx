@@ -69,6 +69,12 @@ function matchesSearch(tour: AdminToursGridTour, search: string) {
   return [tour.title, tour.slug, tour.shortDescription].some((field) => field.toLowerCase().includes(value));
 }
 
+function publicHrefForContent(tour: AdminToursGridTour) {
+  if (tour.contentType === "ACTIVITY") return `/activities/${tour.slug}`;
+  if (tour.contentType === "HOTEL") return `/hotels/${tour.slug}`;
+  return `/tours/${tour.slug}`;
+}
+
 export function AdminToursGrid({
   tours,
   canCreate,
@@ -179,12 +185,7 @@ export function AdminToursGrid({
         {filteredTours.length ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredTours.map((tour) => {
-              const publicHref =
-                tour.contentType === "ACTIVITY"
-                  ? "/activities"
-                  : tour.contentType === "HOTEL"
-                    ? "/hotels"
-                    : `/tours/${tour.slug}`;
+              const publicHref = publicHrefForContent(tour);
               const contentHref = canEdit ? `/admin/tours/${tour.id}` : publicHref;
               return (
                 <article

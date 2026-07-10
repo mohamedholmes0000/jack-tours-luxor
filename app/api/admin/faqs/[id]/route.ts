@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAdminApi } from "@/lib/api/admin-guard";
 import { hasConfiguredDatabase, prisma } from "@/lib/data/safe-db";
 import { adminFaqSchema } from "@/lib/validations";
 
 type Props = { params: Promise<{ id: string }> };
+
+function revalidateFaqPublicPaths() {
+  revalidatePath("/");
+  revalidatePath("/faq");
+  revalidatePath("/faqs");
+}
 
 export async function PUT(request: Request, { params }: Props) {
   const guard = await requireAdminApi({ resource: "faqs", action: "update" });
@@ -13,6 +20,7 @@ export async function PUT(request: Request, { params }: Props) {
   if (!hasConfiguredDatabase()) return NextResponse.json({ ok: false, message: "Database is not configured. FAQ was not saved." }, { status: 503 });
   const { id } = await params;
   await prisma.fAQ.update({ where: { id }, data: parsed.data });
+  revalidateFaqPublicPaths();
   return NextResponse.json({ ok: true });
 }
 
@@ -22,5 +30,6 @@ export async function DELETE(_request: Request, { params }: Props) {
   if (!hasConfiguredDatabase()) return NextResponse.json({ ok: false, message: "Database is not configured. FAQ was not deleted." }, { status: 503 });
   const { id } = await params;
   await prisma.fAQ.delete({ where: { id } });
+  revalidateFaqPublicPaths();
   return NextResponse.json({ ok: true });
 }
