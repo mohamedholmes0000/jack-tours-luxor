@@ -103,10 +103,13 @@ function EmptyState() {
   return (
     <div className="mx-auto mt-7 max-w-xl rounded-2xl border border-[rgb(214_173_84_/_24%)] bg-white p-8 text-center shadow-[0_10px_28px_rgb(6_17_31_/_6%)]">
       <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">
-        More options coming soon — contact us to customize your trip.
+        Experiences are being prepared.
+      </p>
+      <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[var(--color-gray-600)]">
+        Contact us to create a private plan.
       </p>
       <Link className="btn-primary mt-5" href="/trip-planner">
-        Plan your journey
+        Plan your trip
       </Link>
     </div>
   );

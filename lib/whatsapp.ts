@@ -10,6 +10,7 @@ export type TripPlannerMessageInput = {
   destinations: string[];
   interests: string[];
   budgetRange: string;
+  approximateBudget?: string;
   hotelCategory: string;
   name: string;
   email: string;
@@ -101,6 +102,7 @@ export function buildTripPlannerMessage(input: TripPlannerMessageInput): string 
     tripPlannerLine("Destinations", input.destinations),
     tripPlannerLine("Interests", input.interests),
     tripPlannerLine("Budget range", input.budgetRange),
+    tripPlannerLine("Approximate budget", input.approximateBudget),
     tripPlannerLine("Hotel preference", input.hotelCategory),
     tripPlannerLine("Special requests", input.specialRequests),
     tripPlannerLine("Name", input.name),

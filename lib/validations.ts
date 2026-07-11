@@ -6,6 +6,23 @@ const phoneLike = z
   .trim()
   .min(6, "Add a WhatsApp number or phone we can reply to.");
 
+function localDateInputValue(date = new Date()) {
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return localDate.toISOString().slice(0, 10);
+}
+
+function addDaysToDateInput(value: string, days: number) {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    return "";
+  }
+
+  const [, year, month, day] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day) + days);
+  return localDateInputValue(date);
+}
+
 const adminImageSource = z
   .string()
   .trim()
@@ -25,20 +42,41 @@ export const inquirySchema = z.object({
   message: z.string().optional(),
 });
 
-export const tripPlannerSchema = z.object({
-  arrivalDate: z.string().min(1, "Choose an arrival date."),
-  departureDate: z.string().min(1, "Choose a departure date."),
-  travelers: z.number().int().min(1, "Add at least one traveler."),
-  nationality: z.string().trim().min(2, "Add your nationality."),
-  destinations: z.array(z.string()).min(1, "Choose at least one destination."),
-  interests: z.array(z.string()).min(1, "Choose at least one interest."),
-  budgetRange: z.string().min(1, "Choose a budget range."),
-  hotelCategory: z.string().min(1, "Choose a hotel preference."),
-  name: z.string().trim().min(2, "Add your name."),
-  email: z.string().trim().email("Add a valid email."),
-  whatsapp: phoneLike,
-  specialRequests: z.string().trim().optional(),
-});
+export const tripPlannerSchema = z
+  .object({
+    arrivalDate: z.string().min(1, "Choose an arrival date."),
+    departureDate: z.string().min(1, "Choose a departure date."),
+    travelers: z.number().int().min(1, "Add at least one traveler."),
+    nationality: z.string().trim().min(2, "Add your nationality."),
+    destinations: z.array(z.string()).min(1, "Choose at least one destination."),
+    interests: z.array(z.string()).min(1, "Choose at least one interest."),
+    budgetRange: z.string().min(1, "Choose a budget range."),
+    approximateBudget: z.string().trim().optional(),
+    hotelCategory: z.string().min(1, "Choose a hotel preference."),
+    name: z.string().trim().min(2, "Add your name."),
+    email: z.string().trim().email("Add a valid email."),
+    whatsapp: phoneLike,
+    specialRequests: z.string().trim().optional(),
+  })
+  .superRefine((value, context) => {
+    const today = localDateInputValue();
+
+    if (value.arrivalDate && value.arrivalDate < today) {
+      context.addIssue({
+        code: "custom",
+        message: "Arrival date cannot be in the past.",
+        path: ["arrivalDate"],
+      });
+    }
+
+    if (value.arrivalDate && value.departureDate && value.departureDate < addDaysToDateInput(value.arrivalDate, 1)) {
+      context.addIssue({
+        code: "custom",
+        message: "Departure date must be after arrival date.",
+        path: ["departureDate"],
+      });
+    }
+  });
 
 export const contactSchema = z.object({
   name: z.string().trim().min(2, "Add your name."),

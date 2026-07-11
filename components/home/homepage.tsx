@@ -91,6 +91,10 @@ const testimonial = {
   origin: "United States",
 };
 
+// Keep the verified-review presentation ready for later, but do not publish a
+// static claim until it is sourced from real customer data.
+const hasVerifiedTestimonial = false;
+
 const approvedHeroEyebrow = "Private Egypt · est. Luxor";
 const approvedHeroHeadline = "Egypt, privately";
 const approvedHeroHeadlineAccent = "composed.";
@@ -334,8 +338,9 @@ export async function Homepage() {
     { appendMissingAccent: true },
   );
   const destinationsVisible = homepageSettings.destinationsVisible;
+  const configuredDestinationsEyebrow = cleanSettingText(homepageSettings.destinationsEyebrow);
   const destinationsHeader = {
-    eyebrow: homepageSettings.destinationsEyebrow || "Where we travel",
+    eyebrow: configuredDestinationsEyebrow === "." ? "" : configuredDestinationsEyebrow,
     linkHref: homepageSettings.destinationsViewAllHref || "/destinations",
     linkLabel: homepageSettings.destinationsViewAllLabel || "All destinations →",
   };
@@ -450,7 +455,9 @@ export async function Homepage() {
       {destinationsVisible ? (
       <section className="order-3 bg-white py-10 text-[var(--color-navy)] sm:py-12 lg:py-14">
         <div className="container-premium text-center">
-          <p className="eyebrow text-[var(--color-gold-dark)]">{destinationsHeader.eyebrow}</p>
+          {destinationsHeader.eyebrow ? (
+            <p className="eyebrow text-[var(--color-gold-dark)]">{destinationsHeader.eyebrow}</p>
+          ) : null}
           <h2 className="mt-3 font-serif text-[2.2rem] font-semibold leading-none text-[var(--color-navy)] sm:text-[2.6rem]">
             {destinationsHeading.before}
             {destinationsHeading.showAccent ? (
@@ -721,7 +728,7 @@ export async function Homepage() {
       {/* ============================================================
          10 · EDITORIAL PAUSE — pure ivory.
       ============================================================ */}
-      {testimonialsHeader.visible ? (
+      {hasVerifiedTestimonial && testimonialsHeader.visible ? (
       <section className="order-7 bg-[var(--color-ivory)] py-10 sm:py-14 lg:py-16">
         <div className="container-premium reveal-up">
           <p className="eyebrow text-[var(--color-gold-dark)]">{testimonialsHeader.eyebrow}</p>

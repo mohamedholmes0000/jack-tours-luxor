@@ -27,13 +27,13 @@ export function ContentCardGrid({
     return (
       <div className="container-premium py-16 text-center">
         <p className="font-serif text-3xl font-semibold text-[var(--color-navy)]">
-          More options coming soon
+          Experiences are being prepared.
         </p>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[var(--color-gray-600)]">
-          Contact Jack Egypt Tour and we will customize a private plan around your dates, route, and travel style.
+          Contact us to create a private plan.
         </p>
         <Link className="btn-primary mt-6" href="/trip-planner">
-          Plan your journey
+          Plan your trip
         </Link>
       </div>
     );

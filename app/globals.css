@@ -20,7 +20,8 @@
   --shadow-luxury: 0 24px 70px rgb(0 0 0 / 28%);
   --background: var(--color-gray-50);
   --foreground: var(--color-gray-900);
-  --font-accent: var(--font-heading);
+  --font-heading: var(--font-accent-serif);
+  --font-accent: var(--font-accent-serif);
 }
 
 @theme inline {
@@ -193,7 +194,7 @@ body:has(.public-site) footer {
 }
 
 .font-accent-serif {
-  font-family: var(--font-accent), Georgia, serif;
+  font-family: var(--font-accent-serif), Georgia, serif;
 }
 
 .site-header-utility {

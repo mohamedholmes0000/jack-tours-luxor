@@ -1,8 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { FormField, inputClassName, textareaClassName } from "@/components/forms/form-field";
 import { destinations } from "@/lib/content";
 import { TripPlannerValues, tripPlannerSchema } from "@/lib/validations";
@@ -10,19 +10,76 @@ import { buildTripPlannerMessage, buildWhatsAppUrlForNumber } from "@/lib/whatsa
 
 const steps = ["Dates & travelers", "Destinations & interests", "Budget & hotel", "Contact"];
 const interestOptions = ["Ancient sites", "Nile cruise", "Luxury", "Family trip", "Adventure", "Cultural experience"];
-const budgetOptions = ["Under USD 1,000", "USD 1,000-2,500", "USD 2,500-5,000", "USD 5,000+"];
+const budgetOptions = [
+  "Flexible / Not sure yet",
+  "Under USD 500",
+  "USD 500–1,000",
+  "USD 1,000–2,500",
+  "USD 2,500–5,000",
+  "USD 5,000+",
+  "Custom budget",
+];
 const hotelOptions = ["Comfort 3-4 star", "Premium 4-5 star", "Luxury 5 star", "Not sure yet"];
+const countryCodeOptions = [
+  { label: "Egypt +20", value: "+20" },
+  { label: "United States +1", value: "+1" },
+  { label: "United Kingdom +44", value: "+44" },
+  { label: "Germany +49", value: "+49" },
+  { label: "France +33", value: "+33" },
+  { label: "Italy +39", value: "+39" },
+  { label: "Spain +34", value: "+34" },
+  { label: "Saudi Arabia +966", value: "+966" },
+  { label: "UAE +971", value: "+971" },
+  { label: "Qatar +974", value: "+974" },
+  { label: "Kuwait +965", value: "+965" },
+  { label: "Australia +61", value: "+61" },
+  { label: "Canada +1", value: "+1" },
+  { label: "Other", value: "OTHER" },
+];
+
+function localDateInputValue(date = new Date()) {
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return localDate.toISOString().slice(0, 10);
+}
+
+function addDaysToDateInput(value: string, days: number) {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    return "";
+  }
+
+  const [, year, month, day] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day) + days);
+  return localDateInputValue(date);
+}
+
+function formatFullWhatsAppNumber(countryCode: string, value: string) {
+  const trimmedValue = value.trim();
+
+  if (countryCode === "OTHER" || trimmedValue.startsWith("+")) {
+    return trimmedValue;
+  }
+
+  const localNumber = trimmedValue.replace(/^0+/, "");
+  return `${countryCode} ${localNumber}`.trim();
+}
 
 export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string }) {
   const [step, setStep] = useState(0);
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [todayInput] = useState(() => localDateInputValue());
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+20");
 
   const {
     register,
     handleSubmit,
     trigger,
+    control,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm<TripPlannerValues>({
     resolver: zodResolver(tripPlannerSchema),
@@ -31,9 +88,39 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
       destinations: ["Luxor"],
       interests: ["Ancient sites"],
       budgetRange: "",
+      approximateBudget: "",
       hotelCategory: "",
     },
   });
+  const selectedBudgetRange = useWatch({ control, name: "budgetRange" });
+  const arrivalDate = useWatch({ control, name: "arrivalDate" });
+  const departureDate = useWatch({ control, name: "departureDate" });
+  const isCustomBudget = selectedBudgetRange === "Custom budget";
+  const minDepartureDate = arrivalDate ? addDaysToDateInput(arrivalDate, 1) : "";
+
+  useEffect(() => {
+    const tomorrow = addDaysToDateInput(todayInput, 1);
+
+    if (!getValues("arrivalDate")) {
+      setValue("arrivalDate", todayInput, { shouldValidate: false });
+    }
+
+    if (!getValues("departureDate")) {
+      setValue("departureDate", tomorrow, { shouldValidate: false });
+    }
+  }, [getValues, setValue, todayInput]);
+
+  useEffect(() => {
+    if (!arrivalDate) {
+      return;
+    }
+
+    const nextValidDeparture = addDaysToDateInput(arrivalDate, 1);
+
+    if (!departureDate || departureDate < nextValidDeparture) {
+      setValue("departureDate", nextValidDeparture, { shouldDirty: true, shouldValidate: true });
+    }
+  }, [arrivalDate, departureDate, setValue]);
 
   async function goNext() {
     const fieldsByStep: Array<Array<keyof TripPlannerValues>> = [
@@ -52,7 +139,9 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
   async function onSubmit(values: TripPlannerValues) {
     setIsSending(true);
     setErrorMessage(null);
-    const message = buildTripPlannerMessage(values);
+    const fullWhatsapp = formatFullWhatsAppNumber(phoneCountryCode, values.whatsapp);
+    const submitValues = { ...values, whatsapp: fullWhatsapp };
+    const message = buildTripPlannerMessage(submitValues);
     const url = buildWhatsAppUrlForNumber(message, whatsappNumber);
     const inquiryPayload = {
       type: "TRIP_PLANNER",
@@ -62,11 +151,13 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
       travelers: values.travelers,
       nationality: values.nationality,
       destinations: values.destinations,
+      interests: values.interests,
       budgetRange: values.budgetRange,
+      approximateBudget: values.approximateBudget,
       hotelCategory: values.hotelCategory,
       name: values.name,
       email: values.email,
-      whatsapp: values.whatsapp,
+      whatsapp: fullWhatsapp,
       message: values.specialRequests,
     };
 
@@ -131,10 +222,15 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
           {step === 0 ? (
             <div className="grid gap-5 md:grid-cols-2">
               <FormField label="Arrival date" error={errors.arrivalDate?.message}>
-                <input className={inputClassName} type="date" {...register("arrivalDate")} />
+                <input className={inputClassName} type="date" min={todayInput || undefined} {...register("arrivalDate")} />
               </FormField>
               <FormField label="Departure date" error={errors.departureDate?.message}>
-                <input className={inputClassName} type="date" {...register("departureDate")} />
+                <input
+                  className={inputClassName}
+                  type="date"
+                  min={minDepartureDate || undefined}
+                  {...register("departureDate")}
+                />
               </FormField>
               <FormField label="Travelers" error={errors.travelers?.message}>
                 <input
@@ -193,6 +289,22 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
                   ))}
                 </select>
               </FormField>
+              <FormField label="Approximate budget amount" error={errors.approximateBudget?.message}>
+                <input
+                  className={`${inputClassName} ${
+                    isCustomBudget
+                      ? "border-[var(--color-gold)] bg-[rgb(214_173_84_/_10%)] shadow-[0_0_0_3px_rgb(214_173_84_/_14%)]"
+                      : ""
+                  }`}
+                  placeholder="Example: USD 1,200 total, USD 150/day, or flexible"
+                  {...register("approximateBudget")}
+                />
+                {isCustomBudget ? (
+                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-gold-dark)]">
+                    Recommended for custom budgets.
+                  </p>
+                ) : null}
+              </FormField>
               <FormField label="Hotel preference" error={errors.hotelCategory?.message}>
                 <select className={inputClassName} {...register("hotelCategory")}>
                   <option value="">Select hotel style</option>
@@ -223,7 +335,27 @@ export function TripPlannerForm({ whatsappNumber }: { whatsappNumber?: string })
               </FormField>
               <div className="md:col-span-2">
                 <FormField label="WhatsApp" error={errors.whatsapp?.message}>
-                  <input className={inputClassName} placeholder="+1 555 000 0000" {...register("whatsapp")} />
+                  <div className="grid gap-3 sm:grid-cols-[minmax(0,220px)_1fr]">
+                    <select
+                      className={inputClassName}
+                      value={phoneCountryCode}
+                      onChange={(event) => setPhoneCountryCode(event.target.value)}
+                    >
+                      {countryCodeOptions.map((option) => (
+                        <option key={`${option.label}-${option.value}`} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      className={inputClassName}
+                      placeholder={phoneCountryCode === "OTHER" ? "+44 7700 900123" : "1065299917"}
+                      {...register("whatsapp")}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-[var(--color-gray-600)]">
+                    Choose a country code, or select Other and type the full international number.
+                  </p>
                 </FormField>
               </div>
             </div>

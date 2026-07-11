@@ -51,7 +51,12 @@ function isPlaceholderContact(value: string | null | undefined) {
 }
 
 function realOrConfigured(value: string | null | undefined, fallback: string) {
-  return isPlaceholderContact(value) ? fallback : value!.trim();
+  const configured = isPlaceholderContact(value) ? fallback : value!.trim();
+  const digits = configured.replace(/[^\d]/g, "");
+
+  return digits === "201096586292" || digits === "01096586292"
+    ? REAL_PHONE_DISPLAY
+    : configured;
 }
 
 export const defaultSettings: PublicSettings = {
