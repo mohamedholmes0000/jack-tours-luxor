@@ -134,11 +134,33 @@ function parseFooterLinks(value: unknown): FooterLink[] {
 
   if (!links.length) return defaultFooterLinks;
 
-  const withoutHome = links.filter(
+  const normalizedLinks = links.map((link) =>
+    link.label.trim().toLowerCase() === "destinations"
+      ? { label: "Activities", url: "/activities" }
+      : link,
+  );
+  const withoutHome = normalizedLinks.filter(
     (link) => link.url !== "/" && link.label.trim().toLowerCase() !== "home",
   );
+  const withoutPrimaryServices = withoutHome.filter(
+    (link) =>
+      link.url !== "/activities" &&
+      link.label.trim().toLowerCase() !== "activities" &&
+      link.url !== "/hotels" &&
+      link.label.trim().toLowerCase() !== "hotels",
+  );
+  const toursIndex = withoutPrimaryServices.findIndex(
+    (link) => link.url === "/tours" || link.label.trim().toLowerCase() === "tours",
+  );
+  const insertIndex = toursIndex >= 0 ? toursIndex + 1 : Math.min(1, withoutPrimaryServices.length);
 
-  return [{ label: "Home", url: "/" }, ...withoutHome];
+  return [
+    { label: "Home", url: "/" },
+    ...withoutPrimaryServices.slice(0, insertIndex),
+    { label: "Activities", url: "/activities" },
+    { label: "Hotels", url: "/hotels" },
+    ...withoutPrimaryServices.slice(insertIndex),
+  ];
 }
 
 function mapSiteSettings(rows: Array<{ key: string; value: string }>) {

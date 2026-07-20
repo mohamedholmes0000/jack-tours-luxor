@@ -72,23 +72,25 @@ function FeaturedCard({ item }: { item: Tour }) {
             {item.title}
           </h3>
         </Link>
-        <div className="mt-2 flex items-center gap-2 text-[13px]">
-          <span className="text-[var(--color-gold)]">
-            <StarIcon />
-          </span>
-          <span className="font-medium text-[var(--color-navy)]">
-            {item.reviewCount > 0 ? item.rating.toFixed(1) : "0"}
-          </span>
-          <span className="text-[var(--color-navy)]/50">
-            ({item.reviewCount > 0 ? `${item.reviewCount} reviews` : "No Review"})
-          </span>
-        </div>
+        {item.reviewCount > 0 ? (
+          <div className="mt-2 flex items-center gap-2 text-[13px]">
+            <span className="text-[var(--color-gold)]">
+              <StarIcon />
+            </span>
+            <span className="font-medium text-[var(--color-navy)]">{item.rating.toFixed(1)}</span>
+            <span className="text-[var(--color-navy)]/50">({item.reviewCount} reviews)</span>
+          </div>
+        ) : (
+          <p className="mt-2 text-[13px] font-medium text-[var(--color-gold-dark)]">New experience</p>
+        )}
       </div>
       <div className="mx-4 h-px bg-[rgb(6_17_31_/_8%)]" />
       <div className="flex items-end justify-between gap-3 px-4 py-4">
         <p>
           <span className="block text-[12px] text-[var(--color-navy)]/50">From</span>
-          <span className="text-[16px] font-bold text-[var(--color-navy)]">{formatPrice(item)}</span>
+          <span className="text-[16px] font-bold text-[var(--color-navy)]">
+            {formatPrice(item, { includePrefix: false })}
+          </span>
         </p>
         <p className="flex items-center gap-1.5 text-[12px] text-[var(--color-navy)]/50">
           <ClockIcon />
@@ -99,14 +101,17 @@ function FeaturedCard({ item }: { item: Tour }) {
   );
 }
 
-function EmptyState() {
+function EmptyState({ type }: { type: FeaturedTab }) {
+  const isHotel = type === "HOTEL";
+
   return (
-    <div className="mx-auto mt-7 max-w-xl rounded-2xl border border-[rgb(214_173_84_/_24%)] bg-white p-8 text-center shadow-[0_10px_28px_rgb(6_17_31_/_6%)]">
-      <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">
-        Experiences are being prepared.
+    <div className="mx-auto mt-7 max-w-xl rounded-xl border border-[rgb(214_173_84_/_24%)] bg-white/75 p-7 text-center sm:p-8">
+      <span aria-hidden="true" className="mx-auto block h-px w-12 bg-[var(--color-gold)]" />
+      <p className="mt-5 font-serif text-2xl font-semibold text-[var(--color-navy)]">
+        {isHotel ? "New stays are being prepared." : "New experiences are being prepared."}
       </p>
       <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[var(--color-gray-600)]">
-        Contact us to create a private plan.
+        Tell us what you need and our Luxor team will include the right options in your trip plan.
       </p>
       <Link className="btn-primary mt-5" href="/trip-planner">
         Plan your trip
@@ -187,7 +192,7 @@ export function FeaturedJourneysTabs({
           ))}
         </div>
       ) : (
-        <EmptyState />
+        <EmptyState type={activeTab} />
       )}
     </>
   );

@@ -937,12 +937,6 @@ body:has(.public-site) footer {
     row-gap: 1.1rem;
   }
 
-  .public-site article,
-  .public-site figure,
-  .public-site details {
-    box-shadow: 0 14px 34px rgb(0 0 0 / 14%);
-  }
-
   .public-site article .p-6,
   .public-site .p-7,
   .public-site .p-8 {

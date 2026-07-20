@@ -230,17 +230,17 @@ function TourCard({ tour }: { tour: Tour }) {
           {tour.title}
         </Link>
 
-        <div className="mt-2 flex items-center gap-2 text-sm">
-          <span className="text-[var(--color-gold)]">
-            <StarIcon />
-          </span>
-          <span className="font-medium text-[var(--color-navy)]">
-            {tour.reviewCount > 0 ? tour.rating.toFixed(1) : "0"}
-          </span>
-          <span className="text-[var(--color-navy)]/50">
-            ({tour.reviewCount > 0 ? `${tour.reviewCount} reviews` : "No Review"})
-          </span>
-        </div>
+        {tour.reviewCount > 0 ? (
+          <div className="mt-2 flex items-center gap-2 text-sm">
+            <span className="text-[var(--color-gold)]">
+              <StarIcon />
+            </span>
+            <span className="font-medium text-[var(--color-navy)]">{tour.rating.toFixed(1)}</span>
+            <span className="text-[var(--color-navy)]/50">({tour.reviewCount} reviews)</span>
+          </div>
+        ) : (
+          <p className="mt-2 text-[13px] font-medium text-[var(--color-gold-dark)]">New experience</p>
+        )}
       </div>
 
       <div className="mx-4 my-3 h-px bg-[rgb(6_17_31_/_8%)]" />

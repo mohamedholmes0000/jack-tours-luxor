@@ -916,10 +916,11 @@ export function getDestinationBySlug(slug: string) {
   return destinations.find((destination) => destination.slug === slug);
 }
 
-export function formatPrice(tour: Tour) {
+export function formatPrice(tour: Tour, { includePrefix = true }: { includePrefix?: boolean } = {}) {
   if (!tour.priceFrom) {
     return "Custom quote";
   }
 
-  return `From ${tour.priceCurrency} ${tour.priceFrom.toLocaleString("en-US")}`;
+  const price = `${tour.priceCurrency} ${tour.priceFrom.toLocaleString("en-US")}`;
+  return includePrefix ? `From ${price}` : price;
 }

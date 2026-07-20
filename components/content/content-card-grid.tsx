@@ -24,17 +24,22 @@ export function ContentCardGrid({
   items: Tour[];
 }) {
   if (!items.length) {
+    const isHotel = emptyLabel.toLowerCase() === "hotel";
+
     return (
-      <div className="container-premium py-16 text-center">
-        <p className="font-serif text-3xl font-semibold text-[var(--color-navy)]">
-          Experiences are being prepared.
-        </p>
-        <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[var(--color-gray-600)]">
-          Contact us to create a private plan.
-        </p>
-        <Link className="btn-primary mt-6" href="/trip-planner">
-          Plan your trip
-        </Link>
+      <div className="container-premium py-14 sm:py-16">
+        <div className="mx-auto max-w-xl rounded-xl border border-[rgb(214_173_84_/_24%)] bg-[var(--color-ivory)] px-6 py-9 text-center sm:px-10">
+          <span aria-hidden="true" className="mx-auto block h-px w-12 bg-[var(--color-gold)]" />
+          <p className="mt-5 font-serif text-3xl font-semibold text-[var(--color-navy)]">
+            {isHotel ? "New stays are being prepared." : "New experiences are being prepared."}
+          </p>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[var(--color-gray-600)]">
+            Tell us what you need and our Luxor team will include the right options in your trip plan.
+          </p>
+          <Link className="btn-primary mt-6" href="/trip-planner">
+            Plan your trip
+          </Link>
+        </div>
       </div>
     );
   }
@@ -75,17 +80,21 @@ export function ContentCardGrid({
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-[var(--color-gray-600)]">
                 {item.shortDescription}
               </p>
-              <div className="mt-3 flex items-center gap-2 text-sm text-[var(--color-navy)]/60">
-                <Star className="h-4 w-4 fill-[var(--color-gold)] text-[var(--color-gold)]" />
-                <span className="font-semibold text-[var(--color-navy)]">
-                  {item.reviewCount > 0 ? item.rating.toFixed(1) : "0"}
-                </span>
-                <span>({item.reviewCount > 0 ? `${item.reviewCount} reviews` : "No Review"})</span>
-              </div>
+              {item.reviewCount > 0 ? (
+                <div className="mt-3 flex items-center gap-2 text-sm text-[var(--color-navy)]/60">
+                  <Star className="h-4 w-4 fill-[var(--color-gold)] text-[var(--color-gold)]" />
+                  <span className="font-semibold text-[var(--color-navy)]">{item.rating.toFixed(1)}</span>
+                  <span>({item.reviewCount} reviews)</span>
+                </div>
+              ) : (
+                <p className="mt-3 text-sm font-medium text-[var(--color-gold-dark)]">New experience</p>
+              )}
               <div className="mt-5 flex items-center justify-between border-t border-[rgb(6_17_31_/_10%)] pt-4">
                 <p>
                   <span className="block text-xs text-[var(--color-navy)]/50">From</span>
-                  <span className="font-bold text-[var(--color-navy)]">{formatPrice(item)}</span>
+                  <span className="font-bold text-[var(--color-navy)]">
+                    {formatPrice(item, { includePrefix: false })}
+                  </span>
                 </p>
                 <p className="flex items-center gap-1.5 text-xs text-[var(--color-navy)]/55">
                   <Clock className="h-4 w-4" />

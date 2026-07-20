@@ -241,22 +241,22 @@ function HomeSearchPanel() {
           <form action="/tours" method="get" className="home-search-content home-search-content-tours md:grid-cols-[1fr_1fr_1fr_auto]">
             <SearchField icon={MapPin} label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Abu Simbel", "Red Sea"]} placeholder="Where are you going?" />
             <SearchField icon={CalendarDays} label="When" name="duration" options={["Half Day", "Full Day", "2-3 Days", "4+ Days"]} placeholder="Choose timing" />
-            <SearchField icon={SlidersHorizontal} label="More" name="style" options={["Private Day Tour", "Nile Cruise", "Multi-Day Journey", "Luxury"]} placeholder="More" />
-            <button type="submit" className="home-search-button">Search</button>
+            <SearchField icon={SlidersHorizontal} label="Travel style" name="style" options={["Private Day Tour", "Nile Cruise", "Multi-Day Journey", "Luxury"]} placeholder="Choose a style" />
+            <button type="submit" className="home-search-button">Explore tours</button>
           </form>
 
           <form action="/activities" method="get" className="home-search-content home-search-content-activities md:grid-cols-[1fr_1fr_1fr_auto]">
             <SearchField icon={MapPin} label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Abu Simbel", "Hurghada"]} placeholder="Where are you going?" />
             <SearchField icon={CalendarDays} label="When" name="date" options={["Today", "Tomorrow", "This Week", "Custom Date"]} placeholder="Choose timing" />
-            <SearchField icon={SlidersHorizontal} label="More" name="experience" options={["Temples & Tombs", "Nile & Nubia", "Pyramids", "Red Sea", "Culture"]} placeholder="More" />
-            <button type="submit" className="home-search-button">Search</button>
+            <SearchField icon={SlidersHorizontal} label="Experience type" name="experience" options={["Temples & Tombs", "Nile & Nubia", "Pyramids", "Red Sea", "Culture"]} placeholder="Choose an experience" />
+            <button type="submit" className="home-search-button">Explore activities</button>
           </form>
 
           <form action="/hotels" method="get" className="home-search-content home-search-content-hotels md:grid-cols-[1fr_1fr_1fr_auto]">
             <SearchField icon={MapPin} label="Destination" name="destination" options={["Luxor", "Cairo", "Aswan", "Hurghada", "Custom Route"]} placeholder="Where are you staying?" />
             <SearchField icon={Users} label="Guests" name="guests" options={["1 Traveler", "2 Travelers", "3-4 Travelers", "5+ Travelers"]} placeholder="Travelers" />
-            <SearchField icon={SlidersHorizontal} label="More" name="style" options={["Nile View", "Boutique Stay", "Beach Resort", "Cruise Hotel"]} placeholder="More" />
-            <button type="submit" className="home-search-button">Search</button>
+            <SearchField icon={SlidersHorizontal} label="Stay style" name="style" options={["Nile View", "Boutique Stay", "Beach Resort", "Cruise Hotel"]} placeholder="Choose a stay" />
+            <button type="submit" className="home-search-button">Explore hotels</button>
           </form>
         </div>
       </div>
@@ -291,12 +291,31 @@ export async function Homepage() {
     subheadline: rawHeroSubheadline || simplifiedHeroSubheadline,
   };
   const heroHeading = splitAccentText(heroText.headline, homepageSettings.heroHeadlineAccent || legacyHeroText.accent);
+  const legacyWhyHeading = "Everything you need for a";
+  const legacyWhyAccent = "perfect Egypt journey";
+  const legacyWhyDescription =
+    "From private guides to seamless logistics, we handle every detail of your Egypt experience so you can focus on the wonder.";
+  const normalizedWhyDescription = cleanSettingText(homepageSettings.whyDescription)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+  const normalizedLegacyWhyDescription = legacyWhyDescription
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+  const usesLegacyWhyCopy =
+    cleanSettingText(homepageSettings.whyHeading) === legacyWhyHeading &&
+    cleanSettingText(homepageSettings.whyHeadingAccent) === legacyWhyAccent;
+  const usesLegacyWhyCta =
+    cleanSettingText(homepageSettings.whyCtaLabel).toLowerCase() === "plan your journey" &&
+    homepageSettings.whyCtaHref === "/trip-planner";
   const whyUs = {
-    ctaHref: homepageSettings.whyCtaHref || "/trip-planner",
-    ctaLabel: homepageSettings.whyCtaLabel || "Plan Your Journey",
+    ctaHref: usesLegacyWhyCta ? "/about" : homepageSettings.whyCtaHref || "/about",
+    ctaLabel: usesLegacyWhyCta ? "About our local team" : homepageSettings.whyCtaLabel || "About our local team",
     description:
-      homepageSettings.whyDescription ||
-      "From private guides to seamless logistics, we handle every detail of your Egypt experience so you can focus on the wonder.",
+      !normalizedWhyDescription || normalizedWhyDescription === normalizedLegacyWhyDescription
+        ? "Based in Luxor, we coordinate trusted Egyptologists, stays, transfers, and Nile journeys through one local team."
+        : homepageSettings.whyDescription,
     eyebrow: homepageSettings.whyEyebrow || "Why Jack Egypt Tour",
     image1: safeImageSrc(homepageSettings.whyCollageImage1, "/photos/karnak.jpg"),
     image2: safeImageSrc(homepageSettings.whyCollageImage2, "/photos/hatshepsut.jpg"),
@@ -305,19 +324,22 @@ export async function Homepage() {
     services: homepageSettings.whyServices,
     visible: homepageSettings.whyVisible,
   };
+  const legacyCustomizeDescription =
+    "Share your dates, interests, budget, preferred places, and travel style. Jack Egypt Tour will help shape a private Egypt route with local care, flexible pacing, and easy WhatsApp support from first idea to final detail.";
   const customizeTrip = {
     ctaHref: homepageSettings.customizeTripCtaHref || "/trip-planner",
     ctaLabel: homepageSettings.customizeTripCtaLabel || "Plan Your Trip",
     description:
-      homepageSettings.customizeTripDescription ||
-      "Share your dates, interests, budget, preferred places, and travel style. Jack Egypt Tour will help shape a private Egypt route with local care, flexible pacing, and easy WhatsApp support from first idea to final detail.",
+      !homepageSettings.customizeTripDescription || homepageSettings.customizeTripDescription === legacyCustomizeDescription
+        ? "Tell us where you want to go, when you are traveling, and what matters most. We turn those details into a clear route, then confirm the stays, guides, and transport with you."
+        : homepageSettings.customizeTripDescription,
     eyebrow: homepageSettings.customizeTripEyebrow || "Private planning",
     heading: homepageSettings.customizeTripHeading || "Customize Your Egypt Trip, Your Way",
     image: whyUs.image1,
   };
   const whyUsHeading = splitAccentText(
-    homepageSettings.whyHeading || "Everything you need for a",
-    homepageSettings.whyHeadingAccent,
+    usesLegacyWhyCopy ? "Local knowledge," : homepageSettings.whyHeading || legacyWhyHeading,
+    usesLegacyWhyCopy ? "handled properly." : homepageSettings.whyHeadingAccent,
     { appendMissingAccent: true },
   );
   const finalCta = {
