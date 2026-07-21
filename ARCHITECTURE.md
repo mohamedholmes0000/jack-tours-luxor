@@ -78,10 +78,10 @@ Admin APIs parse/validate inputs with schemas in `lib/validations.ts`. Content/s
 4. Local upload route handlers validate folder/file segments and only serve supported image extensions.
 5. `lib/images.ts` ensures stored image values are allowed local paths or trusted remote hosts before public rendering.
 
-Local storage is a development fallback. Production deployment on Vercel requires Cloudinary for durable user-uploaded media.
+Local storage is a development fallback. Hostinger is the production target, and production requires Cloudinary for durable user-uploaded media across builds and releases.
 
 ## SEO and deployment architecture
 
 The root layout produces global metadata from public settings. Individual pages define their own metadata as needed. `app/robots.ts` and `app/sitemap.ts` expose crawl metadata. JSON-LD helpers cover organization, FAQ, blog posts, and tours.
 
-The intended deployed topology is Vercel hosting the Next.js application, managed PostgreSQL (documented recommendation: Neon), and Cloudinary media. No deployment pipeline, CI workflow, or Vercel configuration file is checked into this repository.
+The intended deployed topology is Hostinger hosting the Next.js application/domain/email, Neon PostgreSQL providing the production database, Cloudinary storing production media, and GitHub carrying reviewed source. No automated deployment pipeline, CI workflow, or Hostinger configuration file is checked into this repository.

@@ -14,6 +14,7 @@ This is a repository-derived history, not a product release log. It summarizes t
 | 2026-06-16 to 2026-06-18 | Admin users, homepage editor, Cloudinary, gallery album commits | Role-based user administration, editable homepage sections, Cloudinary with local fallback, and album-based gallery management were added. |
 | 2026-06-20 to 2026-06-21 | Hero/header/mobile/featured-card commits | Cinematic hero/header behavior and mobile navigation/layout received focused refinement. |
 | 2026-06-23 to 2026-07-11 | Content-type, admin reliability, upload, booking/launch commits | Activities/hotels, revalidation, settings consistency, uploads, and booking/inquiry readiness were iterated. |
+| 2026-07-21 | `36097d0` — `chore: add prisma baseline migration` | Replaced the two incomplete additive migrations with the complete `prisma/migrations/0_init` baseline. |
 
 ## Important architectural decisions
 
@@ -38,7 +39,7 @@ The history records a Book Now → Trip Planner → WhatsApp flow, a richer tour
 
 ## Image upload improvements
 
-History records a local image system, later migration of admin uploads to Cloudinary with local fallback, gallery multi-photo uploads, and homepage upload fixes. Current source validates types/sizes, supports Cloudinary, and treats Cloudinary as required for safe Vercel uploads.
+History records a local image system, later migration of admin uploads to Cloudinary with local fallback, gallery multi-photo uploads, and homepage upload fixes. Current source validates types/sizes and supports Cloudinary; current production documentation requires Cloudinary for durable Hostinger uploads.
 
 ## Known design decisions
 
@@ -48,4 +49,4 @@ History records a local image system, later migration of admin uploads to Cloudi
 
 ## Current direction
 
-The latest committed change is `204ffc3` (2026-07-11), “Finalize booking flows and launch readiness.” The checked-out working tree also contains uncommitted presentation/content-polish changes around homepage wording, listing-card prices/review states, footer links, and mobile card styling. Those changes are intentionally not represented as a historical release because they are not committed.
+The latest committed change is `36097d0` (2026-07-21), `chore: add prisma baseline migration`. The repository now has a complete initial Prisma migration instead of the two superseded additive migrations. Current deployment direction is Hostinger for the Next.js app/domain/email, Neon PostgreSQL for production data, Cloudinary for uploads, and GitHub for reviewed source delivery.

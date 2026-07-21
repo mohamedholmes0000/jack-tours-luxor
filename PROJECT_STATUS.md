@@ -1,6 +1,6 @@
 # Project Status
 
-Last repository inspection: 2026-07-19. This status describes the checked-out working tree, including existing uncommitted presentation/content-polish changes. It does not claim production services are configured or live.
+Last repository inspection: 2026-07-21. The Prisma baseline is committed at `36097d0`, pushed to `main`, tested on blank PostgreSQL 18 and schema-audit databases, and registered as applied on production. This does not claim the Hostinger application runtime or all production integrations are configured and live.
 
 ## Completed features
 
@@ -27,20 +27,22 @@ Last repository inspection: 2026-07-19. This status describes the checked-out wo
 
 ## Production readiness
 
-The application passed the repository's previously recorded checks during the current workspace session: lint, TypeScript no-emit check, production build, and Prisma schema validation. Public routes were also loaded locally in Chrome with successful HTTP responses.
+`npx prisma validate` and `npm run build` pass on commit `36097d0`. Source lint also passes; `eslint.config.mjs` now excludes only the generated `.codex-browser-check/**` artifact so real project lint errors remain visible.
 
-This does **not** establish launch readiness. A production launch still depends on a real PostgreSQL database, valid authentication secrets/URLs, Cloudinary configuration for uploads, production content, and end-to-end verification against those services.
+The complete `0_init` migration baseline is committed and was tested on a blank PostgreSQL 18 database. The existing Neon production database has `0_init` registered as applied without executing baseline SQL or changing application row counts.
+
+Launch readiness still depends on verified Hostinger runtime/environment configuration, Cloudinary, production authentication, and end-to-end checks of admin saves and inquiries.
 
 ## Launch blockers
 
-1. **Fresh database migration path is incomplete in the repository.** Only additive migrations for `Destination.type/subtitle` and `Tour.contentType` are tracked; no initial migration that creates the base tables is present. Do not run the documented migration commands against a blank production database without first resolving this deliberately and safely.
-2. **Production services cannot be verified from the repository.** Database, Vercel project, domain/DNS, Cloudinary account, and environment-variable configuration are external state.
-3. **No delivery workflow for new inquiries.** Leads are stored in the database and can be reviewed in admin, but no email/CRM notification integration exists.
-4. **Initial admin access needs production hardening.** The seed creates an initial admin user; review/reset it before production use.
+1. **Hostinger runtime and environment are external state.** Confirm the selected plan supports the required Node.js/Next.js runtime, build/start commands, HTTPS domain, and all required environment variables.
+2. **Production integrations need end-to-end verification.** Neon PostgreSQL is the production database and the baseline is registered, but admin authentication, persisted inquiries, and Cloudinary uploads still need verification through the deployed application.
+3. **No delivery workflow for new inquiries.** Leads are stored in PostgreSQL and reviewed in admin, but no email/CRM notification integration exists.
+4. **Initial admin access needs production hardening.** Do not use the seed/default credential in production.
 
 ## Technical debt and pending improvements
 
-- Create and review a complete migration baseline, then document an unambiguous production migration procedure.
+- Keep every future Prisma schema change in a reviewed migration, test it on an isolated database, back up production, and use only the approved production migration procedure.
 - Add automated test coverage and CI; no test directory or GitHub Actions workflow was found.
 - Add error monitoring, uptime monitoring, and performance measurement.
 - Define an operational path for inquiry notification and response ownership.
@@ -49,15 +51,15 @@ This does **not** establish launch readiness. A production launch still depends 
 
 ## Known bugs / risks
 
-- Fresh-environment Prisma migration instructions in `README.md` cannot be assumed to work from the tracked migrations alone because the initial migration is absent.
-- Local image uploads are ephemeral on Vercel; homepage upload code explicitly requires Cloudinary there, and all production uploads should use Cloudinary.
-- The checkout currently has pre-existing uncommitted UI/content-polish changes in seven application files. They are not part of the last commit and should be reviewed/committed separately.
-- `.codex-browser-check/` is an untracked local browser-check artifact created during inspection; it is not application code.
+- Production must use Cloudinary for durable uploads; the local `public/uploads` fallback is development-only and should not be relied on across Hostinger builds or releases.
+- The seed upserts CMS records and an initial admin account. It is not an approved production data-loading command.
+- Public fallback content can keep pages visible while database-backed admin saves and inquiries fail; operational verification must include those write paths.
+- `.codex-browser-check/` is a generated browser-testing artifact. ESLint ignores that folder only; application source remains linted.
 
 ## Current priorities
 
-1. Preserve/review the existing uncommitted UI and content changes.
-2. Make the database bootstrap/migration history safe for a blank environment.
-3. Configure and verify production environment variables, Neon/PostgreSQL, Cloudinary, and the admin login.
-4. Enter and publish real catalog and CMS content.
-5. Test every inquiry route through to the staff response process.
+1. Configure and verify the Hostinger Node.js runtime and production environment variables.
+2. Verify Neon-backed admin login, CMS writes, and inquiry persistence through the deployed application.
+3. Configure and test Cloudinary production uploads.
+4. Confirm the production admin credential is unique and not seed-derived.
+5. Enter final catalog/CMS content and test every inquiry route through the staff response process.

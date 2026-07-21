@@ -65,7 +65,7 @@ Prisma models cover:
 - Gallery: `GalleryCategory`, `GalleryAlbum`, `GalleryImage`.
 - CMS settings: `SiteSetting`, `HomepageSettings`, listing-page settings, About/Contact/Gallery/Trip Planner page settings, `GlobalSettings`, and `HeaderFooter`.
 
-`prisma/seed.ts` upserts baseline content and an admin user. Treat it as development/bootstrap data, not as a safe production content-import tool without reviewing its effects.
+`prisma/migrations/0_init/migration.sql` is the complete initial migration baseline. It was tested on blank PostgreSQL 18 and registered as applied on the existing Neon production database. `prisma/seed.ts` upserts CMS content and an admin user; it is development/bootstrap data and must not be run on production.
 
 ## Authentication and admin architecture
 
@@ -95,7 +95,7 @@ The homepage search panels submit URL query parameters to tours, activities, or 
 - Admin uploads accept JPEG, PNG, and WebP files up to 5 MB.
 - If all Cloudinary environment variables exist, images go to `jack-tours/<folder>` in Cloudinary with automatic quality/format transformation.
 - Without Cloudinary, uploads are written to `public/uploads/<folder>` and served by local upload route handlers.
-- Homepage uploads explicitly reject the local fallback when running on Vercel without Cloudinary.
+- Production uploads must use Cloudinary. The homepage handler also contains a legacy platform-specific fallback rejection inherited from the implementation, but Hostinger is the production target.
 - Trusted image sources are local allowed paths plus Unsplash, i.ibb.co, and Cloudinary; `lib/images.ts` enforces this for admin image sources.
 
 ## Design, responsive, and UX rules
@@ -118,12 +118,14 @@ The homepage search panels submit URL query parameters to tours, activities, or 
 
 ## Deployment philosophy and production safety
 
-- Intended hosting is Vercel for the Next.js app, Neon (or another managed PostgreSQL) for data, and Cloudinary for production media.
-- Vercel must not rely on local filesystem uploads; configure Cloudinary first.
+- Production target: Hostinger for the Next.js app, domain, DNS, and email; Neon PostgreSQL for data; Cloudinary for durable media; GitHub for reviewed source delivery.
+- Confirm the selected Hostinger plan supports the required Node.js version, environment variables, `npm run build`, and a persistent `npm run start` process. Avoid a VPS unless managed hosting cannot satisfy those requirements.
+- Do not rely on local filesystem uploads in production; configure Cloudinary first.
 - Do not expose or commit `DATABASE_URL`, `NEXTAUTH_SECRET`, or Cloudinary credentials.
 - Set a unique strong `NEXTAUTH_SECRET`, production `NEXTAUTH_URL`, and canonical `NEXT_PUBLIC_SITE_URL` before deployment.
 - Change/remove any seeded initial admin credential before granting production access.
-- Make a database backup and test migrations on a disposable/staging database before production schema changes.
+- `0_init` is already registered on production. Do not rerun it, resolve it again, use `db push`, or run seed on production.
+- Future migrations require a backup, isolated testing, review, and a separately approved `prisma migrate deploy` step.
 
 ## AI and Codex workflow
 
@@ -152,14 +154,13 @@ The homepage search panels submit URL query parameters to tours, activities, or 
 - Activities and hotels have no static fallback catalog; they remain empty until published database records exist.
 - The safe database wrapper can keep public pages visible during a database outage, but it can also mask database failures from visitors; admin writes and inquiries will fail rather than silently succeed.
 - Inquiry capture stores leads only. It does not send email notifications or create a reservation.
-- No test suite, CI workflow, Vercel project configuration, or deployment workflow file was found in the repository.
-- Only two Prisma migration directories are currently tracked, both additive migrations. A complete initial-schema migration is not present in the repository. See `DEVELOPER_SETUP.md` and `PROJECT_STATUS.md` before assuming a fresh database can use `prisma migrate` safely.
+- No automated test suite, CI workflow, Hostinger deployment configuration, or deployment workflow file is checked into the repository.
+- A complete `0_init` baseline is tracked and production has it registered as applied. Future migration safety still depends on backup, isolated testing, review, and controlled deployment.
 
 ## Forward roadmap suggested by the current codebase
 
 These are gaps visible in the implementation, not committed business promises:
 
-- Establish a complete, reviewed Prisma migration baseline for fresh environments.
 - Add production lead notification/CRM handling and an inquiry follow-up workflow.
 - Add automated tests and CI before frequent production releases.
 - Populate and operate activities, hotels, destinations, gallery albums, and editorial content through the CMS.

@@ -8,9 +8,9 @@
 | Node.js | Node 20 LTS or later compatible with Next.js 16; use the version required by your deployment platform where possible |
 | npm | Bundled with Node.js; this repository has `package-lock.json` |
 | VS Code | Current stable version |
-| PostgreSQL | Local PostgreSQL 15+ for local data, or a managed PostgreSQL database such as Neon |
+| PostgreSQL | Local PostgreSQL 15+ for development; production uses Neon PostgreSQL |
 | Cloudinary account | Required for durable production image uploads |
-| Vercel account/CLI | Needed only when deploying to Vercel |
+| Hostinger account/plan | Required for the production Next.js app, domain, DNS, and email; confirm managed Node.js support |
 
 Recommended VS Code extensions: ESLint, Prisma, Tailwind CSS IntelliSense, EditorConfig (if adopted later), and GitLens (optional).
 
@@ -51,30 +51,37 @@ openssl rand -base64 32
 
 If OpenSSL is unavailable, generate an equivalently strong random secret with a trusted local secret-management tool.
 
-## Database setup — important migration warning
+## Database setup — Prisma baseline
 
-The Prisma schema is complete, but the repository only tracks two additive migration folders and does **not** contain an initial migration that creates the base schema. Therefore, `npm run prisma:migrate` / `prisma migrate dev` must not be assumed to initialize a blank database successfully.
+The complete baseline migration is tracked at `prisma/migrations/0_init/migration.sql`. It was tested successfully on a blank PostgreSQL 18 database. Production uses Neon PostgreSQL and already has `0_init` registered as applied.
 
-For a disposable local development database, after reviewing the schema, the practical bootstrap command is:
+For a new blank local or disposable development database:
 
 ```powershell
-npx prisma db push
+npx prisma migrate deploy
+```
+
+The seed is optional development/bootstrap data. Review `prisma/seed.ts` first and run it only against a disposable local database:
+
+```powershell
 npm run prisma:seed
 ```
 
-This synchronizes the current schema without creating migration history. It is **not** a substitute for a reviewed production migration strategy. Before building a production environment, create/recover and commit a proper initial migration baseline, or have the database owner provide the established schema and migration history.
+Command boundaries:
 
-Useful Prisma commands:
+- `npm run prisma:migrate` invokes `prisma migrate dev`. Use it only to author migrations against a local/disposable development database.
+- `npm run db:setup` also runs the seed. It is local-only and must never target production.
+- `prisma db push` is not part of the production workflow.
+- Never rerun `0_init` or `migrate resolve` on the existing Neon production database.
+- Future production migrations require a backup, isolated testing, review, and a separately approved `prisma migrate deploy` step.
+
+Useful safe local commands:
 
 ```powershell
 npm run prisma:generate
 npx prisma validate
-npx prisma db push
-npm run prisma:seed
 npm run prisma:studio
 ```
-
-`npm run db:setup` and `npm run prisma:migrate` are present in `package.json`, but the migration warning above applies to a blank database.
 
 ## Day-to-day commands
 
@@ -92,15 +99,11 @@ Do not carry the seed admin credential into production. Reset it after database 
 
 ## Deployment commands
 
-This repository has no Vercel project metadata or scripted deployment command. After linking the correct Vercel project and setting environment variables, typical manual CLI commands are:
+The production target is Hostinger, with Neon PostgreSQL and Cloudinary. This repository contains no generic deployment script because the exact Git/build/start controls depend on the selected Hostinger plan.
 
-```powershell
-npx vercel link
-npx vercel
-npx vercel --prod
-```
+Configure the Hostinger application to install dependencies, run `npm run build`, and start with `npm run start`. Set production environment variables in Hostinger rather than committing an `.env` file. Do not attach migration, seed, or database setup commands to the application deployment.
 
-Run production database schema work only using the reviewed migration plan for that environment; do not use `db push` casually against production.
+Avoid a VPS unless the managed Hostinger runtime cannot support the required Next.js 16 Node.js process.
 
 ## Git workflow
 
@@ -126,6 +129,6 @@ Run that only when the path is your intended trusted working copy.
 | Public site shows fallback content | `DATABASE_URL` is missing, equals the placeholder, or database access failed. Check server logs and database connectivity. |
 | Admin cannot save / inquiries return 503 | Database is unavailable or unconfigured; public fallback does not make writes work. |
 | Admin login loops to login | Set `NEXTAUTH_SECRET` and correct `NEXTAUTH_URL`; ensure the admin user exists and is active. |
-| Uploads fail on Vercel | Set all three Cloudinary variables. Local filesystem uploads are not durable on Vercel. |
+| Uploads fail in production | Set all three Cloudinary variables. The local filesystem fallback is development-only and must not be treated as durable Hostinger storage. |
 | Images fall back to Karnak image | The image source is not an allowed local path or one of the trusted remote hosts in `lib/images.ts`. |
-| Fresh `prisma migrate` fails | See the missing-initial-migration warning above; do not improvise production migration repairs. |
+| Fresh local migration fails | Confirm the database is blank/disposable and run `npx prisma migrate deploy` so the tracked `0_init` baseline is applied. Never improvise against production. |

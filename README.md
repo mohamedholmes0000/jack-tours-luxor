@@ -28,7 +28,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER="201096586292"
 
 `NEXTAUTH_SECRET` is required for admin sessions in production. Generate a strong value before deploying.
 It is also required in local development because the admin middleware protects `/admin/*`
-routes with NextAuth JWT sessions. Set the same variable in Vercel before using the Admin CMS.
+routes with NextAuth JWT sessions. Set the same variable in the Hostinger production environment before using the Admin CMS.
 
 Generate a strong local value with:
 
@@ -46,34 +46,25 @@ Open `http://localhost:3000`.
 
 ## Database Setup
 
-The public website is designed to build and run with static fallback content when no real database is configured. Admin saves and persisted inquiries require PostgreSQL.
+The public website can build and run with static fallback content when no real database is configured. Admin saves and persisted inquiries require the production Neon PostgreSQL database.
 
-Run migrations:
+A complete Prisma baseline is tracked at `prisma/migrations/0_init/migration.sql`. It was tested against a blank PostgreSQL 18 database, and production has already registered `0_init` as applied.
+
+For a new blank local or disposable test database only:
 
 ```bash
-npm run prisma:migrate
+npx prisma migrate deploy
 ```
 
-Seed initial content and the first admin user:
+The seed is development/bootstrap data and changes CMS records and the initial admin account. Run it only on a disposable local database after reviewing `prisma/seed.ts`:
 
 ```bash
 npm run prisma:seed
 ```
 
-Or run the combined setup:
+`npm run prisma:migrate` uses `prisma migrate dev` and `npm run db:setup` also runs the seed. Both are local-development commands and must never be used against production.
 
-```bash
-npm run db:setup
-```
-
-Seeded admin login:
-
-```txt
-Email: admin@jacktoursluxor.com
-Password: Admin2024!
-```
-
-Change this password after production setup by updating the seeded admin user in the database.
+Do not run `migrate resolve` again on production, do not use `db push` on production, and do not seed production. Future schema changes require a reviewed migration, a fresh backup, testing on an isolated branch/database, and an approved `prisma migrate deploy` step.
 
 ## Admin CMS
 
@@ -97,44 +88,37 @@ Admin API routes are protected by session/auth.
 
 ## Environment Variables
 
-- `DATABASE_URL`: PostgreSQL connection string. Use Neon or another managed PostgreSQL provider for deployment.
-- `NEXTAUTH_SECRET`: required locally and on Vercel for NextAuth admin sessions and protected admin routes.
+- `DATABASE_URL`: Neon PostgreSQL connection string for production; use a separate local/disposable PostgreSQL database for development and migration testing.
+- `NEXTAUTH_SECRET`: required locally and in the Hostinger production environment for NextAuth admin sessions and protected admin routes.
 - `NEXTAUTH_URL`: deployed app URL, for example `https://example.com`.
 - `NEXT_PUBLIC_SITE_URL`: public canonical site URL used by metadata, robots, and sitemap.
 - `NEXT_PUBLIC_WHATSAPP_NUMBER`: WhatsApp number used by public CTAs.
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`: required for durable production uploads.
 
 No secrets should be committed. `.env*` is ignored except `.env.example`.
 
 ## Deployment Recommendation
 
-Recommended MVP deployment:
+Current production direction:
 
-- Vercel for the Next.js application
-- Neon PostgreSQL for the database
-- Hostinger only for domain/DNS/email if you already use it
+- Hostinger for the Next.js application, domain, DNS, and email
+- Neon PostgreSQL for production data
+- Cloudinary for durable production uploads
+- GitHub `main` as the reviewed source branch
 
-Hostinger shared hosting is not ideal for running this full Next.js app directly. It usually lacks the runtime, deployment workflow, and serverless/Node infrastructure expected by this project. Point the domain DNS from Hostinger to Vercel instead.
+Use a Hostinger plan that supports the Node.js version required by Next.js 16, environment variables, `npm run build`, and a persistent `npm run start` process. Avoid a VPS unless the managed Hostinger application runtime cannot satisfy those requirements.
 
 ## Production Checklist
 
-1. Create a Neon PostgreSQL database.
-2. Set all environment variables in Vercel, including `NEXTAUTH_SECRET`.
-3. Run Prisma migration against the production database:
-
-```bash
-npm run prisma:migrate
-```
-
-4. Seed the database:
-
-```bash
-npm run prisma:seed
-```
-
-5. Log into `/admin/login`.
-6. Update site settings, tours, FAQs, gallery, and blog content.
-7. Replace the seeded admin password.
-8. Verify WhatsApp CTAs and trip/contact/tour inquiry forms.
+1. Confirm `main` is clean, reviewed, and pushed to GitHub.
+2. Confirm the Hostinger runtime supports the required Node.js and Next.js versions.
+3. Set `DATABASE_URL` for the existing Neon PostgreSQL production database.
+4. Set `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `NEXT_PUBLIC_SITE_URL`, and `NEXT_PUBLIC_WHATSAPP_NUMBER` in Hostinger.
+5. Configure all three Cloudinary variables before enabling admin uploads.
+6. Do not rerun `0_init`, `migrate resolve`, `db push`, or the seed on production.
+7. Build and start the application through the approved Hostinger workflow.
+8. Log into `/admin/login` and confirm the production admin credential is not the seed/default credential.
+9. Verify public pages, WhatsApp CTAs, admin saves, uploads, and all inquiry forms end to end.
 
 ## Verification Commands
 
@@ -147,4 +131,4 @@ npx prisma validate
 
 ## Fallback Behavior
 
-If `DATABASE_URL` is missing, still set to the local placeholder, or unavailable, public pages fall back to static seed-aligned content from `lib/content.ts`. Forms still open WhatsApp even if database persistence fails.
+If `DATABASE_URL` is missing, set to the local placeholder, or unavailable, public pages fall back to static seed-aligned content from `lib/content.ts`. Forms still open WhatsApp even if database persistence fails.
