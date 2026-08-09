@@ -163,38 +163,39 @@ export function MobileNavigation({
       {/* mobile header wrapper */}
       <div className={`site-main-header relative z-[100] border-b transition-[background,border-color,box-shadow] duration-200 ease-in-out md:hidden ${isHomeRoute ? "site-mobile-header-home" : ""} ${isHomeRoute && isNavStuck ? "header-stuck" : ""}`}>
         <div
-          className={`container-premium grid grid-cols-[1fr_auto_1fr] items-center gap-2 ${isHomeRoute ? "h-14" : "h-[60px]"}`}
+          className="container-premium relative flex h-14 items-center justify-between"
         >
           <button
             type="button"
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isOpen}
-            onPointerUp={(event) => { if (event.pointerType === "touch") { event.preventDefault(); toggleMenu(); } }}
+            aria-controls="mobile-navigation-panel"
             onClick={toggleMenu}
-            className={`grid place-items-center justify-self-start transition hover:text-[var(--color-gold)] ${isHomeRoute ? "size-9 text-white" : "size-10 text-[var(--color-navy)]"}`}
+            className={`relative z-10 grid size-11 touch-manipulation place-items-center transition active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-gold)] ${isHomeRoute ? "text-white hover:text-[var(--color-gold-light)]" : "text-[var(--color-navy)] hover:text-[var(--color-gold)]"}`}
           >
-            <MenuIcon className={isHomeRoute ? "size-5" : "size-[22px]"} strokeWidth={1.7} />
+            <MenuIcon className="size-[22px]" strokeWidth={1.7} />
           </button>
 
           <div className="contents">
             <Link
               href="/"
-              className="flex flex-col items-center justify-center leading-none"
+              className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center whitespace-nowrap leading-none"
               onClick={closeMenu}
             >
-              <span className={`font-serif font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-gold)] ${isHomeRoute ? "text-[1.08rem]" : "text-[1.2rem]"}`}>
+              <span className={`font-serif text-[1.12rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-gold)] ${isHomeRoute ? "text-[var(--color-gold-light)]" : ""}`}>
                 {settings.logoLine1}
               </span>
-              <span className={`mt-0.5 font-sans font-medium uppercase tracking-[0.15em] ${isHomeRoute ? "text-[0.48rem] text-white/70" : "text-[0.52rem] text-[var(--color-navy)]/70"}`}>
+              <span className={`mt-0.5 font-sans text-[0.48rem] font-medium uppercase tracking-[0.16em] ${isHomeRoute ? "text-white/72" : "text-[var(--color-navy)]/70"}`}>
                 {settings.logoLine2}
               </span>
             </Link>
 
             <Link
-              className={`inline-flex shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] font-sans font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_8px_18px_rgb(214_173_84_/_16%)] transition hover:bg-[var(--color-gold-light)] justify-self-end ${isHomeRoute ? "min-h-[34px] px-2.5 py-1 text-[0.6rem]" : "min-h-9 px-3 py-1.5 text-[0.64rem]"}`}
+              className="relative z-10 inline-flex min-h-11 min-w-14 shrink-0 touch-manipulation items-center justify-center rounded-md bg-[var(--color-gold)] px-3 py-2 font-sans text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-[var(--color-navy)] shadow-[0_8px_18px_rgb(214_173_84_/_16%)] transition hover:bg-[var(--color-gold-light)] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               href={settings.bookNowHref}
+              aria-label={inquiryCtaLabel}
             >
-              {inquiryCtaLabel}
+              Plan
             </Link>
           </div>
         </div>
@@ -206,6 +207,7 @@ export function MobileNavigation({
         }`}
         onClick={closeMenu}
         aria-hidden={!isOpen}
+        inert={!isOpen}
       >
         <div
           aria-hidden
@@ -214,7 +216,8 @@ export function MobileNavigation({
           }`}
         />
         <aside
-          className={`mobile-menu-panel absolute left-0 top-14 flex h-[calc(100dvh-3.5rem)] w-full flex-col bg-[var(--color-navy)] p-6 text-white shadow-[0_30px_60px_rgba(0,0,0,0.45)] transition-transform duration-300 ease-out will-change-transform ${
+          id="mobile-navigation-panel"
+          className={`absolute left-0 top-14 flex h-[calc(100dvh-3.5rem)] w-full flex-col bg-[var(--color-navy)] p-6 text-white shadow-[0_30px_60px_rgba(0,0,0,0.45)] transition-transform duration-300 ease-out will-change-transform ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
           aria-label="Mobile navigation"
