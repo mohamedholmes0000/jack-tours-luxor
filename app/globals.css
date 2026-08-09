@@ -1272,6 +1272,14 @@ body:has(.public-site) footer {
   bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
+@media (max-width: 767px) {
+  body:has([data-trip-finder-sheet="true"]) .floating-whatsapp {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+}
+
 @media (max-width: 1024px) {
   .home-hero-content,
   .public-site-home [data-home-hero="true"] > .home-hero-content {

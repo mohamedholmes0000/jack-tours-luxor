@@ -91,6 +91,7 @@ function SelectionField({
           />
           <div
             ref={panelRef}
+            data-trip-finder-sheet="true"
             id={panelId}
             role="listbox"
             aria-label={label}
@@ -209,6 +210,7 @@ function RangeField({
             onClick={closeAndRestoreFocus}
           />
           <div
+            data-trip-finder-sheet="true"
             id={panelId}
             className="fixed inset-x-3 bottom-3 z-[90] rounded-[1.25rem] bg-white p-5 shadow-[0_28px_70px_rgb(6_17_31_/_30%)] md:absolute md:inset-x-4 md:bottom-auto md:top-[calc(100%+0.55rem)] md:min-w-[18rem] md:rounded-xl md:border md:border-[rgb(6_17_31_/_10%)]"
           >
@@ -224,37 +226,43 @@ function RangeField({
               </button>
             </div>
 
-            <div className="mt-5">
-              <div
-                aria-hidden="true"
-                className="h-2 rounded-full"
-                style={{
-                  background: `linear-gradient(to right, rgb(231 226 216) ${minimumPercent}%, var(--color-gold-dark) ${minimumPercent}%, var(--color-gold-dark) ${maximumPercent}%, rgb(231 226 216) ${maximumPercent}%)`,
-                }}
-              />
-              <div className="relative -mt-5 h-11">
-                <input
-                  type="range"
-                  aria-label={`Minimum ${label}`}
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={valueMin}
-                  onChange={(event) => onMinChange(Math.min(Number(event.target.value), valueMax - step))}
-                  className="pointer-events-none absolute inset-x-0 top-2 h-8 w-full appearance-none bg-transparent [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:bg-[var(--color-gold-dark)] [&::-moz-range-track]:h-2 [&::-moz-range-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-2 [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-[var(--color-gold-dark)]"
-                />
-                <input
-                  type="range"
-                  aria-label={`Maximum ${label}`}
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={valueMax}
-                  onChange={(event) => onMaxChange(Math.max(Number(event.target.value), valueMin + step))}
-                  className="pointer-events-none absolute inset-x-0 top-2 h-8 w-full appearance-none bg-transparent accent-[var(--color-gold-dark)] [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:pointer-events-auto"
-                />
+            <div className="mt-5 space-y-3">
+              <div className="flex items-center justify-between gap-4 text-sm font-semibold tabular-nums text-[var(--color-navy)]">
+                <span className="min-w-0 rounded-md bg-[var(--color-ivory)] px-2.5 py-1.5">{prefix}{valueMin}</span>
+                <span className="min-w-0 rounded-md bg-[var(--color-ivory)] px-2.5 py-1.5">{prefix}{valueMax}</span>
               </div>
-              <p className="text-right text-sm text-[var(--color-navy)]/62">{summary}</p>
+              <div className="pt-1">
+                <div
+                  aria-hidden="true"
+                  className="h-2 rounded-full"
+                  style={{
+                    background: `linear-gradient(to right, rgb(231 226 216) ${minimumPercent}%, var(--color-gold-dark) ${minimumPercent}%, var(--color-gold-dark) ${maximumPercent}%, rgb(231 226 216) ${maximumPercent}%)`,
+                  }}
+                />
+                <div className="relative -mt-5 h-11">
+                  <input
+                    type="range"
+                    aria-label={`Minimum ${label}`}
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={valueMin}
+                    onChange={(event) => onMinChange(Math.min(Number(event.target.value), valueMax - step))}
+                    className="pointer-events-none absolute inset-x-0 top-2 h-8 w-full appearance-none bg-transparent [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:bg-[var(--color-gold-dark)] [&::-moz-range-track]:h-2 [&::-moz-range-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-2 [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-[var(--color-gold-dark)]"
+                  />
+                  <input
+                    type="range"
+                    aria-label={`Maximum ${label}`}
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={valueMax}
+                    onChange={(event) => onMaxChange(Math.max(Number(event.target.value), valueMin + step))}
+                    className="pointer-events-none absolute inset-x-0 top-2 h-8 w-full appearance-none bg-transparent accent-[var(--color-gold-dark)] [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:pointer-events-auto"
+                  />
+                </div>
+              </div>
+              <p className="text-right text-sm font-medium tabular-nums text-[var(--color-navy)]/62">{summary}</p>
             </div>
           </div>
         </>
