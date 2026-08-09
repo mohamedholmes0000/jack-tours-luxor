@@ -23,7 +23,16 @@ function ChevronLeftIcon() {
 function ChevronRightIcon() {
   return (
     <svg aria-hidden="true" className="size-5" viewBox="0 0 24 24" fill="none">
-      <path d="m9 18 6-6-6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m9 18 6-6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function DestinationMedallion() {
+  return (
+    <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none">
+      <path d="M12 21s6-5.5 6-11a6 6 0 1 0-12 0c0 5.5 6 11 6 11Z" stroke="currentColor" strokeWidth="1.7" />
+      <circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="1.7" />
     </svg>
   );
 }
@@ -31,14 +40,10 @@ function ChevronRightIcon() {
 export function DestinationCarousel({ items }: { items: DestinationCarouselItem[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const mobileTrackRef = useRef<HTMLDivElement>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  const lastStepRef = useRef<number>(0);
-  const resumeTimerRef = useRef<number | null>(null);
   const [activeMobileIndex, setActiveMobileIndex] = useState(0);
   const [canScroll, setCanScroll] = useState(false);
   const [canScrollPrevious, setCanScrollPrevious] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const dragStateRef = useRef({
     isDragging: false,
     startScrollLeft: 0,
@@ -46,26 +51,11 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
     suppressClick: false,
   });
 
-  function pauseThenResume() {
-    setIsPaused(true);
-
-    if (resumeTimerRef.current) {
-      window.clearTimeout(resumeTimerRef.current);
-    }
-
-    resumeTimerRef.current = window.setTimeout(() => {
-      setIsPaused(false);
-    }, 2600);
-  }
-
   function startDrag(clientX: number) {
     const track = trackRef.current;
 
-    if (!track) {
-      return;
-    }
+    if (!track) return;
 
-    pauseThenResume();
     dragStateRef.current = {
       isDragging: true,
       startScrollLeft: track.scrollLeft,
@@ -78,9 +68,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
     const track = trackRef.current;
     const drag = dragStateRef.current;
 
-    if (!track || !drag.isDragging) {
-      return;
-    }
+    if (!track || !drag.isDragging) return;
 
     const distance = clientX - drag.startX;
 
@@ -96,9 +84,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
   }
 
   function shouldSuppressClick() {
-    if (!dragStateRef.current.suppressClick) {
-      return false;
-    }
+    if (!dragStateRef.current.suppressClick) return false;
 
     window.setTimeout(() => {
       dragStateRef.current.suppressClick = false;
@@ -111,21 +97,16 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
     const track = trackRef.current;
     const firstCard = track?.firstElementChild as HTMLElement | null;
 
-    if (!track) {
-      return 0;
-    }
+    if (!track) return 0;
 
-    return firstCard ? firstCard.getBoundingClientRect().width + 32 : track.clientWidth * 0.7;
+    return firstCard ? firstCard.getBoundingClientRect().width + 20 : track.clientWidth * 0.7;
   }
 
   function scrollByCard(direction: "previous" | "next") {
     const track = trackRef.current;
 
-    if (!track) {
-      return;
-    }
+    if (!track) return;
 
-    pauseThenResume();
     track.scrollBy({
       left: direction === "next" ? getScrollStep() : -getScrollStep(),
       behavior: "smooth",
@@ -138,19 +119,18 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
 
     if (!track || !firstCard) return;
 
-    const cardWidth = firstCard.getBoundingClientRect().width;
     const styles = window.getComputedStyle(track);
     const gap = Number.parseFloat(styles.columnGap || styles.gap || "16") || 16;
+    const cardWidth = firstCard.getBoundingClientRect().width;
     const nextIndex = Math.round(track.scrollLeft / (cardWidth + gap));
+
     setActiveMobileIndex(Math.max(0, Math.min(items.length - 1, nextIndex)));
   }
 
   useEffect(() => {
     const track = trackRef.current;
 
-    if (!track) {
-      return;
-    }
+    if (!track) return;
 
     const trackEl = track;
 
@@ -172,105 +152,57 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
     };
   }, [items.length]);
 
-  useEffect(() => {
-    if (isPaused) {
-      return;
-    }
-
-    const track = trackRef.current;
-
-    if (!track) {
-      return;
-    }
-
-    const trackEl = track;
-
-    function tick(timestamp: number) {
-      if (timestamp - lastStepRef.current < 2800) {
-        animationFrameRef.current = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      lastStepRef.current = timestamp;
-      const maxScroll = trackEl.scrollWidth - trackEl.clientWidth;
-
-      if (maxScroll <= 0) {
-        animationFrameRef.current = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      if (trackEl.scrollLeft >= maxScroll - 4) {
-        trackEl.scrollTo({ left: 0, behavior: "smooth" });
-        animationFrameRef.current = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      trackEl.scrollBy({ left: getScrollStep(), behavior: "smooth" });
-      animationFrameRef.current = window.requestAnimationFrame(tick);
-    }
-
-    animationFrameRef.current = window.requestAnimationFrame(tick);
-
-    return () => {
-      if (animationFrameRef.current) {
-        window.cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [isPaused]);
-
-  useEffect(() => {
-    return () => {
-      if (resumeTimerRef.current) {
-        window.clearTimeout(resumeTimerRef.current);
-      }
-    };
-  }, []);
-
   return (
-    <div className="container-premium relative mt-8 max-w-[900px] sm:mt-10">
+    <div className="container-premium relative mt-7 max-w-[1180px] sm:mt-8">
       <div className="destination-carousel-mobile-fade relative lg:hidden">
         <div
           ref={mobileTrackRef}
-          className="destinations-mobile-scroll no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-2"
+          className="destinations-mobile-scroll no-scrollbar -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-5 pb-2"
           aria-label="Destinations carousel"
           onScroll={updateMobileActiveIndex}
         >
-        {items.map((item) => (
-          <Link
-            key={item.name}
-            href={item.href}
-            className="flex w-[38vw] min-w-[128px] max-w-[146px] shrink-0 snap-center flex-col items-center text-center"
-          >
-            <span className="relative block size-[118px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)]">
-              <Image
-                src={item.image}
-                alt={item.name}
-                fill
-                sizes="118px"
-                draggable={false}
-                className="object-cover"
-              />
-            </span>
-            <span className="mt-3 max-w-full truncate font-sans text-[15px] font-bold leading-tight text-[var(--color-navy)]">
-              {item.name}
-            </span>
-            <span className="mt-0.5 line-clamp-2 max-w-full text-[11px] font-normal leading-4 text-[rgb(6_17_31_/_60%)]">
-              {item.subtitle}
-            </span>
-            <span className="mt-1 text-[11px] font-medium leading-4 text-[var(--color-gold-dark)]">
-              {item.countLabel}
-            </span>
-          </Link>
-        ))}
+          {items.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="group w-[72vw] min-w-[248px] max-w-[290px] shrink-0 snap-center overflow-hidden rounded-[1rem] border border-[rgb(6_17_31_/_10%)] bg-white text-left shadow-[0_12px_30px_rgb(6_17_31_/_8%)] outline-none transition duration-500 hover:-translate-y-1 hover:shadow-[0_20px_38px_rgb(6_17_31_/_13%)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)]"
+            >
+              <span className="relative block aspect-[4/3] overflow-hidden bg-[var(--color-sand)]">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  fill
+                  sizes="72vw"
+                  draggable={false}
+                  className="object-cover transition duration-700 ease-out group-hover:scale-[1.06]"
+                />
+                <span className="absolute bottom-0 left-1/2 grid size-11 -translate-x-1/2 translate-y-1/2 place-items-center rounded-full border border-[rgb(214_173_84_/_42%)] bg-white text-[var(--color-gold-dark)] shadow-[0_8px_18px_rgb(6_17_31_/_14%)]">
+                  <DestinationMedallion />
+                </span>
+              </span>
+              <span className="block px-4 pb-4 pt-7 text-center">
+                <span className="block font-serif text-[1.3rem] font-semibold leading-none text-[var(--color-navy)]">
+                  {item.name}
+                </span>
+                <span className="mt-2 block line-clamp-2 text-[0.76rem] leading-5 text-[var(--color-navy)]/58">
+                  {item.subtitle}
+                </span>
+                {item.countLabel ? (
+                  <span className="mt-1 block text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[var(--color-gold-dark)]">
+                    {item.countLabel}
+                  </span>
+                ) : null}
+              </span>
+            </Link>
+          ))}
         </div>
 
-        <div className="mt-4 flex justify-center gap-1.5">
+        <div className="mt-5 flex justify-center gap-1.5" aria-hidden="true">
           {items.map((item, index) => (
             <span
               key={item.name}
-              aria-hidden="true"
               className={`h-1 rounded-full transition-all duration-300 ${
-                index === activeMobileIndex ? "w-4 bg-[var(--color-gold)]" : "w-1 bg-[rgb(6_17_31_/_20%)]"
+                index === activeMobileIndex ? "w-5 bg-[var(--color-gold)]" : "w-1.5 bg-[rgb(6_17_31_/_18%)]"
               }`}
             />
           ))}
@@ -278,12 +210,12 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
       </div>
 
       {canScroll ? (
-        <div className="pointer-events-none absolute left-[-32px] right-[-32px] top-[46px] z-10 hidden items-center justify-between lg:flex">
+        <div className="pointer-events-none absolute inset-x-[-1.5rem] top-[42%] z-10 hidden items-center justify-between lg:flex">
           <button
             type="button"
             aria-label="Previous destination"
             disabled={!canScrollPrevious}
-            className="pointer-events-auto grid size-12 place-items-center rounded-full bg-white text-[var(--color-navy)] shadow-[0_2px_8px_rgb(0_0_0_/_8%)] transition duration-300 hover:scale-105 hover:shadow-[0_8px_20px_rgb(0_0_0_/_12%)] disabled:pointer-events-none disabled:scale-100 disabled:text-[var(--color-navy)]/25 disabled:shadow-[0_2px_8px_rgb(0_0_0_/_5%)]"
+            className="pointer-events-auto grid size-11 place-items-center rounded-full border border-[rgb(6_17_31_/_10%)] bg-white text-[var(--color-navy)] shadow-[0_8px_20px_rgb(6_17_31_/_12%)] transition hover:-translate-x-0.5 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] disabled:pointer-events-none disabled:opacity-30"
             onClick={() => scrollByCard("previous")}
           >
             <ChevronLeftIcon />
@@ -292,7 +224,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
             type="button"
             aria-label="Next destination"
             disabled={!canScrollNext}
-            className="pointer-events-auto grid size-12 place-items-center rounded-full bg-white text-[var(--color-navy)] shadow-[0_2px_8px_rgb(0_0_0_/_8%)] transition duration-300 hover:scale-105 hover:shadow-[0_8px_20px_rgb(0_0_0_/_12%)] disabled:pointer-events-none disabled:scale-100 disabled:text-[var(--color-navy)]/25 disabled:shadow-[0_2px_8px_rgb(0_0_0_/_5%)]"
+            className="pointer-events-auto grid size-11 place-items-center rounded-full border border-[rgb(6_17_31_/_10%)] bg-white text-[var(--color-navy)] shadow-[0_8px_20px_rgb(6_17_31_/_12%)] transition hover:translate-x-0.5 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] disabled:pointer-events-none disabled:opacity-30"
             onClick={() => scrollByCard("next")}
           >
             <ChevronRightIcon />
@@ -302,52 +234,51 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
 
       <div
         ref={trackRef}
-        className={`no-scrollbar hidden w-full cursor-grab snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth active:cursor-grabbing lg:flex ${
-          canScroll ? "sm:justify-start" : "sm:justify-center"
+        className={`no-scrollbar hidden w-full cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto px-1 py-2 active:cursor-grabbing lg:flex ${
+          canScroll ? "justify-start" : "justify-center"
         }`}
         aria-label="Destinations carousel"
-        onPointerDown={(event) => {
-          startDrag(event.clientX);
-        }}
+        onPointerDown={(event) => startDrag(event.clientX)}
         onPointerLeave={stopDrag}
-        onPointerMove={(event) => {
-          moveDrag(event.clientX);
-        }}
+        onPointerMove={(event) => moveDrag(event.clientX)}
         onPointerUp={stopDrag}
-        onWheel={pauseThenResume}
-        onTouchStart={pauseThenResume}
       >
         {items.map((item) => (
           <Link
             key={item.name}
             href={item.href}
             draggable={false}
-            className="group flex w-[140px] shrink-0 snap-center flex-col items-center text-center outline-none"
+            className="group min-w-[190px] shrink-0 snap-center overflow-hidden rounded-[1rem] border border-[rgb(6_17_31_/_10%)] bg-white text-left shadow-[0_10px_28px_rgb(6_17_31_/_7%)] outline-none transition duration-500 hover:-translate-y-1.5 hover:border-[rgb(214_173_84_/_46%)] hover:shadow-[0_22px_42px_rgb(6_17_31_/_13%)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] xl:min-w-0 xl:flex-1"
             onDragStart={(event) => event.preventDefault()}
             onClick={(event) => {
-              if (shouldSuppressClick()) {
-                event.preventDefault();
-              }
+              if (shouldSuppressClick()) event.preventDefault();
             }}
           >
-            <span className="relative block size-[140px] overflow-hidden rounded-full bg-[var(--color-sand)] shadow-[0_14px_30px_rgb(87_59_22_/_12%)] transition duration-300 ease-out group-hover:scale-105 group-focus-visible:scale-105">
+            <span className="relative block aspect-[4/3] overflow-hidden bg-[var(--color-sand)]">
               <Image
                 src={item.image}
                 alt={item.name}
                 fill
-                sizes="140px"
+                sizes="(min-width: 1280px) 220px, 20vw"
                 draggable={false}
-                className="object-cover transition duration-500 group-hover:scale-105"
+                className="object-cover transition duration-700 ease-out group-hover:scale-[1.06]"
               />
+              <span className="absolute bottom-0 left-1/2 grid size-11 -translate-x-1/2 translate-y-1/2 place-items-center rounded-full border border-[rgb(214_173_84_/_42%)] bg-white text-[var(--color-gold-dark)] shadow-[0_8px_18px_rgb(6_17_31_/_14%)]">
+                <DestinationMedallion />
+              </span>
             </span>
-            <span className="mt-3 font-sans text-[18px] font-bold leading-tight text-[var(--color-navy)]">
-              {item.name}
-            </span>
-            <span className="mt-1 max-w-[140px] text-[13px] font-normal leading-5 text-[rgb(6_17_31_/_50%)]">
-              {item.subtitle}
-            </span>
-            <span className="mt-1 text-[13px] font-normal leading-5 text-[rgb(6_17_31_/_60%)]">
-              {item.countLabel}
+            <span className="block px-4 pb-4 pt-7 text-center">
+              <span className="block font-serif text-[1.35rem] font-semibold leading-none text-[var(--color-navy)]">
+                {item.name}
+              </span>
+              <span className="mt-2 block min-h-10 text-[0.76rem] leading-5 text-[var(--color-navy)]/58">
+                {item.subtitle}
+              </span>
+              {item.countLabel ? (
+                <span className="mt-1 block text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[var(--color-gold-dark)]">
+                  {item.countLabel}
+                </span>
+              ) : null}
             </span>
           </Link>
         ))}

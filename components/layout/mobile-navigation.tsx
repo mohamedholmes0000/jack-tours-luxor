@@ -76,6 +76,11 @@ function buildMobileNavItems(items: Array<{ href: string; label: string }>) {
   ];
 }
 
+function normalizeInquiryCtaLabel(value: string) {
+  const label = value.trim();
+  return !label || label.toLowerCase() === "book now" ? "Plan Your Trip" : label;
+}
+
 export function MobileNavigation({
   isHomeRoute = false,
   isNavStuck = false,
@@ -90,6 +95,7 @@ export function MobileNavigation({
   const phone = settings.phone || "+20 1096586292";
   const phoneHref = phone.replace(/[^\d+]/g, "");
   const email = settings.email || "admin@jacktoursluxor.com";
+  const inquiryCtaLabel = normalizeInquiryCtaLabel(settings.bookNowLabel);
   const navItems = buildMobileNavItems([
     { href: settings.navLink1Url, label: settings.navLink1Label },
     { href: settings.navLink2Url, label: settings.navLink2Label },
@@ -148,23 +154,24 @@ export function MobileNavigation({
     setIsOpen(false);
   }
 
-  function openMenu() {
-    setIsOpen(true);
+  function toggleMenu() {
+    setIsOpen((open) => !open);
   }
 
   return (
     <>
       {/* mobile header wrapper */}
-      <div className={`site-main-header border-b transition-[background,border-color,box-shadow] duration-200 ease-in-out md:hidden ${isHomeRoute ? "site-mobile-header-home" : ""} ${isHomeRoute && isNavStuck ? "header-stuck" : ""}`}>
+      <div className={`site-main-header relative z-[100] border-b transition-[background,border-color,box-shadow] duration-200 ease-in-out md:hidden ${isHomeRoute ? "site-mobile-header-home" : ""} ${isHomeRoute && isNavStuck ? "header-stuck" : ""}`}>
         <div
           className={`container-premium grid grid-cols-[1fr_auto_1fr] items-center gap-2 ${isHomeRoute ? "h-14" : "h-[60px]"}`}
         >
           <button
             type="button"
-            aria-label="Open navigation menu"
+            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isOpen}
-            onClick={openMenu}
-            className={`grid place-items-center justify-self-start text-[var(--color-navy)] transition hover:text-[var(--color-gold-dark)] ${isHomeRoute ? "size-9" : "size-10"}`}
+            onPointerUp={(event) => { if (event.pointerType === "touch") { event.preventDefault(); toggleMenu(); } }}
+            onClick={toggleMenu}
+            className={`grid place-items-center justify-self-start transition hover:text-[var(--color-gold)] ${isHomeRoute ? "size-9 text-white" : "size-10 text-[var(--color-navy)]"}`}
           >
             <MenuIcon className={isHomeRoute ? "size-5" : "size-[22px]"} strokeWidth={1.7} />
           </button>
@@ -178,7 +185,7 @@ export function MobileNavigation({
               <span className={`font-serif font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-gold)] ${isHomeRoute ? "text-[1.08rem]" : "text-[1.2rem]"}`}>
                 {settings.logoLine1}
               </span>
-              <span className={`mt-0.5 font-sans font-medium uppercase tracking-[0.15em] text-[var(--color-navy)]/70 ${isHomeRoute ? "text-[0.48rem]" : "text-[0.52rem]"}`}>
+              <span className={`mt-0.5 font-sans font-medium uppercase tracking-[0.15em] ${isHomeRoute ? "text-[0.48rem] text-white/70" : "text-[0.52rem] text-[var(--color-navy)]/70"}`}>
                 {settings.logoLine2}
               </span>
             </Link>
@@ -187,7 +194,7 @@ export function MobileNavigation({
               className={`inline-flex shrink-0 items-center justify-center rounded-md bg-[var(--color-gold)] font-sans font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] shadow-[0_8px_18px_rgb(214_173_84_/_16%)] transition hover:bg-[var(--color-gold-light)] justify-self-end ${isHomeRoute ? "min-h-[34px] px-2.5 py-1 text-[0.6rem]" : "min-h-9 px-3 py-1.5 text-[0.64rem]"}`}
               href={settings.bookNowHref}
             >
-              {settings.bookNowLabel}
+              {inquiryCtaLabel}
             </Link>
           </div>
         </div>
@@ -207,7 +214,7 @@ export function MobileNavigation({
           }`}
         />
         <aside
-          className={`mobile-menu-panel absolute left-0 top-0 flex h-dvh w-full flex-col bg-[var(--color-navy)] p-6 text-white shadow-[0_30px_60px_rgba(0,0,0,0.45)] transition-transform duration-300 ease-out will-change-transform ${
+          className={`mobile-menu-panel absolute left-0 top-14 flex h-[calc(100dvh-3.5rem)] w-full flex-col bg-[var(--color-navy)] p-6 text-white shadow-[0_30px_60px_rgba(0,0,0,0.45)] transition-transform duration-300 ease-out will-change-transform ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
           aria-label="Mobile navigation"

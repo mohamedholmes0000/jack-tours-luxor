@@ -343,6 +343,37 @@ export async function getFaqsSafe() {
   );
 }
 
+export type PublicTestimonial = {
+  id: string;
+  name: string;
+  location: string | null;
+  rating: number;
+  text: string;
+  source: string | null;
+};
+
+export async function getTestimonialsSafe(): Promise<PublicTestimonial[]> {
+  return tryDatabase(
+    async () => {
+      const dbTestimonials = await prisma.testimonial.findMany({
+        where: { active: true },
+        orderBy: [{ featured: "desc" }, { order: "asc" }, { createdAt: "desc" }],
+        take: 4,
+      });
+
+      return dbTestimonials.map((testimonial) => ({
+        id: testimonial.id,
+        name: testimonial.name,
+        location: testimonial.country || testimonial.nationality,
+        rating: testimonial.rating,
+        text: testimonial.text,
+        source: testimonial.source,
+      }));
+    },
+    [],
+  );
+}
+
 export async function getGalleryImagesSafe(): Promise<GalleryImage[]> {
   const albums = await getGalleryAlbumsSafe();
   return albums.flatMap((album) => album.images);

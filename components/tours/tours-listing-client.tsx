@@ -5,6 +5,10 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { FavoriteHeartButton } from "@/components/tours/favorite-heart-button";
 import type { Tour } from "@/lib/content";
+import {
+  getTourJourneyType,
+  type TourJourneyType,
+} from "@/lib/tour-journey-type";
 
 type SortOption = "recommended" | "price-asc" | "price-desc" | "newest";
 type DurationFilter = "half-day" | "full-day" | "multi-day";
@@ -12,6 +16,7 @@ type DurationFilter = "half-day" | "full-day" | "multi-day";
 type ToursListingClientProps = {
   tours: Tour[];
   initialCategory?: string;
+  initialJourney?: string;
 };
 
 const categoryFilters = [
@@ -133,6 +138,10 @@ function normalizeCategoryFilter(category?: string) {
   );
 
   return matchingFilter ? [matchingFilter.label] : [];
+}
+
+function normalizeJourneyFilter(journey?: string): TourJourneyType | null {
+  return journey === "one-day" || journey === "multi-day" ? journey : null;
 }
 
 function ToggleCheckbox({
@@ -261,14 +270,28 @@ function TourCard({ tour }: { tour: Tour }) {
   );
 }
 
-export function ToursListingClient({ tours, initialCategory }: ToursListingClientProps) {
+export function ToursListingClient({
+  tours,
+  initialCategory,
+  initialJourney,
+}: ToursListingClientProps) {
   const basePriceValues = tours.map((tour) => tour.priceFrom).filter((price) => price > 0);
   const baseMinPrice = Math.floor(Math.min(...basePriceValues, 0));
   const baseMaxPrice = Math.ceil(Math.max(...basePriceValues, 0));
+  const normalizedInitialJourney = normalizeJourneyFilter(initialJourney);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     normalizeCategoryFilter(initialCategory),
   );
-  const [selectedDurations, setSelectedDurations] = useState<DurationFilter[]>([]);
+  const [selectedDurations, setSelectedDurations] = useState<DurationFilter[]>(
+    normalizedInitialJourney === "one-day"
+      ? ["half-day", "full-day"]
+      : normalizedInitialJourney === "multi-day"
+        ? ["multi-day"]
+        : [],
+  );
+  const [selectedJourney, setSelectedJourney] = useState<TourJourneyType | null>(
+    normalizedInitialJourney,
+  );
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState(baseMinPrice);
   const [maxPrice, setMaxPrice] = useState(baseMaxPrice);
@@ -289,6 +312,7 @@ export function ToursListingClient({ tours, initialCategory }: ToursListingClien
     setSelectedCategories([]);
     setSelectedDurations([]);
     setSelectedDestinations([]);
+    setSelectedJourney(null);
     setMinPrice(baseMinPrice);
     setMaxPrice(baseMaxPrice);
   }
@@ -312,10 +336,18 @@ export function ToursListingClient({ tours, initialCategory }: ToursListingClien
         const matchesPrice = !price || (price >= minPrice && price <= maxPrice);
         const matchesDuration =
           !selectedDurations.length || selectedDurations.includes(durationBucket(tour.duration));
+        const matchesJourney =
+          !selectedJourney || getTourJourneyType(tour) === selectedJourney;
         const matchesDestination =
           !selectedDestinations.length || selectedDestinations.includes(tour.city || "Luxor");
 
-        return matchesCategory && matchesPrice && matchesDuration && matchesDestination;
+        return (
+          matchesCategory &&
+          matchesPrice &&
+          matchesDuration &&
+          matchesJourney &&
+          matchesDestination
+        );
       })
       .sort((a, b) => {
         if (sort === "price-asc") {
@@ -333,7 +365,16 @@ export function ToursListingClient({ tours, initialCategory }: ToursListingClien
         return a.index - b.index;
       })
       .map(({ tour }) => tour);
-  }, [maxPrice, minPrice, selectedCategories, selectedDestinations, selectedDurations, sort, tours]);
+  }, [
+    maxPrice,
+    minPrice,
+    selectedCategories,
+    selectedDestinations,
+    selectedDurations,
+    selectedJourney,
+    sort,
+    tours,
+  ]);
 
   const filters = (
     <>

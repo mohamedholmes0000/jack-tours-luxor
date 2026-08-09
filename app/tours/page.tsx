@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 type ToursPageProps = {
-  searchParams?: Promise<{ category?: string }>;
+  searchParams?: Promise<{ category?: string; journey?: string }>;
 };
 
 export default async function ToursPage({ searchParams }: ToursPageProps) {
@@ -39,7 +39,11 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
         </div>
       </section>
 
-      <ToursListingClient tours={tours} initialCategory={params?.category} />
+      <ToursListingClient
+        tours={tours}
+        initialCategory={params?.category}
+        initialJourney={params?.journey}
+      />
     </>
   );
 }

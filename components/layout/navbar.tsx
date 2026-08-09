@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
+import { MessageCircle } from "lucide-react";
 import { MobileNavigation } from "@/components/layout/mobile-navigation";
 import type { PublicSettings } from "@/lib/data/settings";
+import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 function PhoneIcon({ className = "" }: { className?: string }) {
   return (
@@ -87,11 +89,18 @@ function buildHeaderNavItems(items: Array<{ href: string; label: string }>) {
   ];
 }
 
+function normalizeInquiryCtaLabel(value: string) {
+  const label = value.trim();
+  return !label || label.toLowerCase() === "book now" ? "Plan Your Trip" : label;
+}
+
 export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolean; settings: PublicSettings }) {
   const pathname = usePathname();
   const [isNavStuck, setIsNavStuck] = useState(false);
   const phone = settings.phone || "+20 1096586292";
   const email = settings.email || "admin@jacktoursluxor.com";
+  const inquiryCtaLabel = normalizeInquiryCtaLabel(settings.bookNowLabel);
+  const whatsappHref = buildWhatsAppUrlForNumber(undefined, settings.whatsappNumber);
   const navItems = buildHeaderNavItems([
     { href: settings.navLink1Url, label: settings.navLink1Label },
     { href: settings.navLink2Url, label: settings.navLink2Label },
@@ -192,19 +201,31 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
           })}
           </nav>
 
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex items-center justify-end gap-3">
+            {isHomeRoute ? (
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noreferrer"
+                className="hidden min-h-[38px] items-center justify-center gap-2 rounded-md border border-[rgb(214_173_84_/_68%)] bg-[rgb(6_17_31_/_22%)] px-3.5 text-[0.68rem] font-semibold uppercase tracking-[0.05em] text-white transition hover:border-[var(--color-gold-light)] hover:bg-white/10 xl:inline-flex"
+              >
+                <MessageCircle aria-hidden className="size-4 text-[var(--color-gold-light)]" strokeWidth={1.8} />
+                WhatsApp
+              </a>
+            ) : (
+              <Link
+                href="/admin"
+                aria-label="Admin login"
+                className="grid size-10 place-items-center rounded-full border border-[rgb(6_17_31_/_16%)] text-[var(--color-navy)] transition duration-200 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)]"
+              >
+                <UserIcon className="size-5" />
+              </Link>
+            )}
             <Link
-              href="/admin"
-              aria-label="Admin login"
-              className={`grid place-items-center rounded-full border transition duration-200 hover:border-[var(--color-gold)] hover:text-[var(--color-gold-dark)] ${isHomeRoute ? "size-8 border-white/20 bg-white/8 text-white/84" : "size-10 border-[rgb(6_17_31_/_16%)] text-[var(--color-navy)]"}`}
-            >
-              <UserIcon className={isHomeRoute ? "size-4" : "size-5"} />
-            </Link>
-            <Link
-              className={`inline-flex items-center justify-center rounded-md bg-[var(--color-gold)] font-sans font-medium uppercase tracking-[0.05em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] ${isHomeRoute ? "min-h-[38px] px-4 py-2 text-[0.74rem]" : "min-h-10 px-4 py-2.5 text-[0.78rem] lg:px-6 lg:text-[0.8rem]"}`}
+              className={`inline-flex items-center justify-center rounded-md bg-[var(--color-gold)] font-sans font-semibold uppercase tracking-[0.05em] text-[var(--color-navy)] transition duration-200 hover:bg-[var(--color-gold-light)] ${isHomeRoute ? "min-h-[38px] px-4 py-2 text-[0.7rem]" : "min-h-10 px-4 py-2.5 text-[0.78rem] lg:px-6 lg:text-[0.8rem]"}`}
               href={settings.bookNowHref}
             >
-              {settings.bookNowLabel}
+              {inquiryCtaLabel}
             </Link>
           </div>
         </div>
