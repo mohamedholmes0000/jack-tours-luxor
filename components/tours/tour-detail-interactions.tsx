@@ -66,11 +66,11 @@ export function TourFaqAccordion({ items }: { items: FaqItem[] }) {
 export function MobileTourBookingBar({
   heroId,
   price,
-  bookingHref,
+  inquiryHref,
 }: {
   heroId: string;
   price: string;
-  bookingHref: string;
+  inquiryHref: string;
 }) {
   const [visible, setVisible] = useState(false);
 
@@ -110,10 +110,10 @@ export function MobileTourBookingBar({
           <span className="block text-xs text-white/70">per person</span>
         </p>
         <Link
-          href={bookingHref}
+          href={inquiryHref}
           className="shrink-0 rounded-md bg-[var(--color-gold)] px-5 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]"
         >
-          Book Now
+          Continue on WhatsApp
         </Link>
       </div>
     </div>

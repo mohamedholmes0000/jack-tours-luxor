@@ -20,6 +20,7 @@ export type TripPlannerMessageInput = {
 
 export type TourInquiryMessageInput = {
   tourTitle: string;
+  tourRoute: string;
   preferredDate: string;
   travelers: number;
   name: string;
@@ -35,13 +36,24 @@ export type ContactMessageInput = {
   message: string;
 };
 
-export function buildWhatsAppUrlForNumber(message = DEFAULT_MESSAGE, number?: string): string {
+function resolveWhatsAppNumber(number?: string): string {
   const configuredNumber = number ?? process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? DEFAULT_WHATSAPP_NUMBER;
   const parsedPhone = configuredNumber.replace(/[^\d]/g, "");
-  const phone = parsedPhone.length >= 8 ? parsedPhone : DEFAULT_WHATSAPP_NUMBER;
+  return parsedPhone.length >= 8 ? parsedPhone : DEFAULT_WHATSAPP_NUMBER;
+}
+
+export function buildWhatsAppUrlForNumber(message = DEFAULT_MESSAGE, number?: string): string {
+  const phone = resolveWhatsAppNumber(number);
   const text = encodeURIComponent(message);
 
   return `https://wa.me/${phone}?text=${text}`;
+}
+
+export function buildWhatsAppAppUrl(message = DEFAULT_MESSAGE, number?: string): string {
+  const phone = resolveWhatsAppNumber(number);
+  const fallbackUrl = buildWhatsAppUrlForNumber(message, number);
+
+  return `intent://send?phone=${phone}&text=${encodeURIComponent(message)}#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`;
 }
 
 export function buildWhatsAppUrl(message = DEFAULT_MESSAGE): string {
@@ -118,6 +130,7 @@ export function buildTourInquiryMessage(input: TourInquiryMessageInput): string 
     "Hello Jack Egypt Tour, I would like to inquire about a private tour.",
     "",
     line("Tour", input.tourTitle),
+    line("Tour route", input.tourRoute),
     line("Preferred date", input.preferredDate),
     line("Travelers", input.travelers),
     line("Name", input.name),

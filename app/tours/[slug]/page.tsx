@@ -6,11 +6,11 @@ import {
   MobileTourBookingBar,
   TourFaqAccordion,
 } from "@/components/tours/tour-detail-interactions";
+import { TourInquiryForm } from "@/components/forms/tour-inquiry-form";
 import { tours, type Tour } from "@/lib/content";
 import { getToursSafe } from "@/lib/data/public";
 import { getPublicSettings } from "@/lib/data/settings";
 import { JsonLd, touristTripJsonLd } from "@/lib/seo";
-import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
 type TourDetailProps = {
   params: Promise<{ slug: string }>;
@@ -219,9 +219,10 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
   const thumbnailImages = allImages.slice(1, 5);
   const showSplitGallery = allImages.length > 1;
   const languageLabel = tour.languages.length ? tour.languages.join(", ") : "English";
-  const bookingHref = `/trip-planner?tour=${encodeURIComponent(tour.slug)}`;
-  const whatsappMessage = `Hi, I'm interested in the ${tour.title} tour. Could you tell me more?`;
-  const whatsappHref = buildWhatsAppUrlForNumber(whatsappMessage, settings.whatsappNumber);
+  const inquiryHref = "#tour-inquiry";
+  const tourRoute = tour.itinerary.length
+    ? tour.itinerary.map((item) => item.title).join(" -> ")
+    : tour.city || tour.departurePoint;
   const price = priceAmount(tour);
   const similarTours = getSimilarTours(tour, safeTours);
   const heroId = "tour-detail-hero";
@@ -471,6 +472,15 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
                   </div>
                 </div>
               </section>
+
+              <section id="tour-inquiry" className="scroll-mt-28">
+                <TourInquiryForm
+                  tourTitle={tour.title}
+                  tourSlug={tour.slug}
+                  tourRoute={tourRoute}
+                  whatsappNumber={settings.whatsappNumber}
+                />
+              </section>
             </div>
           </main>
 
@@ -500,27 +510,19 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
               <div className="my-5 h-px bg-[rgb(6_17_31_/_8%)]" />
 
               <div className="space-y-3">
-                <Link
-                  href={bookingHref}
+                <a
+                  href={inquiryHref}
                   className="block w-full rounded-md bg-[var(--color-gold)] px-4 py-3.5 text-center text-sm font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)] transition hover:bg-[var(--color-gold-light)]"
                 >
-                  Book Now
-                </Link>
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block w-full rounded-md border-[1.5px] border-[var(--color-navy)] px-4 py-3.5 text-center text-sm font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)] transition hover:bg-[var(--color-navy)] hover:text-white"
-                >
-                  WhatsApp Us
+                  Continue on WhatsApp
                 </a>
               </div>
 
               <div className="mt-6 space-y-3">
                 {[
                   "Free cancellation 24h before",
-                  "Reserve now, pay later",
-                  "Instant confirmation via WhatsApp",
+                  "Request details with no obligation",
+                  "Availability confirmed by WhatsApp",
                 ].map((item) => (
                   <p key={item} className="flex gap-2 text-[13px] leading-5 text-[var(--color-navy)]/50">
                     <span className="mt-0.5 text-[var(--color-gold)]">
@@ -539,25 +541,17 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
               <p className="mt-1 text-3xl font-bold text-[var(--color-navy)]">{price}</p>
               <p className="mt-1 text-[13px] text-[var(--color-navy)]/50">per person</p>
               <div className="my-5 h-px bg-[rgb(6_17_31_/_8%)]" />
-              <Link
-                href={bookingHref}
+              <a
+                href={inquiryHref}
                 className="block w-full rounded-md bg-[var(--color-gold)] px-4 py-3.5 text-center text-sm font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]"
               >
-                Book Now
-              </Link>
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 block w-full rounded-md border-[1.5px] border-[var(--color-navy)] px-4 py-3.5 text-center text-sm font-semibold uppercase tracking-[0.08em] text-[var(--color-navy)]"
-              >
-                WhatsApp Us
+                Continue on WhatsApp
               </a>
               <div className="mt-5 space-y-2">
                 {[
                   "Free cancellation 24h before",
-                  "Reserve now, pay later",
-                  "Instant confirmation via WhatsApp",
+                  "Request details with no obligation",
+                  "Availability confirmed by WhatsApp",
                 ].map((item) => (
                   <p key={item} className="flex gap-2 text-[13px] leading-5 text-[var(--color-navy)]/50">
                     <span className="mt-0.5 text-[var(--color-gold)]">
@@ -602,7 +596,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
         </section>
       ) : null}
 
-      <MobileTourBookingBar heroId={heroId} price={price} bookingHref={bookingHref} />
+      <MobileTourBookingBar heroId={heroId} price={price} inquiryHref={inquiryHref} />
       </div>
     </>
   );

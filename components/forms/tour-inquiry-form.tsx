@@ -5,16 +5,25 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormField, inputClassName, textareaClassName } from "@/components/forms/form-field";
 import { TourInquiryValues, tourInquirySchema } from "@/lib/validations";
-import { buildTourInquiryMessage, buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
+import {
+  buildTourInquiryMessage,
+  buildWhatsAppAppUrl,
+  buildWhatsAppUrlForNumber,
+} from "@/lib/whatsapp";
 
 type TourInquiryFormProps = {
   tourTitle: string;
   tourSlug: string;
+  tourRoute: string;
   whatsappNumber?: string;
 };
 
-export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInquiryFormProps) {
-  const [successUrl, setSuccessUrl] = useState<string | null>(null);
+export function TourInquiryForm({
+  tourTitle,
+  tourSlug,
+  tourRoute,
+  whatsappNumber,
+}: TourInquiryFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const {
@@ -31,7 +40,10 @@ export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInq
   async function onSubmit(values: TourInquiryValues) {
     setIsSending(true);
     setErrorMessage(null);
-    const url = buildWhatsAppUrlForNumber(buildTourInquiryMessage({ ...values, tourTitle }), whatsappNumber);
+    const tourMessage = buildTourInquiryMessage({ ...values, tourTitle, tourRoute });
+    const whatsappUrl = /Android/i.test(navigator.userAgent)
+      ? buildWhatsAppAppUrl(tourMessage, whatsappNumber)
+      : buildWhatsAppUrlForNumber(tourMessage, whatsappNumber);
 
     try {
       const response = await fetch("/api/inquiries", {
@@ -42,14 +54,24 @@ export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInq
           name: values.name,
           phone: values.phone,
           whatsapp: values.phone,
+          arrivalDate: values.preferredDate,
           travelers: values.travelers,
           tourSlug,
-          message: `Tour: ${tourTitle}\nPreferred date: ${values.preferredDate}\nNotes: ${values.notes ?? ""}`,
+          message: [
+            `Tour: ${tourTitle}`,
+            `Tour route: ${tourRoute}`,
+            `Travel date: ${values.preferredDate}`,
+            `Travelers: ${values.travelers}`,
+            `Notes: ${values.notes ?? ""}`,
+          ].join("\n"),
         }),
       });
 
       if (!response.ok) {
-        setErrorMessage("We couldn't send your inquiry. Please try again or contact us on WhatsApp.");
+        const responseBody = await response.json().catch(() => null);
+        setErrorMessage(
+          responseBody?.message ?? "We couldn't send your inquiry. Please try again.",
+        );
         setIsSending(false);
         return;
       }
@@ -60,9 +82,7 @@ export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInq
       return;
     }
 
-    setSuccessUrl(url);
-    window.open(url, "_blank", "noopener,noreferrer");
-    setIsSending(false);
+    window.location.assign(whatsappUrl);
   }
 
   return (
@@ -74,18 +94,13 @@ export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInq
             Ask for dates and availability.
           </h2>
         </div>
-        {successUrl ? (
-          <a className="btn-primary" href={successUrl} target="_blank" rel="noreferrer">
-            Open WhatsApp
-          </a>
-        ) : null}
       </div>
-      {successUrl ? (
-        <p className="mt-5 border border-[rgb(214_173_84_/_22%)] bg-[var(--color-sand)] p-4 text-sm leading-7 text-[var(--color-gray-600)]">
-          Your inquiry message is ready. WhatsApp should have opened in a new tab.
+      {errorMessage ? (
+        <p className="mt-5 border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+          {errorMessage}
         </p>
-      ) : (
-        <form className="mt-8 grid gap-5 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+      ) : null}
+      <form className="mt-8 grid gap-5 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
           <FormField label="Preferred date" error={errors.preferredDate?.message}>
             <input className={inputClassName} type="date" {...register("preferredDate")} />
           </FormField>
@@ -112,18 +127,12 @@ export function TourInquiryForm({ tourTitle, tourSlug, whatsappNumber }: TourInq
               />
             </FormField>
           </div>
-          <div className="md:col-span-2">
+          <div className="flex flex-col gap-3 sm:flex-row md:col-span-2">
             <button className="btn-primary w-full sm:w-auto" type="submit" disabled={isSending}>
-              {isSending ? "Preparing..." : "Send Inquiry on WhatsApp"}
+              {isSending ? "Saving your inquiry..." : "Continue on WhatsApp"}
             </button>
           </div>
-          {errorMessage ? (
-            <p className="border border-red-200 bg-red-50 p-4 text-sm text-red-700 md:col-span-2">
-              {errorMessage}
-            </p>
-          ) : null}
         </form>
-      )}
     </div>
   );
 }
