@@ -35,6 +35,12 @@ export default async function AdminDashboardPage() {
       resource: "pages",
     },
     {
+      description: "Add selected traveler reviews and choose what appears on the homepage.",
+      href: "/admin/reviews",
+      label: "Reviews",
+      resource: "testimonials",
+    },
+    {
       description: "Manage the questions shown on the website.",
       href: "/admin/faqs",
       label: "FAQ",

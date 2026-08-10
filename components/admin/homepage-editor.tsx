@@ -1130,7 +1130,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
-        description="Live review-section heading; individual reviews need a future manager."
+        description="Live review-section heading; individual reviews are managed separately."
         open={openSections.testimonials}
         status="Partially editable"
         title="Reviews Preview"
@@ -1138,7 +1138,10 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       >
         <div className="grid gap-5">
           <InfoBanner>
-            The section header and visibility are live. Individual testimonial records are not managed from this page. A dedicated Reviews manager is coming in Phase 4.
+            The section header and visibility are live. Individual testimonial records are managed in the dedicated Reviews area. Homepage selection prioritizes Featured active reviews, then other active reviews.{" "}
+          <Link className="font-bold text-[var(--color-gold-dark)]" href="/admin/reviews">
+            Manage Reviews →
+          </Link>
           </InfoBanner>
           <div className="grid gap-5 md:grid-cols-2">
             <TextInput disabled={!canEdit} label="Eyebrow text" value={values.testimonialsEyebrow} onChange={(value) => setField("testimonialsEyebrow", value)} />

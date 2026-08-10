@@ -69,8 +69,9 @@ export function GlobalSettingsForm({ initialValues }: { initialValues: AdminGlob
             <FormField label="Instagram URL">
               <input className={inputClassName} value={values.socialInstagram || ""} onChange={(event) => update("socialInstagram", event.target.value)} />
             </FormField>
-            <FormField label="TripAdvisor URL">
+            <FormField label="Tripadvisor profile URL">
               <input className={inputClassName} value={values.socialTripadvisor || ""} onChange={(event) => update("socialTripadvisor", event.target.value)} />
+              <p className="mt-2 text-xs text-[var(--color-gray-600)]">One official business/profile link used by the homepage Reviews section.</p>
             </FormField>
             <FormField label="Twitter/X URL">
               <input className={inputClassName} value={values.socialTwitter || ""} onChange={(event) => update("socialTwitter", event.target.value)} />

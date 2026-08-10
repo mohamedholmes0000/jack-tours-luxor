@@ -9,6 +9,7 @@ export type AdminResource =
   | "faqs"
   | "inquiries"
   | "settings"
+  | "testimonials"
   | "pages"
   | "users"
   | "profile";
@@ -64,6 +65,7 @@ export function resourceFromPath(pathname: string): AdminResource {
   if (pathname.startsWith("/admin/destinations")) return "destinations";
   if (pathname.startsWith("/admin/gallery")) return "gallery";
   if (pathname.startsWith("/admin/blog")) return "blog";
+  if (pathname.startsWith("/admin/reviews")) return "testimonials";
   if (pathname.startsWith("/admin/faqs")) return "faqs";
   if (pathname.startsWith("/admin/inquiries")) return "inquiries";
   if (pathname.startsWith("/admin/settings")) return "settings";

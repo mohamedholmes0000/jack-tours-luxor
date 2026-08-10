@@ -6,6 +6,7 @@ import type {
   AdminBlogPostValues,
   AdminDestinationValues,
   AdminTourValues,
+  AdminTestimonialValues,
 } from "@/lib/validations";
 
 export type AdminContentType = "TOUR" | "ACTIVITY" | "HOTEL";
@@ -364,6 +365,68 @@ export async function getAdminFaqs() {
   return tryDatabase(
     async () => prisma.fAQ.findMany({ orderBy: [{ order: "asc" }, { category: "asc" }] }),
     [],
+  );
+}
+
+export type AdminTestimonialListItem = {
+  id: string;
+  name: string;
+  nationality: string | null;
+  country: string | null;
+  rating: number;
+  text: string;
+  source: string | null;
+  active: boolean;
+  featured: boolean;
+  order: number;
+  createdAt: Date;
+};
+
+export async function getAdminTestimonials(): Promise<AdminTestimonialListItem[]> {
+  return tryDatabase(
+    async () =>
+      prisma.testimonial.findMany({
+        orderBy: [{ featured: "desc" }, { order: "asc" }, { createdAt: "desc" }],
+        select: {
+          id: true,
+          name: true,
+          nationality: true,
+          country: true,
+          rating: true,
+          text: true,
+          source: true,
+          active: true,
+          featured: true,
+          order: true,
+          createdAt: true,
+        },
+      }),
+    [],
+  );
+}
+
+export async function getAdminTestimonial(id: string): Promise<(AdminTestimonialValues & { id: string }) | null> {
+  return tryDatabase(
+    async () => {
+      const testimonial = await prisma.testimonial.findUnique({ where: { id } });
+
+      if (!testimonial) return null;
+
+      return {
+        id: testimonial.id,
+        name: testimonial.name,
+        nationality: testimonial.nationality ?? "",
+        country: testimonial.country ?? "",
+        rating: testimonial.rating,
+        text: testimonial.text,
+        avatarImage: testimonial.avatarImage ?? "",
+        source: testimonial.source ?? "",
+        order: testimonial.order,
+        active: testimonial.active,
+        featured: testimonial.featured,
+      };
+    },
+    null,
   );
 }
 

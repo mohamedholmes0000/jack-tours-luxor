@@ -155,6 +155,19 @@ export const adminFaqSchema = z.object({
   active: z.boolean(),
 });
 
+export const adminTestimonialSchema = z.object({
+  name: z.string().trim().min(2, "Add the traveler name."),
+  country: z.string().trim().max(80).optional().or(z.literal("")),
+  nationality: z.string().trim().max(80).optional().or(z.literal("")),
+  rating: z.number().int().min(1, "Choose a rating from 1 to 5.").max(5, "Choose a rating from 1 to 5."),
+  text: z.string().trim().min(10, "Add the traveler review.").max(4000, "Keep the review under 4000 characters."),
+  avatarImage: optionalAdminImageSource,
+  source: z.string().trim().max(80).optional().or(z.literal("")),
+  order: z.number().int().min(0),
+  active: z.boolean(),
+  featured: z.boolean(),
+});
+
 export const adminGalleryImageSchema = z.object({
   url: adminImageSource,
   publicId: z.string().trim().optional(),
@@ -328,6 +341,7 @@ export type TourInquiryValues = z.infer<typeof tourInquirySchema>;
 export type AdminTourValues = z.infer<typeof adminTourSchema>;
 export type AdminBlogPostValues = z.infer<typeof adminBlogPostSchema>;
 export type AdminFaqValues = z.infer<typeof adminFaqSchema>;
+export type AdminTestimonialValues = z.infer<typeof adminTestimonialSchema>;
 export type AdminGalleryImageValues = z.infer<typeof adminGalleryImageSchema>;
 export type AdminGalleryAlbumValues = z.infer<typeof adminGalleryAlbumSchema>;
 export type AdminGalleryCategoryValues = z.infer<typeof adminGalleryCategorySchema>;

@@ -17,6 +17,7 @@ const primaryLinks = [
   { href: "/admin/tours", label: "Tours", resource: "tours" },
   { href: "/admin/destinations", label: "Destinations", resource: "destinations" },
   { href: "/admin/pages/homepage", label: "Homepage", resource: "pages" },
+  { href: "/admin/reviews", label: "Reviews", resource: "testimonials" },
   { href: "/admin/faqs", label: "FAQ", resource: "faqs" },
   { href: "/admin/settings", label: "Settings", resource: "settings" },
 ] satisfies AdminLink[];

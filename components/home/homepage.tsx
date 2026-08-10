@@ -118,6 +118,17 @@ function normalizeInquiryCtaLabel(value: string | undefined, fallback = "Plan Yo
   return !label || label.toLowerCase() === "book now" ? fallback : label;
 }
 
+function safeExternalHttpUrl(value: string | undefined) {
+  if (!value) return "";
+
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
 const whyReasons = [
   {
     description: "Deep local knowledge and on-the-ground insight bring Egypt to life.",
@@ -141,7 +152,7 @@ const whyReasons = [
   },
 ];
 // Temporary preview fallback for homepage layout review only. These records are
-// never persisted and disappear automatically once three CMS reviews exist.
+// never persisted and appear only while fewer than three active CMS reviews exist.
 const previewTestimonials = [
   {
     id: "preview-sofia-martinez",
@@ -280,14 +291,16 @@ export async function Homepage() {
     getFaqsSafe(),
     getTestimonialsSafe(),
   ]);
-  const realTestimonialText = new Set(testimonials.map((item) => item.text.trim().toLowerCase()));
+  const realActiveTestimonials = testimonials.slice(0, 3);
+  const realTestimonialText = new Set(realActiveTestimonials.map((item) => item.text.trim().toLowerCase()));
   const previewFill = previewTestimonials.filter(
     (item) => !realTestimonialText.has(item.text.trim().toLowerCase()),
   );
-  const isTestimonialPreview = testimonials.length < 3;
+  const isTestimonialPreview = realActiveTestimonials.length < 3;
   const homepageTestimonials = isTestimonialPreview
-    ? [...testimonials, ...previewFill].slice(0, 3)
-    : testimonials.slice(0, 3);
+    ? [...realActiveTestimonials, ...previewFill].slice(0, 3)
+    : realActiveTestimonials;
+  const tripadvisorUrl = safeExternalHttpUrl(settings.tripAdvisorUrl);
   const oneDayTour = safeTours.find(
     (tour) => getTourJourneyType(tour) === "one-day",
   );
@@ -836,9 +849,22 @@ export async function Homepage() {
                     {testimonialsHeading.after}
                   </h2>
                 </div>
-                <p className="max-w-sm text-sm leading-6 text-[var(--color-navy)]/58 md:text-right">
-                  A closer look at the care, pacing, and local coordination behind each journey.
-                </p>
+                <div className="max-w-sm md:text-right">
+                  <p className="text-sm leading-6 text-[var(--color-navy)]/58">
+                    A closer look at the care, pacing, and local coordination behind each journey.
+                  </p>
+                  {tripadvisorUrl ? (
+                    <a
+                      href={tripadvisorUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group mt-3 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-navy)] outline-none transition-colors hover:text-[var(--color-gold-dark)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none"
+                    >
+                      View all reviews on Tripadvisor
+                      <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
+                    </a>
+                  ) : null}
+                </div>
               </div>
 
               <div className="mt-6 grid gap-4 lg:grid-cols-12">
