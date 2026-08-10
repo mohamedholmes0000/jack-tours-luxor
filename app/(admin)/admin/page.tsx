@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { canWriteAdminResource } from "@/lib/admin/permissions";
+import {
+  canAccessAdminResource,
+  canWriteAdminResource,
+  type AdminResource,
+} from "@/lib/admin/permissions";
 import { getCurrentAdminUser } from "@/lib/api/admin-guard";
 import { getAdminSummary } from "@/lib/data/admin";
 
@@ -11,6 +15,45 @@ export default async function AdminDashboardPage() {
   const summary = await getAdminSummary();
   const currentUser = await getCurrentAdminUser();
   const role = currentUser?.role || "VIEWER";
+  const controlLinks = [
+    {
+      description: "Create, edit, and publish Egypt tours.",
+      href: "/admin/tours",
+      label: "Tours",
+      resource: "tours",
+    },
+    {
+      description: "Maintain destination cards and public pages.",
+      href: "/admin/destinations",
+      label: "Destinations",
+      resource: "destinations",
+    },
+    {
+      description: "Review live, partial, and hardcoded homepage sections.",
+      href: "/admin/pages/homepage",
+      label: "Homepage",
+      resource: "pages",
+    },
+    {
+      description: "Manage the questions shown on the website.",
+      href: "/admin/faqs",
+      label: "FAQ",
+      resource: "faqs",
+    },
+    {
+      description: "Review new trip-planning and contact leads.",
+      href: "/admin/inquiries",
+      label: "Inquiries",
+      resource: "inquiries",
+    },
+    {
+      description: "Update site-wide contact, header, and footer settings.",
+      href: "/admin/settings",
+      label: "Settings",
+      resource: "settings",
+    },
+  ] satisfies Array<{ description: string; href: string; label: string; resource: AdminResource }>;
+  const visibleControlLinks = controlLinks.filter((link) => canAccessAdminResource(role, link.resource));
   const cards = [
     ["Tours", summary.tourCount],
     ["Destinations", summary.destinationCount],
@@ -31,20 +74,38 @@ export default async function AdminDashboardPage() {
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
           {canWriteAdminResource(role, "tours", "create") ? (
-            <Link className="btn-primary" href="/admin/tours">
+            <Link className="btn-primary" href="/admin/tours/new">
               Add Tour
             </Link>
           ) : null}
-          {canWriteAdminResource(role, "blog", "create") ? (
-            <Link className="btn-secondary" href="/admin/blog">
-              Add Blog Post
+          {canAccessAdminResource(role, "inquiries") ? (
+            <Link className="btn-secondary" href="/admin/inquiries">
+              View Inquiries
             </Link>
           ) : null}
-          <Link className="btn-secondary" href="/admin/inquiries">
-            View Inquiries
-          </Link>
         </div>
       </div>
+
+      <section className="mt-8">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold)]">
+              Website controls
+            </p>
+            <h2 className="mt-2 font-serif text-3xl font-semibold text-[var(--color-navy)]">
+              Manage the essentials
+            </h2>
+          </div>
+        </div>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {visibleControlLinks.map((link) => (
+            <Link key={link.href} href={link.href} className="rounded-2xl border border-[var(--color-gray-100)] bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--color-gold)]">
+              <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">{link.label}</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-gray-600)]">{link.description}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <div className="mt-8 grid gap-5 md:grid-cols-4">
         {cards.map(([label, value]) => (

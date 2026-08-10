@@ -3,22 +3,34 @@
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { Home } from "lucide-react";
 import type { AdminRole } from "@prisma/client";
 import { canAccessAdminResource, roleLabels, type AdminResource } from "@/lib/admin/permissions";
 
-const links = [
+type AdminLink = {
+  href: string;
+  label: string;
+  resource: AdminResource;
+};
+
+const primaryLinks = [
   { href: "/admin", label: "Dashboard", resource: "dashboard" },
   { href: "/admin/tours", label: "Tours", resource: "tours" },
+  { href: "/admin/destinations", label: "Destinations", resource: "destinations" },
+  { href: "/admin/pages/homepage", label: "Homepage", resource: "pages" },
+  { href: "/admin/faqs", label: "FAQ", resource: "faqs" },
+  { href: "/admin/settings", label: "Settings", resource: "settings" },
+] satisfies AdminLink[];
+
+const secondaryLinks = [
   { href: "/admin/activities", label: "Activities", resource: "tours" },
   { href: "/admin/hotels", label: "Hotels", resource: "tours" },
-  { href: "/admin/destinations", label: "Destinations", resource: "destinations" },
   { href: "/admin/blog", label: "Blog", resource: "blog" },
   { href: "/admin/gallery", label: "Gallery", resource: "gallery" },
-  { href: "/admin/faqs", label: "FAQs", resource: "faqs" },
   { href: "/admin/inquiries", label: "Inquiries", resource: "inquiries" },
-  { href: "/admin/settings", label: "Settings", resource: "settings" },
-] satisfies Array<{ href: string; label: string; resource: AdminResource }>;
+  { href: "/admin/users", label: "Users", resource: "users" },
+  { href: "/admin/profile", label: "Profile", resource: "profile" },
+  { href: "/admin/pages/contact", label: "Contact Page", resource: "pages" },
+] satisfies AdminLink[];
 
 type AdminSidebarUser = {
   name?: string | null;
@@ -33,6 +45,29 @@ function getInitials(name?: string | null, email?: string | null) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("");
+}
+
+function isLinkActive(pathname: string, href: string) {
+  if (href === "/admin") return pathname === href;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function SidebarLink({ href, label, pathname }: AdminLink & { pathname: string }) {
+  const active = isLinkActive(pathname, href);
+
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={`border px-4 py-3 text-sm font-semibold transition ${
+        active
+          ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
+          : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
+      }`}
+    >
+      {label}
+    </Link>
+  );
 }
 
 function LogOutIcon() {
@@ -54,55 +89,17 @@ function LogOutIcon() {
   );
 }
 
-function UserIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M20 21a8 8 0 0 0-16 0" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
-
-function UsersIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  );
-}
-
 export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
   const pathname = usePathname();
   const displayName = user?.name || "Admin user";
   const email = user?.email || "Signed in";
   const role = user?.role || "ADMIN";
-  const profileActive = pathname === "/admin/profile";
-  const usersActive = pathname === "/admin/users" || pathname.startsWith("/admin/users/");
-  const homepageActive = pathname === "/admin/pages/homepage";
-  const contactPageActive = pathname === "/admin/pages/contact";
-  const canAccessPages = canAccessAdminResource(role, "pages");
-  const visibleLinks = links.filter((link) => canAccessAdminResource(role, link.resource));
+  const visiblePrimaryLinks = primaryLinks.filter((link) =>
+    canAccessAdminResource(role, link.resource),
+  );
+  const visibleSecondaryLinks = secondaryLinks.filter((link) =>
+    canAccessAdminResource(role, link.resource),
+  );
 
   return (
     <aside className="flex flex-col border-r border-[var(--color-gray-100)] bg-white p-5 lg:min-h-screen">
@@ -114,65 +111,23 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
           Admin CMS
         </span>
       </Link>
-      <nav className="mt-8 grid gap-2">
-        {canAccessPages ? (
-          <div className="mb-2">
-            <p className="mb-2 px-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-gray-600)]">
-              Pages
-            </p>
-            <Link
-              href="/admin/pages/homepage"
-              aria-current={homepageActive ? "page" : undefined}
-              className={`flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
-                homepageActive
-                  ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
-                  : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
-              }`}
-            >
-              <Home className="h-4 w-4" />
-              Homepage
-            </Link>
-            <Link
-              href="/admin/pages/contact"
-              aria-current={contactPageActive ? "page" : undefined}
-              className={`mt-2 flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
-                contactPageActive
-                  ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
-                  : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
-              }`}
-            >
-              Contact Page
-            </Link>
-          </div>
-        ) : null}
-        {visibleLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            aria-current={pathname === link.href ? "page" : undefined}
-            className={`border px-4 py-3 text-sm font-semibold transition ${
-              pathname === link.href || (link.href !== "/admin" && pathname.startsWith(`${link.href}/`))
-                ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
-                : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
-            }`}
-          >
-            {link.label}
-          </Link>
-        ))}
-        {role === "SUPER_ADMIN" ? (
-          <Link
-            href="/admin/users"
-            aria-current={usersActive ? "page" : undefined}
-            className={`flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
-              usersActive
-                ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
-                : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
-            }`}
-          >
-            <UsersIcon />
-            Users
-          </Link>
-        ) : null}
+      <nav aria-label="Admin navigation" className="mt-8 grid gap-6">
+        <div className="grid gap-2">
+          <p className="px-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-gray-600)]">
+            Manage website
+          </p>
+          {visiblePrimaryLinks.map((link) => (
+            <SidebarLink key={link.href} {...link} pathname={pathname} />
+          ))}
+        </div>
+        <div className="grid gap-2 border-t border-[var(--color-gray-100)] pt-5">
+          <p className="px-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-gray-600)]">
+            More
+          </p>
+          {visibleSecondaryLinks.map((link) => (
+            <SidebarLink key={link.href} {...link} pathname={pathname} />
+          ))}
+        </div>
       </nav>
       <div className="mt-8 border-t border-[var(--color-gray-100)] pt-5 lg:mt-auto">
         <div className="flex items-center gap-3">
@@ -187,28 +142,14 @@ export function AdminSidebar({ user }: { user?: AdminSidebarUser }) {
         <span className="mt-3 inline-flex rounded-full border border-[rgb(214_173_84_/_28%)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">
           {roleLabels[role]}
         </span>
-        <div className="mt-4 grid gap-2">
-          <Link
-            href="/admin/profile"
-            aria-current={profileActive ? "page" : undefined}
-            className={`flex items-center gap-2 border px-4 py-3 text-sm font-semibold transition ${
-              profileActive
-                ? "border-[var(--color-gold)] bg-[var(--color-sand)] text-[var(--color-navy)]"
-                : "border-transparent text-[var(--color-navy)] hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
-            }`}
-          >
-            <UserIcon />
-            My Profile
-          </Link>
-          <button
-            type="button"
-            onClick={() => signOut({ callbackUrl: "/admin/login" })}
-            className="flex items-center gap-2 border border-transparent px-4 py-3 text-left text-sm font-semibold text-[var(--color-navy)] transition hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
-          >
-            <LogOutIcon />
-            Logout
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => signOut({ callbackUrl: "/admin/login" })}
+          className="mt-4 flex w-full items-center gap-2 border border-transparent px-4 py-3 text-left text-sm font-semibold text-[var(--color-navy)] transition hover:border-[var(--color-gray-100)] hover:bg-[var(--color-gray-50)]"
+        >
+          <LogOutIcon />
+          Logout
+        </button>
       </div>
     </aside>
   );

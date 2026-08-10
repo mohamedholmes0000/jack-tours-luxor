@@ -638,25 +638,36 @@ function ImageUploadField({
 function SectionCard({
   children,
   description,
+  legacy = false,
   open,
+  status,
   title,
   onToggle,
 }: {
   children: React.ReactNode;
   description: string;
+  legacy?: boolean;
   open: boolean;
+  status?: "Editable" | "Partially editable" | "Hardcoded" | "Legacy / inactive";
   title: string;
   onToggle: () => void;
 }) {
   return (
-    <section className="overflow-visible rounded-2xl border border-[var(--color-gray-100)] bg-white shadow-sm">
+    <section className={`overflow-visible rounded-2xl border shadow-sm ${legacy ? "order-last border-amber-200 bg-amber-50/35" : "border-[var(--color-gray-100)] bg-white"}`}>
       <button
         className="flex w-full items-center justify-between gap-4 p-5 text-left"
         type="button"
         onClick={onToggle}
       >
         <span>
-          <span className="block font-serif text-2xl font-semibold text-[var(--color-navy)]">{title}</span>
+          <span className="flex flex-wrap items-center gap-3">
+            <span className="font-serif text-2xl font-semibold text-[var(--color-navy)]">{title}</span>
+            {status ? (
+              <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${legacy ? "border-amber-200 bg-amber-50 text-amber-800" : "border-blue-200 bg-blue-50 text-blue-800"}`}>
+                {status}
+              </span>
+            ) : null}
+          </span>
           <span className="mt-1 block text-sm text-[var(--color-gray-600)]">{description}</span>
         </span>
         <ChevronDown className={`h-5 w-5 shrink-0 text-[var(--color-gold-dark)] transition ${open ? "rotate-180" : ""}`} />
@@ -676,14 +687,14 @@ function InfoBanner({ children }: { children: React.ReactNode }) {
 
 const sectionLabels: Record<SectionKey, string> = {
   customizeTrip: "Customize Trip",
-  destinations: "Destinations Header",
-  featured: "Featured Journeys Header",
+  destinations: "Top Destinations",
+  featured: "Old Featured Journeys Header",
   finalCta: "Final CTA",
-  hero: "Hero",
+  hero: "Hero Slider",
   ourWorld: "Our World",
   stats: "Stats",
-  testimonials: "Testimonials Header",
-  why: "Why Us",
+  testimonials: "Reviews Preview",
+  why: "Why Jack",
 };
 
 export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; initialValues: HomepageEditorValues }) {
@@ -743,14 +754,15 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       {toast ? <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">{toast}</p> : null}
       {error ? <p className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</p> : null}
 
       <SectionCard
-        description="Live hero image, eyebrow, headline, subheadline, and primary CTA."
+        description="Live hero content with destination-assisted slides and a global WhatsApp action."
         open={openSections.hero}
-        title="Hero"
+        status="Partially editable"
+        title="Hero Slider"
         onToggle={() => setOpenSections((current) => ({ ...current, hero: !current.hero }))}
       >
         <div className="grid gap-6 lg:grid-cols-[minmax(280px,420px)_1fr]">
@@ -770,18 +782,18 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
             </div>
             <TextArea disabled={!canEdit} label="Subheadline paragraph" value={values.heroSubheadline} onChange={(value) => setField("heroSubheadline", value)} />
             <InfoBanner>
-              Secondary hero link and trust badge fields are not active in the current public hero layout. They are shown read-only so the CMS does not imply they affect the live site.
+              The secondary CTA label and the first three trust badges are used by the live hero. Its WhatsApp URL is generated from Global Settings, so the stored secondary URL is preserved but not used directly.
             </InfoBanner>
             <div className="grid gap-5 md:grid-cols-2">
-              <TextInput disabled label="Secondary link label (not active)" value={values.heroSecondaryLinkLabel} onChange={(value) => setField("heroSecondaryLinkLabel", value)} />
-              <TextInput disabled label="Secondary link URL (not active)" value={values.heroSecondaryLinkHref} onChange={(value) => setField("heroSecondaryLinkHref", value)} />
+              <TextInput disabled={!canEdit} label="Secondary WhatsApp label" value={values.heroSecondaryLinkLabel} onChange={(value) => setField("heroSecondaryLinkLabel", value)} />
+              <TextInput disabled label="Stored secondary URL (not used directly)" value={values.heroSecondaryLinkHref} onChange={(value) => setField("heroSecondaryLinkHref", value)} />
             </div>
             <div className="grid gap-5 md:grid-cols-3">
               {[0, 1, 2].map((index) => (
                 <TextInput
                   key={index}
-                  disabled
-                  label={`Trust badge ${index + 1} (not active)`}
+                  disabled={!canEdit}
+                  label={`Trust badge ${index + 1}`}
                   value={values.heroTrustBadges[index]}
                   onChange={(value) => {
                     const next = [...values.heroTrustBadges];
@@ -798,9 +810,10 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
-        description="Section heading and view-all link for the destination circles."
+        description="Live section heading with destination cards managed separately."
         open={openSections.destinations}
-        title="Destinations Header"
+        status="Partially editable"
+        title="Top Destinations"
         onToggle={() => setOpenSections((current) => ({ ...current, destinations: !current.destinations }))}
       >
         <div className="grid gap-5">
@@ -822,36 +835,44 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
         {saveButton("destinations")}
       </SectionCard>
 
+      <div className="order-last mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-amber-800">Legacy / inactive fields</p>
+        <p className="mt-2 text-sm leading-6 text-amber-900/75">
+          These saved values are kept for compatibility, but they do not control the current homepage design.
+        </p>
+      </div>
+
       <SectionCard
-        description="Section heading, intro copy, and view-all link for featured tours."
+        description="Preserved settings for the removed Featured Journeys section."
+        legacy
         open={openSections.featured}
-        title="Featured Journeys Header"
+        status="Legacy / inactive"
+        title="Old Featured Journeys Header"
         onToggle={() => setOpenSections((current) => ({ ...current, featured: !current.featured }))}
       >
         <div className="grid gap-5">
           <InfoBanner>
-            Tour cards are managed at{" "}
+            These fields do not control the current “Plan now and travel deeper” promotional carousel. Tour content remains managed at{" "}
             <Link className="font-bold text-[var(--color-gold-dark)]" href="/admin/tours">
               Manage tours →
             </Link>
-            <span className="mt-1 block">Use the Featured toggle on each tour to show it on the homepage.</span>
           </InfoBanner>
           <div className="grid gap-5 md:grid-cols-2">
-            <TextInput disabled={!canEdit} label="Eyebrow text" value={values.featuredEyebrow} onChange={(value) => setField("featuredEyebrow", value)} />
-            <TextInput disabled={!canEdit} label="Heading text" value={values.featuredHeading} onChange={(value) => setField("featuredHeading", value)} />
-            <TextInput disabled={!canEdit} label="Italic accent words" value={values.featuredHeadingAccent} onChange={(value) => setField("featuredHeadingAccent", value)} />
-            <TextInput disabled={!canEdit} label="View all tours link text" value={values.featuredViewAllLabel} onChange={(value) => setField("featuredViewAllLabel", value)} />
-            <TextInput disabled={!canEdit} label="View all tours link URL" value={values.featuredViewAllHref} onChange={(value) => setField("featuredViewAllHref", value)} />
+            <TextInput disabled label="Eyebrow text" value={values.featuredEyebrow} onChange={(value) => setField("featuredEyebrow", value)} />
+            <TextInput disabled label="Heading text" value={values.featuredHeading} onChange={(value) => setField("featuredHeading", value)} />
+            <TextInput disabled label="Italic accent words" value={values.featuredHeadingAccent} onChange={(value) => setField("featuredHeadingAccent", value)} />
+            <TextInput disabled label="View all tours link text" value={values.featuredViewAllLabel} onChange={(value) => setField("featuredViewAllLabel", value)} />
+            <TextInput disabled label="View all tours link URL" value={values.featuredViewAllHref} onChange={(value) => setField("featuredViewAllHref", value)} />
           </div>
-          <TextArea disabled={!canEdit} label="Description paragraph" value={values.featuredDescription} onChange={(value) => setField("featuredDescription", value)} />
-          <Toggle checked={values.featuredVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("featuredVisible", value)} />
+          <TextArea disabled label="Description paragraph" value={values.featuredDescription} onChange={(value) => setField("featuredDescription", value)} />
+          <Toggle checked={values.featuredVisible} disabled label="Stored visibility" onChange={(value) => setField("featuredVisible", value)} />
         </div>
-        {saveButton("featured")}
       </SectionCard>
 
       <SectionCard
         description="Text status and image used by the public Customize Your Egypt Trip section."
         open={openSections.customizeTrip}
+        status="Partially editable"
         title="Customize Trip"
         onToggle={() => setOpenSections((current) => ({ ...current, customizeTrip: !current.customizeTrip }))}
       >
@@ -896,30 +917,34 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
-        description="Why Us copy, CTA, and included services."
+        description="Live Why Jack copy and CTA with trust points currently defined in code."
         open={openSections.why}
-        title="Why Us"
+        status="Partially editable"
+        title="Why Jack"
         onToggle={() => setOpenSections((current) => ({ ...current, why: !current.why }))}
       >
         <div className="grid gap-6">
+          <InfoBanner>
+            The headline, description, CTA, and visibility are live. The redesigned four trust points and their icons are currently defined in the public component; the stored Why Services below are legacy values and do not control them.
+          </InfoBanner>
           <div className="grid gap-5 md:grid-cols-2">
             <TextInput disabled={!canEdit} label="Eyebrow text" value={values.whyEyebrow} onChange={(value) => setField("whyEyebrow", value)} />
             <TextInput disabled={!canEdit} label="Heading text" value={values.whyHeading} onChange={(value) => setField("whyHeading", value)} />
             <TextInput disabled={!canEdit} label="Italic accent words" value={values.whyHeadingAccent} onChange={(value) => setField("whyHeadingAccent", value)} />
             <TextInput disabled={!canEdit} label="CTA button label" value={values.whyCtaLabel} onChange={(value) => setField("whyCtaLabel", value)} />
             <TextInput disabled={!canEdit} label="CTA button link" value={values.whyCtaHref} onChange={(value) => setField("whyCtaHref", value)} />
-            <TextInput disabled={!canEdit} label="Included services heading" value={values.whyIncludedHeading} onChange={(value) => setField("whyIncludedHeading", value)} />
+            <TextInput disabled label="Stored services heading (not active)" value={values.whyIncludedHeading} onChange={(value) => setField("whyIncludedHeading", value)} />
           </div>
           <TextArea disabled={!canEdit} label="Description paragraph" value={values.whyDescription} onChange={(value) => setField("whyDescription", value)} />
-          <div>
-            <p className="mb-4 font-serif text-2xl font-semibold text-[var(--color-navy)]">Included Services</p>
-            <div className="grid gap-4 md:grid-cols-2">
+          <details className="rounded-xl border border-amber-200 bg-amber-50/45 p-4">
+            <summary className="cursor-pointer text-sm font-bold text-amber-900">Stored Why Services — legacy / inactive</summary>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
               {values.whyServices.map((service, index) => (
                 <div key={index} className="grid gap-3 rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)] p-4">
                   <label className="grid gap-2 text-sm font-medium text-[var(--color-navy)]">
                     Icon
                     <IconPicker
-                      disabled={!canEdit}
+                      disabled
                       value={service.icon}
                       onChange={(icon) => {
                         const next = [...values.whyServices];
@@ -929,7 +954,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
                     />
                   </label>
                   <TextInput
-                    disabled={!canEdit}
+                    disabled
                     label="Label text"
                     value={service.label}
                     onChange={(label) => {
@@ -941,7 +966,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
                 </div>
               ))}
             </div>
-          </div>
+          </details>
           <Toggle checked={values.whyVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("whyVisible", value)} />
         </div>
         {saveButton("why")}
@@ -949,7 +974,9 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
 
       <SectionCard
         description="Not active on the current public homepage layout."
+        legacy
         open={openSections.ourWorld}
+        status="Legacy / inactive"
         title="Our World"
         onToggle={() => setOpenSections((current) => ({ ...current, ourWorld: !current.ourWorld }))}
       >
@@ -979,7 +1006,9 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
 
       <SectionCard
         description="Not active on the current public homepage layout."
+        legacy
         open={openSections.stats}
+        status="Legacy / inactive"
         title="Stats"
         onToggle={() => setOpenSections((current) => ({ ...current, stats: !current.stats }))}
       >
@@ -1026,12 +1055,16 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
-        description="Eyebrow and heading copy for the testimonial section."
+        description="Live review-section heading; individual reviews need a future manager."
         open={openSections.testimonials}
-        title="Testimonials Header"
+        status="Partially editable"
+        title="Reviews Preview"
         onToggle={() => setOpenSections((current) => ({ ...current, testimonials: !current.testimonials }))}
       >
         <div className="grid gap-5">
+          <InfoBanner>
+            The section header and visibility are live. Individual testimonial records are not managed from this page and need a future Reviews admin.
+          </InfoBanner>
           <div className="grid gap-5 md:grid-cols-2">
             <TextInput disabled={!canEdit} label="Eyebrow text" value={values.testimonialsEyebrow} onChange={(value) => setField("testimonialsEyebrow", value)} />
             <TextInput disabled={!canEdit} label="Heading text" value={values.testimonialsHeading} onChange={(value) => setField("testimonialsHeading", value)} />
@@ -1045,6 +1078,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       <SectionCard
         description="Live final booking CTA copy and primary button."
         open={openSections.finalCta}
+        status="Partially editable"
         title="Final CTA"
         onToggle={() => setOpenSections((current) => ({ ...current, finalCta: !current.finalCta }))}
       >
