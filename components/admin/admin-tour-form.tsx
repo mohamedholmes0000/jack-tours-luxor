@@ -3,8 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { FormField, inputClassName, textareaClassName } from "@/components/forms/form-field";
+import { getTourJourneyType } from "@/lib/tour-journey-type";
 import { adminTourSchema, type AdminTourValues } from "@/lib/validations";
 
 type AdminTourFormProps = {
@@ -85,6 +86,23 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR", r
   });
 
   const itinerary = useFieldArray({ control, name: "itinerary" });
+  const formValues = useWatch({ control });
+  const journeyClassification = getTourJourneyType({
+    title: formValues.title || "",
+    category: formValues.category || "",
+    duration: formValues.duration || "",
+    shortDescription: formValues.shortDescription || "",
+    overview: formValues.overview || "",
+  });
+  const journeyLabel = journeyClassification === "one-day" ? "One Day" : journeyClassification === "multi-day" ? "Multi Day" : "Custom / Unknown";
+  const qualityHints = [
+    !formValues.heroImage ? "Add a hero image." : null,
+    !formValues.city?.trim() ? "Add a city." : null,
+    !formValues.duration?.trim() ? "Add a duration." : null,
+    !formValues.priceFrom ? "Add a starting price or confirm this is a custom-priced item." : null,
+    !formValues.shortDescription?.trim() ? "Add a short description." : null,
+    !formValues.published ? "This item is currently a draft." : null,
+  ].filter((hint): hint is string => Boolean(hint));
   const [textArrays, setTextArrays] = useState({
     images: initialValues?.images?.length ? initialValues.images : emptyTour.images,
     highlights: initialValues?.highlights?.length ? initialValues.highlights : emptyTour.highlights,
@@ -218,19 +236,20 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR", r
     );
   }
 
-  return (
+return (
     <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
       <section className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">
-        <h2 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">Core details</h2>
+        <div className="flex flex-col gap-2 border-b border-[var(--color-gray-100)] pb-5">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">Basic</p>
+          <h2 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">Core record details</h2>
+          <p className="text-sm leading-6 text-[var(--color-gray-600)]">Set the identity, content type, and publishing state for this {label.toLowerCase()}.</p>
+        </div>
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <FormField label="Title" error={errors.title?.message}>
             <input className={inputClassName} {...register("title")} />
           </FormField>
           <FormField label="Slug" error={errors.slug?.message}>
             <input className={inputClassName} {...register("slug")} />
-          </FormField>
-          <FormField label="Category" error={errors.category?.message}>
-            <input className={inputClassName} {...register("category")} />
           </FormField>
           <FormField label="Content type" error={errors.contentType?.message}>
             <select className={inputClassName} {...register("contentType")}>
@@ -239,61 +258,120 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR", r
               <option value="HOTEL">Hotel</option>
             </select>
           </FormField>
-          <FormField label="Duration" error={errors.duration?.message}>
-            <input className={inputClassName} {...register("duration")} />
+          <FormField label="Category" error={errors.category?.message}>
+            <input className={inputClassName} placeholder="Day Tours" {...register("category")} />
           </FormField>
           <FormField label="City" error={errors.city?.message}>
             <input className={inputClassName} placeholder="Luxor" {...register("city")} />
           </FormField>
-          <FormField label="Rating" error={errors.rating?.message}>
-            <input className={inputClassName} max="5" min="0" step="0.1" type="number" {...register("rating", { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Review count" error={errors.reviewCount?.message}>
-            <input className={inputClassName} min="0" type="number" {...register("reviewCount", { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Group size" error={errors.groupSize?.message}>
-            <input className={inputClassName} {...register("groupSize")} />
-          </FormField>
-          <FormField label="Departure point" error={errors.departurePoint?.message}>
-            <input className={inputClassName} {...register("departurePoint")} />
-          </FormField>
-          <FormField label="Price from" error={errors.priceFrom?.message}>
-            <input className={inputClassName} min="0" type="number" {...register("priceFrom", { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Hero image URL" error={errors.heroImage?.message}>
-            <input className={inputClassName} {...register("heroImage")} />
-          </FormField>
-          <div className="md:col-span-2">
-            <FormField label="Short description" error={errors.shortDescription?.message}>
-              <textarea className={textareaClassName} {...register("shortDescription")} />
-            </FormField>
-          </div>
-          <div className="md:col-span-2">
-            <FormField label="Overview" error={errors.overview?.message}>
-              <textarea className={textareaClassName} {...register("overview")} />
-            </FormField>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="flex min-h-12 items-center gap-3 border border-[var(--color-gray-100)] px-4">
+              <input type="checkbox" {...register("published")} />
+              <span className="text-sm font-semibold text-[var(--color-gray-900)]">Published</span>
+            </label>
+            <label className="flex min-h-12 items-center gap-3 border border-[var(--color-gray-100)] px-4">
+              <input type="checkbox" {...register("featured")} />
+              <span className="text-sm font-semibold text-[var(--color-gray-900)]">Featured</span>
+            </label>
           </div>
         </div>
+        <div className="mt-6 rounded-xl border border-[rgb(214_173_84_/_35%)] bg-[var(--color-ivory)] p-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-gold-dark)]">Current Journey Classification</p>
+              <p className="mt-1 font-serif text-2xl font-semibold text-[var(--color-navy)]">{journeyLabel}</p>
+            </div>
+            <span className="rounded-full bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-navy)]">Informational only</span>
+          </div>
+          <p className="mt-3 text-sm leading-6 text-[var(--color-gray-600)]">
+            Classification is inferred from duration, category, title, and content. It is not stored as a separate field.
+            {journeyClassification === null ? " Classification is unclear and may need content cleanup." : ""}
+          </p>
+        </div>
+        <p className="mt-4 text-xs leading-5 text-[var(--color-gray-600)]">
+          Featured is the current candidate flag for promotional or homepage use. This form does not change the current promotional carousel rules.
+        </p>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">
-          {renderTextArray("Gallery image URLs", "images", "https://images.unsplash.com/... or /photos/karnak.jpg")}
+        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">Trip</p>
+          <h2 className="mt-2 font-serif text-3xl font-semibold text-[var(--color-navy)]">Travel essentials</h2>
+          <div className="mt-6 grid gap-5">
+            <FormField label="Duration" error={errors.duration?.message}>
+              <input className={inputClassName} placeholder="8 Days / 7 Nights" {...register("duration")} />
+            </FormField>
+            <FormField label="Group size" error={errors.groupSize?.message}>
+              <input className={inputClassName} placeholder="Private" {...register("groupSize")} />
+            </FormField>
+            <FormField label="Departure / meeting information" error={errors.departurePoint?.message}>
+              <input className={inputClassName} placeholder="Hotel pickup in Luxor" {...register("departurePoint")} />
+            </FormField>
+          </div>
         </div>
-        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">
-          {renderTextArray("Highlights", "highlights", "Private guide")}
-        </div>
-        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">
-          {renderTextArray("Included", "included", "Pickup and drop-off")}
-        </div>
-        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">
-          {renderTextArray("Excluded", "excluded", "Entrance fees")}
+        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">Pricing & reviews</p>
+          <h2 className="mt-2 font-serif text-3xl font-semibold text-[var(--color-navy)]">Commercial details</h2>
+          <div className="mt-6 grid gap-5">
+            <FormField label="Price from" error={errors.priceFrom?.message}>
+              <input className={inputClassName} min="0" type="number" {...register("priceFrom", { valueAsNumber: true })} />
+            </FormField>
+            <p className="-mt-2 text-xs leading-5 text-[var(--color-gray-600)]">Currency follows the current saved/API configuration and is not editable here.</p>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <FormField label="Rating" error={errors.rating?.message}>
+                <input className={inputClassName} max="5" min="0" step="0.1" type="number" {...register("rating", { valueAsNumber: true })} />
+              </FormField>
+              <FormField label="Review count" error={errors.reviewCount?.message}>
+                <input className={inputClassName} min="0" type="number" {...register("reviewCount", { valueAsNumber: true })} />
+              </FormField>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">Content</p>
+        <h2 className="mt-2 font-serif text-3xl font-semibold text-[var(--color-navy)]">Tell the journey story</h2>
+        <div className="mt-6 grid gap-5">
+          <FormField label="Short description" error={errors.shortDescription?.message}>
+            <textarea className={textareaClassName} {...register("shortDescription")} />
+          </FormField>
+          <FormField label="Overview" error={errors.overview?.message}>
+            <textarea className={textareaClassName} {...register("overview")} />
+          </FormField>
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">Media</p>
+          <h2 className="mt-2 font-serif text-3xl font-semibold text-[var(--color-navy)]">Hero image</h2>
+          <div className="mt-6">
+            <FormField label="Hero image URL" error={errors.heroImage?.message}>
+              <input className={inputClassName} {...register("heroImage")} />
+            </FormField>
+            <p className="mt-2 text-xs leading-5 text-[var(--color-gray-600)]">Use a trusted image URL or a local /photos/... or /images/... path.</p>
+          </div>
+        </div>
+        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">Media</p>
+          <h2 className="mt-2 font-serif text-3xl font-semibold text-[var(--color-navy)]">Gallery images</h2>
+          <div className="mt-6">{renderTextArray("Gallery image URLs", "images", "https://images.unsplash.com/... or /photos/karnak.jpg")}</div>
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-3">
+        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">{renderTextArray("Highlights", "highlights", "Private guide")}</div>
+        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">{renderTextArray("Included", "included", "Pickup and drop-off")}</div>
+        <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">{renderTextArray("Excluded", "excluded", "Entrance fees")}</div>
+      </section>
+
+      <section className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">Itinerary</h2>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">Itinerary</p>
+            <h2 className="mt-2 font-serif text-3xl font-semibold text-[var(--color-navy)]">Journey schedule</h2>
+          </div>
           <button className="text-sm font-bold text-[var(--color-gold)]" type="button" onClick={() => itinerary.append({ title: "", description: "" })}>
             Add item
           </button>
@@ -312,16 +390,9 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR", r
       </section>
 
       <section className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">
-        <h2 className="font-serif text-3xl font-semibold text-[var(--color-navy)]">Publishing and SEO</h2>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">SEO</p>
+        <h2 className="mt-2 font-serif text-3xl font-semibold text-[var(--color-navy)]">Search preview details</h2>
         <div className="mt-6 grid gap-5 md:grid-cols-2">
-          <label className="flex min-h-12 items-center gap-3 border border-[var(--color-gray-100)] px-4">
-            <input type="checkbox" {...register("published")} />
-            <span className="text-sm font-semibold text-[var(--color-gray-900)]">Published</span>
-          </label>
-          <label className="flex min-h-12 items-center gap-3 border border-[var(--color-gray-100)] px-4">
-            <input type="checkbox" {...register("featured")} />
-            <span className="text-sm font-semibold text-[var(--color-gray-900)]">Featured</span>
-          </label>
           <FormField label="Meta title" error={errors.metaTitle?.message}>
             <input className={inputClassName} {...register("metaTitle")} />
           </FormField>
@@ -331,6 +402,14 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR", r
         </div>
       </section>
 
+      {qualityHints.length ? (
+        <aside className="border border-amber-200 bg-amber-50 p-5 text-sm text-amber-950">
+          <p className="font-bold uppercase tracking-[0.12em]">Data quality hints</p>
+          <ul className="mt-3 list-disc space-y-1 pl-5 leading-6">
+            {qualityHints.map((hint) => <li key={hint}>{hint}</li>)}
+          </ul>
+        </aside>
+      ) : null}
       {message ? <p className="bg-green-50 p-4 text-sm text-green-800">{message}</p> : null}
       {error ? <p className="bg-red-50 p-4 text-sm text-red-800">{error}</p> : null}
 
@@ -339,9 +418,7 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR", r
           <button className="btn-secondary" type="button" onClick={onDelete} disabled={isDeleting}>
             {isDeleting ? "Deleting..." : `Delete ${label}`}
           </button>
-        ) : (
-          <span />
-        )}
+        ) : <span />}
         <button className="btn-primary" type="submit" disabled={isSaving}>
           {isSaving ? "Saving..." : `Save ${label}`}
         </button>

@@ -47,8 +47,7 @@ export default async function EditTourPage({ params }: EditTourPageProps) {
           Edit {label}
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--color-gray-600)]">
-          Editing static fallback {label}s is visible in the form, but saving requires a configured
-          database.
+          Edit the saved {label} record. Changes are available to the public site after saving.
         </p>
       </div>
       {!hasDb ? <DatabaseNotice /> : null}

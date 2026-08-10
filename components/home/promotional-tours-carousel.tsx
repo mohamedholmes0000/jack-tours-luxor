@@ -330,7 +330,14 @@ export function PromotionalToursCarousel({ tours }: { tours: Tour[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const journeys = useMemo(() => {
-    const realJourneys = tours.map(toPromoJourney);
+    const featuredTours = tours.filter((tour) => tour.featured);
+    const sourceTours = featuredTours.length ? featuredTours : tours;
+    const realJourneys = sourceTours.map(toPromoJourney);
+
+    if (process.env.NODE_ENV === "production") {
+      return realJourneys;
+    }
+
     const existingTitles = new Set(
       realJourneys.map((journey) => normalizeTitle(journey.title)),
     );

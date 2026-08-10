@@ -36,7 +36,7 @@ const homepageSections: Array<{
     status: "Partially editable",
   },
   {
-    description: "Card content comes from Tours, but the old Featured settings do not control this carousel.",
+    description: "Cards use published Featured Tours, with other published Tours as a fallback. Old Featured-section settings remain inactive.",
     href: "/admin/tours",
     name: "Promotional Tours",
     status: "Partially editable",
@@ -62,7 +62,7 @@ const homepageSections: Array<{
     status: "Partially editable",
   },
   {
-    description: "FAQ items are managed in FAQ admin; homepage framing and preview count remain in code.",
+    description: "FAQ items are managed in FAQ admin; homepage framing and preview count remain code-managed.",
     href: "/admin/faqs",
     name: "FAQ Preview",
     status: "Partially editable",

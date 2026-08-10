@@ -54,33 +54,7 @@ export async function getAdminSummary() {
   );
 }
 
-function fallbackAdminTours(contentType: AdminContentType) {
-  return tours
-    .filter((tour) => (tour.contentType ?? "TOUR") === contentType)
-    .map((tour) => ({
-      id: tour.slug,
-      contentType: tour.contentType ?? "TOUR",
-      slug: tour.slug,
-      title: tour.title,
-      category: tour.category,
-      shortDescription: tour.shortDescription,
-      duration: tour.duration,
-      city: tour.city,
-      rating: tour.rating,
-      reviewCount: tour.reviewCount,
-      groupSize: tour.groupSize,
-      priceFrom: tour.priceFrom,
-      priceCurrency: tour.priceCurrency,
-      heroImage: tour.heroImage,
-      published: true,
-      featured: tour.featured,
-      createdAt: new Date(),
-    }));
-}
-
 export async function getAdminTours(contentType: AdminContentType = "TOUR") {
-  const fallbackTours = fallbackAdminTours(contentType);
-
   return tryDatabase(
     async () => {
       const dbTours = await prisma.tour.findMany({
@@ -93,6 +67,7 @@ export async function getAdminTours(contentType: AdminContentType = "TOUR") {
           title: true,
           category: true,
           shortDescription: true,
+          overview: true,
           duration: true,
           city: true,
           rating: true,
@@ -107,9 +82,9 @@ export async function getAdminTours(contentType: AdminContentType = "TOUR") {
         },
       });
 
-      return dbTours.length ? dbTours : fallbackTours;
+      return dbTours;
     },
-    fallbackTours,
+    [],
   );
 }
 
@@ -260,67 +235,9 @@ export async function getAdminTour(id: string) {
         };
       }
 
-      const staticTour = tours.find((item) => item.slug === id);
-      return staticTour
-        ? {
-            id: staticTour.slug,
-            contentType: staticTour.contentType ?? "TOUR",
-            title: staticTour.title,
-            slug: staticTour.slug,
-            category: staticTour.category,
-            shortDescription: staticTour.shortDescription,
-            overview: staticTour.overview,
-            duration: staticTour.duration,
-            city: staticTour.city,
-            rating: staticTour.rating,
-            reviewCount: staticTour.reviewCount,
-            groupSize: staticTour.groupSize,
-            departurePoint: staticTour.departurePoint,
-            priceFrom: staticTour.priceFrom,
-            heroImage: staticTour.heroImage,
-            images: staticTour.images,
-            highlights: staticTour.highlights,
-            included: staticTour.included,
-            excluded: staticTour.excluded,
-            itinerary: staticTour.itinerary,
-            published: true,
-            featured: staticTour.featured,
-            metaTitle: "",
-            metaDescription: "",
-          }
-        : null;
+      return null;
     },
-    (() => {
-      const staticTour = tours.find((item) => item.slug === id);
-      return staticTour
-        ? {
-            id: staticTour.slug,
-            contentType: staticTour.contentType ?? "TOUR",
-            title: staticTour.title,
-            slug: staticTour.slug,
-            category: staticTour.category,
-            shortDescription: staticTour.shortDescription,
-            overview: staticTour.overview,
-            duration: staticTour.duration,
-            city: staticTour.city,
-            rating: staticTour.rating,
-            reviewCount: staticTour.reviewCount,
-            groupSize: staticTour.groupSize,
-            departurePoint: staticTour.departurePoint,
-            priceFrom: staticTour.priceFrom,
-            heroImage: staticTour.heroImage,
-            images: staticTour.images,
-            highlights: staticTour.highlights,
-            included: staticTour.included,
-            excluded: staticTour.excluded,
-            itinerary: staticTour.itinerary,
-            published: true,
-            featured: staticTour.featured,
-            metaTitle: "",
-            metaDescription: "",
-          }
-        : null;
-    })(),
+    null,
   );
 }
 

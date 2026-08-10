@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { safeImageSrc } from "@/lib/images";
+import { getTourJourneyType } from "@/lib/tour-journey-type";
 
 export type AdminToursGridTour = {
   id: string;
@@ -13,6 +14,7 @@ export type AdminToursGridTour = {
   title: string;
   category: string;
   shortDescription: string;
+  overview: string;
   duration: string;
   city: string;
   rating: number;
@@ -28,6 +30,9 @@ export type AdminToursGridTour = {
 
 type SortValue = "newest" | "oldest" | "price-high" | "price-low";
 type StatusValue = "all" | "published" | "draft";
+type FeaturedValue = "all" | "featured" | "not-featured";
+type ContentTypeValue = "all" | AdminToursGridTour["contentType"];
+type JourneyValue = "all" | "one-day" | "multi-day" | "custom-unknown";
 
 function PencilIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
@@ -75,6 +80,38 @@ function publicHrefForContent(tour: AdminToursGridTour) {
   return `/tours/${tour.slug}`;
 }
 
+function getJourneyLabel(tour: AdminToursGridTour) {
+  const journey = getTourJourneyType(tour);
+  if (journey === "one-day") return "One Day";
+  if (journey === "multi-day") return "Multi Day";
+  return "Custom / Unknown";
+}
+
+function SelectField({
+  children,
+  label,
+  onChange,
+  value,
+}: {
+  children: React.ReactNode;
+  label: string;
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  return (
+    <label>
+      <span className="sr-only">{label}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)] px-4 py-3 text-sm font-medium text-[var(--color-navy)] outline-none transition focus:border-[var(--color-gold)] focus:bg-white lg:min-w-[154px]"
+      >
+        {children}
+      </select>
+    </label>
+  );
+}
+
 export function AdminToursGrid({
   tours,
   canCreate,
@@ -96,10 +133,18 @@ export function AdminToursGrid({
   const [items, setItems] = useState(tours);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<StatusValue>("all");
+  const [featured, setFeatured] = useState<FeaturedValue>("all");
+  const [contentType, setContentType] = useState<ContentTypeValue>("all");
+  const [journey, setJourney] = useState<JourneyValue>("all");
   const [sort, setSort] = useState<SortValue>("newest");
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminToursGridTour | null>(null);
+
+const availableContentTypes = useMemo(
+    () => Array.from(new Set(items.map((tour) => tour.contentType))),
+    [items],
+  );
 
   const filteredTours = useMemo(() => {
     return items
@@ -109,13 +154,25 @@ export function AdminToursGrid({
         if (status === "draft") return !tour.published;
         return true;
       })
+      .filter((tour) => {
+        if (featured === "featured") return tour.featured;
+        if (featured === "not-featured") return !tour.featured;
+        return true;
+      })
+      .filter((tour) => contentType === "all" || tour.contentType === contentType)
+      .filter((tour) => {
+        if (journey === "all") return true;
+        const inferredJourney = getTourJourneyType(tour);
+        if (journey === "custom-unknown") return inferredJourney === null;
+        return inferredJourney === journey;
+      })
       .sort((a, b) => {
         if (sort === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         if (sort === "price-high") return (b.priceFrom ?? 0) - (a.priceFrom ?? 0);
         if (sort === "price-low") return (a.priceFrom ?? 0) - (b.priceFrom ?? 0);
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
-  }, [items, search, sort, status]);
+  }, [contentType, featured, items, journey, search, sort, status]);
 
   async function deleteTour() {
     if (!deleteTarget) return;
@@ -139,44 +196,54 @@ export function AdminToursGrid({
 
   return (
     <>
-      <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-[var(--color-gray-100)] bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
-        <label className="flex-1">
-          <span className="sr-only">Search tours</span>
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            className="w-full rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)] px-4 py-3 text-sm text-[var(--color-navy)] outline-none transition focus:border-[var(--color-gold)] focus:bg-white"
-            placeholder="Search by title, slug, or description"
-            type="search"
-          />
-        </label>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:w-auto">
-          <label>
-            <span className="sr-only">Filter by status</span>
-            <select
-              value={status}
-              onChange={(event) => setStatus(event.target.value as StatusValue)}
-              className="w-full rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)] px-4 py-3 text-sm font-medium text-[var(--color-navy)] outline-none transition focus:border-[var(--color-gold)] focus:bg-white lg:min-w-[170px]"
-            >
+<div className="mt-8 rounded-2xl border border-[var(--color-gray-100)] bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <label className="flex-1">
+            <span className="sr-only">Search tours</span>
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              className="w-full rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)] px-4 py-3 text-sm text-[var(--color-navy)] outline-none transition focus:border-[var(--color-gold)] focus:bg-white"
+              placeholder="Search title, city, category, or slug"
+              type="search"
+            />
+          </label>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+            <SelectField label="Filter by status" value={status} onChange={(value) => setStatus(value as StatusValue)}>
               <option value="all">All status</option>
               <option value="published">Published</option>
               <option value="draft">Draft</option>
-            </select>
-          </label>
-          <label>
-            <span className="sr-only">Sort tours</span>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value as SortValue)}
-              className="w-full rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)] px-4 py-3 text-sm font-medium text-[var(--color-navy)] outline-none transition focus:border-[var(--color-gold)] focus:bg-white lg:min-w-[170px]"
-            >
+            </SelectField>
+            <SelectField label="Filter by featured state" value={featured} onChange={(value) => setFeatured(value as FeaturedValue)}>
+              <option value="all">All featured states</option>
+              <option value="featured">Featured</option>
+              <option value="not-featured">Not featured</option>
+            </SelectField>
+            <SelectField label="Filter by content type" value={contentType} onChange={(value) => setContentType(value as ContentTypeValue)}>
+              <option value="all">All content types</option>
+              {availableContentTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type.charAt(0) + type.slice(1).toLowerCase()}
+                </option>
+              ))}
+            </SelectField>
+            <SelectField label="Filter by journey classification" value={journey} onChange={(value) => setJourney(value as JourneyValue)}>
+              <option value="all">All journey types</option>
+              <option value="one-day">One Day</option>
+              <option value="multi-day">Multi Day</option>
+              <option value="custom-unknown">Custom / Unknown</option>
+            </SelectField>
+            <SelectField label="Sort tours" value={sort} onChange={(value) => setSort(value as SortValue)}>
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
               <option value="price-high">Price High</option>
               <option value="price-low">Price Low</option>
-            </select>
-          </label>
+            </SelectField>
+          </div>
         </div>
+        <p className="mt-3 text-xs leading-5 text-[var(--color-gray-600)]">
+          Journey type is inferred from existing duration, category, title, and content. It is informational only and is never saved back to the database.
+        </p>
       </div>
 
       {error ? <p className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</p> : null}
@@ -187,6 +254,7 @@ export function AdminToursGrid({
             {filteredTours.map((tour) => {
               const publicHref = publicHrefForContent(tour);
               const contentHref = canEdit ? `/admin/tours/${tour.id}` : publicHref;
+              const journeyLabel = getJourneyLabel(tour);
               return (
                 <article
                   key={tour.id}
@@ -209,9 +277,19 @@ export function AdminToursGrid({
                     >
                       {tour.published ? "Published" : "Draft"}
                     </span>
-                    <span className="absolute bottom-4 left-4 rounded-full bg-[var(--color-navy)]/85 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
-                      {tour.contentType.toLowerCase()}
-                    </span>
+                    <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
+                      <span className="rounded-full bg-[var(--color-navy)]/85 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
+                        {tour.contentType.toLowerCase()}
+                      </span>
+                      <span className="rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-navy)]">
+                        {journeyLabel}
+                      </span>
+                    </div>
+                    {tour.featured ? (
+                      <span className="absolute left-4 top-12 rounded-full bg-[var(--color-gold-dark)] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
+                        Featured
+                      </span>
+                    ) : null}
                     {canEdit ? (
                       <Link
                         aria-label={`Edit ${tour.title}`}
@@ -225,7 +303,7 @@ export function AdminToursGrid({
                   <div className="p-5">
                     <Link href={contentHref} target={canEdit ? undefined : "_blank"} className="block">
                       <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gray-600)]">
-                        {tour.city || "Egypt"}
+                        {tour.city || "City missing"}
                       </p>
                       <h2 className="mt-2 line-clamp-2 font-serif text-2xl font-semibold leading-tight text-[var(--color-navy)]">
                         {tour.title}
@@ -235,6 +313,9 @@ export function AdminToursGrid({
                       </p>
                       <p className="mt-4 text-sm font-semibold text-[var(--color-gold-dark)]">
                         {tour.rating.toFixed(1)} ({tour.reviewCount} reviews)
+                      </p>
+                      <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-gray-600)]">
+                        {tour.duration || "Duration not set"} · {journeyLabel}
                       </p>
                     </Link>
 
@@ -291,7 +372,7 @@ export function AdminToursGrid({
         ) : (
           <div className="rounded-2xl border border-[var(--color-gray-100)] bg-white p-10 text-center shadow-sm">
             <p className="font-serif text-3xl font-semibold text-[var(--color-navy)]">{emptyTitle}</p>
-            <p className="mt-2 text-sm text-[var(--color-gray-600)]">Adjust the search or filters to see more catalog items.</p>
+            <p className="mt-2 text-sm text-[var(--color-gray-600)]">Only saved database records appear here. Adjust the search or filters to see more catalog items.</p>
             {canCreate ? (
               <Link className="btn-primary mt-6" href={createHref}>
                 + Add New {singularLabel}

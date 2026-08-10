@@ -489,7 +489,6 @@ export async function Homepage() {
       {/* ============================================================
           2 · DESTINATIONS MARQUEE — auto-scrolling cinematic strip.
       ============================================================ */}
-      {destinationsVisible ? (
       <section className="relative order-2 bg-[var(--color-ivory)] pb-6 text-[var(--color-navy)] sm:pb-8">
         <TripFinder destinations={topDestinations.map((destination) => destination.name)} />
         <JourneyDiscovery
@@ -497,7 +496,6 @@ export async function Homepage() {
           multiDayImage={multiDayTour?.heroImage || discoveryFallbackImage}
         />
       </section>
-      ) : null}
       {destinationsVisible ? (
       <section className="order-3 bg-white py-8 text-[var(--color-navy)] sm:py-10 lg:py-12">
         <div className="container-premium text-center">

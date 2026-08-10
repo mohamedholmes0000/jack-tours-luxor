@@ -17,12 +17,17 @@ import { isAllowedAdminImageSrc, safeImageSrc } from "@/lib/images";
 type SectionKey =
   | "customizeTrip"
   | "destinations"
+  | "experienceTypes"
+  | "faqPreview"
   | "featured"
   | "finalCta"
   | "hero"
+  | "howItWorks"
   | "ourWorld"
+  | "promotionalTours"
   | "stats"
   | "testimonials"
+  | "tripFinder"
   | "why";
 type ImageField =
   | "finalCtaBackgroundImage"
@@ -652,6 +657,15 @@ function SectionCard({
   title: string;
   onToggle: () => void;
 }) {
+  const statusClassName =
+    status === "Hardcoded"
+      ? "border-slate-200 bg-slate-50 text-slate-700"
+      : status === "Legacy / inactive"
+        ? "border-amber-200 bg-amber-50 text-amber-800"
+        : status === "Editable"
+          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+          : "border-blue-200 bg-blue-50 text-blue-800";
+
   return (
     <section className={`overflow-visible rounded-2xl border shadow-sm ${legacy ? "order-last border-amber-200 bg-amber-50/35" : "border-[var(--color-gray-100)] bg-white"}`}>
       <button
@@ -663,7 +677,7 @@ function SectionCard({
           <span className="flex flex-wrap items-center gap-3">
             <span className="font-serif text-2xl font-semibold text-[var(--color-navy)]">{title}</span>
             {status ? (
-              <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${legacy ? "border-amber-200 bg-amber-50 text-amber-800" : "border-blue-200 bg-blue-50 text-blue-800"}`}>
+              <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${statusClassName}`}>
                 {status}
               </span>
             ) : null}
@@ -688,12 +702,17 @@ function InfoBanner({ children }: { children: React.ReactNode }) {
 const sectionLabels: Record<SectionKey, string> = {
   customizeTrip: "Customize Trip",
   destinations: "Top Destinations",
+  experienceTypes: "Experience Type Cards",
+  faqPreview: "FAQ Preview",
   featured: "Old Featured Journeys Header",
   finalCta: "Final CTA",
   hero: "Hero Slider",
+  howItWorks: "How It Works",
   ourWorld: "Our World",
+  promotionalTours: "Promotional Tours",
   stats: "Stats",
   testimonials: "Reviews Preview",
+  tripFinder: "Trip Finder",
   why: "Why Jack",
 };
 
@@ -702,12 +721,17 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
     customizeTrip: false,
     destinations: false,
+    experienceTypes: false,
+    faqPreview: false,
     featured: false,
     finalCta: false,
     hero: true,
+    howItWorks: false,
     ourWorld: false,
+    promotionalTours: false,
     stats: false,
     testimonials: false,
+    tripFinder: false,
     why: false,
   });
   const [savingSection, setSavingSection] = useState<SectionKey | null>(null);
@@ -810,6 +834,30 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       </SectionCard>
 
       <SectionCard
+        description="Live lead-generation search; its structure and ranges remain intentionally code-managed."
+        open={openSections.tripFinder}
+        status="Hardcoded"
+        title="Trip Finder"
+        onToggle={() => setOpenSections((current) => ({ ...current, tripFinder: !current.tripFinder }))}
+      >
+        <InfoBanner>
+          The Trip Finder is live and uses published destination data where available. Tabs, duration ranges, price ranges, and field behavior are structural controls and are not editable in this phase because no safe existing homepage storage supports them.
+        </InfoBanner>
+      </SectionCard>
+
+      <SectionCard
+        description="Live One Day and Multi Day discovery cards with fixed filter routes."
+        open={openSections.experienceTypes}
+        status="Hardcoded"
+        title="Experience Type Cards"
+        onToggle={() => setOpenSections((current) => ({ ...current, experienceTypes: !current.experienceTypes }))}
+      >
+        <InfoBanner>
+          Titles, descriptions, CTA labels, and composition are currently code-managed. Card images are selected from real tour data when suitable tours exist. Routes remain fixed to <strong>/tours?journey=one-day</strong> and <strong>/tours?journey=multi-day</strong>. Making this copy editable requires future storage work.
+        </InfoBanner>
+      </SectionCard>
+
+      <SectionCard
         description="Live section heading with destination cards managed separately."
         open={openSections.destinations}
         status="Partially editable"
@@ -818,7 +866,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       >
         <div className="grid gap-5">
           <InfoBanner>
-            This heading and view-all link are live on the homepage. Destination circle data comes from Destination records when available, with static fallback cards and tour counts from published content. Destination detail copy is still partly static/fallback. Manage cards at{" "}
+            This heading, visibility, and view-all link are live on the homepage. The visibility switch controls Top Destinations only; Trip Finder and Experience Type Cards remain available. Destination card data is managed separately, with safe public fallbacks. Manage cards at{" "}
             <Link className="font-bold text-[var(--color-gold-dark)]" href="/admin/destinations">
               Manage destinations →
             </Link>
@@ -833,6 +881,21 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
           <Toggle checked={values.destinationsVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("destinationsVisible", value)} />
         </div>
         {saveButton("destinations")}
+      </SectionCard>
+
+      <SectionCard
+        description="Live ‘Plan now and travel deeper’ carousel powered by published Tour records."
+        open={openSections.promotionalTours}
+        status="Partially editable"
+        title="Promotional Tours"
+        onToggle={() => setOpenSections((current) => ({ ...current, promotionalTours: !current.promotionalTours }))}
+      >
+        <InfoBanner>
+          Homepage cards use published Tours marked <strong>Featured</strong>. If no published featured tours exist, the carousel falls back to other published Tours so the section does not become empty. The current heading and description remain code-managed because the old Featured Journeys fields are intentionally not reused. Manage card content at{" "}
+          <Link className="font-bold text-[var(--color-gold-dark)]" href="/admin/tours">
+            Manage tours →
+          </Link>
+        </InfoBanner>
       </SectionCard>
 
       <div className="order-last mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5">
@@ -914,6 +977,18 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
           </div>
         </div>
         {saveButton("customizeTrip")}
+      </SectionCard>
+
+      <SectionCard
+        description="Live four-step planning process; content storage is not available yet."
+        open={openSections.howItWorks}
+        status="Hardcoded"
+        title="How It Works"
+        onToggle={() => setOpenSections((current) => ({ ...current, howItWorks: !current.howItWorks }))}
+      >
+        <InfoBanner>
+          Visibility, eyebrow, heading, introduction, and four step titles/descriptions are currently defined in the public component. Icons and layout will remain code-managed. Making only the copy editable requires a future storage decision and was intentionally not added to Prisma in this phase.
+        </InfoBanner>
       </SectionCard>
 
       <SectionCard
@@ -1063,7 +1138,7 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
       >
         <div className="grid gap-5">
           <InfoBanner>
-            The section header and visibility are live. Individual testimonial records are not managed from this page and need a future Reviews admin.
+            The section header and visibility are live. Individual testimonial records are not managed from this page. A dedicated Reviews manager is coming in Phase 4.
           </InfoBanner>
           <div className="grid gap-5 md:grid-cols-2">
             <TextInput disabled={!canEdit} label="Eyebrow text" value={values.testimonialsEyebrow} onChange={(value) => setField("testimonialsEyebrow", value)} />
@@ -1073,6 +1148,21 @@ export function HomepageEditor({ canEdit, initialValues }: { canEdit: boolean; i
           <Toggle checked={values.testimonialsVisible} disabled={!canEdit} label="Section visible" onChange={(value) => setField("testimonialsVisible", value)} />
         </div>
         {saveButton("testimonials")}
+      </SectionCard>
+
+      <SectionCard
+        description="Live FAQ preview; questions and answers remain in the dedicated FAQ manager."
+        open={openSections.faqPreview}
+        status="Hardcoded"
+        title="FAQ Preview"
+        onToggle={() => setOpenSections((current) => ({ ...current, faqPreview: !current.faqPreview }))}
+      >
+        <InfoBanner>
+          The homepage currently shows up to six published FAQ items with code-managed eyebrow, heading, description, and View All label. No existing homepage storage supports those presentation fields. Manage questions and answers at{" "}
+          <Link className="font-bold text-[var(--color-gold-dark)]" href="/admin/faqs">
+            Manage FAQ →
+          </Link>
+        </InfoBanner>
       </SectionCard>
 
       <SectionCard
