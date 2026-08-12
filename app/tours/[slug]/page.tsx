@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
+  TourDetailGallery,
   MobileTourBookingBar,
   TourFaqAccordion,
 } from "@/components/tours/tour-detail-interactions";
@@ -444,34 +445,7 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
                 </div>
               </section>
 
-              <section id="tour-gallery">
-                {sectionHeader("Tour gallery", "In the frame")}
-                <div className="relative mt-6 overflow-hidden rounded-xl border border-[rgb(214_173_84_/_24%)] bg-[var(--color-navy)] py-4 shadow-[0_22px_60px_rgb(87_59_22_/_12%)]">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-[var(--color-navy)] to-transparent" />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-[var(--color-navy)] to-transparent" />
-                  <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-2 no-scrollbar">
-                    {allImages.map((image, index) => (
-                      <figure
-                        key={`${image}-${index}`}
-                        className="group relative aspect-[4/3] w-[min(82vw,30rem)] shrink-0 snap-center overflow-hidden rounded-lg border border-[rgb(214_173_84_/_24%)] bg-[var(--color-gray-100)] sm:w-[26rem] lg:w-[30rem]"
-                      >
-                        <Image
-                          src={image}
-                          alt={`${tour.title} gallery image ${index + 1}`}
-                          fill
-                          sizes="(min-width: 1024px) 30rem, (min-width: 640px) 26rem, 82vw"
-                          className="object-cover transition duration-500 group-hover:scale-105"
-                        />
-                        <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#06111f] to-transparent p-4">
-                          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-gold-light)]">
-                            Image {index + 1}
-                          </p>
-                        </figcaption>
-                      </figure>
-                    ))}
-                  </div>
-                </div>
-              </section>
+              <TourDetailGallery title={tour.title} images={allImages} />
 
               <section id="tour-inquiry" className="scroll-mt-28">
                 <TourInquiryForm

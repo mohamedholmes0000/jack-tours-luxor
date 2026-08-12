@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import type { GalleryImage } from "@/lib/content";
 
 function XIcon() {
@@ -24,13 +24,21 @@ function ArrowIcon({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-export function GalleryLightbox({ images }: { images: GalleryImage[] }) {
+type GalleryLightboxProps = {
+  images: GalleryImage[];
+  renderGallery?: (openImage: (index: number) => void) => ReactNode;
+};
+
+export function GalleryLightbox({ images, renderGallery }: GalleryLightboxProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const touchStartXRef = useRef<number | null>(null);
   const titleId = useId();
   const descriptionId = useId();
   const activeImage = activeIndex === null ? null : images[activeIndex];
+  const hasImageMetadata = Boolean(
+    activeImage?.category || activeImage?.title || activeImage?.description,
+  );
 
   function close() {
     setActiveIndex(null);
@@ -75,42 +83,46 @@ export function GalleryLightbox({ images }: { images: GalleryImage[] }) {
 
   return (
     <>
-      <div className="container-premium grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {images.map((image, index) => (
-          <figure
-            key={`${image.url}-${index}`}
-            role="button"
-            tabIndex={0}
-            aria-label={`Open ${image.title}`}
-            className="group cursor-pointer overflow-hidden rounded-lg bg-white shadow-[0_2px_8px_rgb(0_0_0_/_6%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgb(0_0_0_/_12%)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-gold)]"
-            onClick={() => setActiveIndex(index)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                setActiveIndex(index);
-              }
-            }}
-          >
-            <div className="relative aspect-[4/3] overflow-hidden">
-              <Image
-                src={image.url}
-                alt={image.alt}
-                fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                className="object-cover transition duration-300 group-hover:scale-[1.02]"
-              />
-            </div>
-            <figcaption className="p-4">
-              <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">
-                {image.category}
-              </p>
-              <h2 className="mt-2 text-lg font-semibold leading-snug text-[var(--color-navy)]">
-                {image.title}
-              </h2>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+      {renderGallery ? (
+        renderGallery((index) => setActiveIndex(index))
+      ) : (
+        <div className="container-premium grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {images.map((image, index) => (
+            <figure
+              key={`${image.url}-${index}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`Open ${image.title}`}
+              className="group cursor-pointer overflow-hidden rounded-lg bg-white shadow-[0_2px_8px_rgb(0_0_0_/_6%)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgb(0_0_0_/_12%)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-gold)]"
+              onClick={() => setActiveIndex(index)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setActiveIndex(index);
+                }
+              }}
+            >
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <Image
+                  src={image.url}
+                  alt={image.alt}
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover transition duration-300 group-hover:scale-[1.02]"
+                />
+              </div>
+              <figcaption className="p-4">
+                <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[var(--color-gold-dark)]">
+                  {image.category}
+                </p>
+                <h2 className="mt-2 text-lg font-semibold leading-snug text-[var(--color-navy)]">
+                  {image.title}
+                </h2>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
 
       {activeImage ? (
         <div
@@ -136,8 +148,9 @@ export function GalleryLightbox({ images }: { images: GalleryImage[] }) {
           <div
             role="dialog"
             aria-modal="true"
-            aria-labelledby={titleId}
-            aria-describedby={descriptionId}
+            aria-labelledby={activeImage.title ? titleId : undefined}
+            aria-describedby={activeImage.description ? descriptionId : undefined}
+            aria-label={hasImageMetadata ? undefined : "Gallery image viewer"}
             className="relative flex h-full max-h-[92vh] w-full max-w-6xl flex-col"
           >
             <button
@@ -176,17 +189,25 @@ export function GalleryLightbox({ images }: { images: GalleryImage[] }) {
                 priority
               />
             </div>
-            <div className="mx-auto mt-4 max-w-3xl text-center">
-              <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
-                {activeImage.category}
-              </p>
-              <h2 id={titleId} className="mt-2 text-2xl font-semibold text-white">
-                {activeImage.title}
-              </h2>
-              <p id={descriptionId} className="mt-2 text-sm leading-6 text-white/70">
-                {activeImage.description}
-              </p>
-            </div>
+            {hasImageMetadata ? (
+              <div className="mx-auto mt-4 max-w-3xl text-center">
+                {activeImage.category ? (
+                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[var(--color-gold-light)]">
+                    {activeImage.category}
+                  </p>
+                ) : null}
+                {activeImage.title ? (
+                  <h2 id={titleId} className="mt-2 text-2xl font-semibold text-white">
+                    {activeImage.title}
+                  </h2>
+                ) : null}
+                {activeImage.description ? (
+                  <p id={descriptionId} className="mt-2 text-sm leading-6 text-white/70">
+                    {activeImage.description}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}
