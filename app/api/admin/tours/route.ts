@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         metaTitle: parsed.data.metaTitle || null,
         metaDescription: parsed.data.metaDescription || null,
         itinerary: parsed.data.itinerary,
-        languages: ["English", "Arabic"],
+        languages: parsed.data.languages.length ? parsed.data.languages : ["English", "Arabic"],
         priceCurrency: "USD",
       },
     });

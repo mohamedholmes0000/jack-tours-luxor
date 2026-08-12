@@ -271,11 +271,11 @@ export default async function TourDetailPage({ params }: TourDetailProps) {
 
           <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden p-8 md:block">
             <div className="mx-auto flex max-w-[1280px] items-end justify-between gap-8">
-              <div className="max-w-4xl">
+              <div className="w-full md:w-[calc(60%-2rem)] md:shrink-0">
                 <p className="text-[12.5px] font-medium uppercase tracking-[0.1em] text-[var(--color-gold-light)]">
                   {tour.category}
                 </p>
-                <h1 className="mt-3 max-w-4xl text-[40px] font-bold leading-tight text-white drop-shadow-[0_4px_18px_rgb(0_0_0_/_45%)]">
+                <h1 className="mt-3 max-w-full text-[34px] font-bold leading-[1.12] text-white drop-shadow-[0_4px_18px_rgb(0_0_0_/_45%)]">
                   {tour.title}
                 </h1>
                 <p className="mt-3 text-base text-white/70">{tour.city || tour.departurePoint}</p>

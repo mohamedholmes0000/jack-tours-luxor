@@ -29,6 +29,7 @@ const emptyTour: AdminTourValues = {
   reviewCount: 0,
   groupSize: "Private",
   departurePoint: "",
+  languages: [],
   priceFrom: 0,
   heroImage: "",
   images: [""],
@@ -49,8 +50,13 @@ function cleanValues(values: AdminTourValues): AdminTourValues {
     highlights: values.highlights.filter(Boolean),
     included: values.included.filter(Boolean),
     excluded: values.excluded.filter(Boolean),
+    languages: values.languages.map((language) => language.trim()).filter(Boolean),
     itinerary: values.itinerary.filter((item) => item.title || item.description),
   };
+}
+
+function parseLanguages(value: string) {
+  return value.split(",").map((language) => language.trim()).filter(Boolean);
 }
 
 function contentTypeLabel(contentType: AdminTourValues["contentType"]) {
@@ -74,6 +80,7 @@ export function AdminTourForm({ mode, id, initialValues, contentType = "TOUR", r
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [languagesText, setLanguagesText] = useState(initialValues?.languages?.join(", ") ?? "");
   const {
     register,
     control,
@@ -307,6 +314,21 @@ return (
             <FormField label="Departure / meeting information" error={errors.departurePoint?.message}>
               <input className={inputClassName} placeholder="Hotel pickup in Luxor" {...register("departurePoint")} />
             </FormField>
+            <FormField label="Languages" error={errors.languages?.message}>
+              <input
+                className={inputClassName}
+                placeholder="English, French, German"
+                value={languagesText}
+                onChange={(event) => {
+                  const nextValue = event.target.value;
+                  setLanguagesText(nextValue);
+                  setValue("languages", parseLanguages(nextValue), { shouldDirty: true, shouldValidate: true });
+                }}
+              />
+            </FormField>
+            <p className="-mt-2 text-xs leading-5 text-[var(--color-gray-600)]">
+              Separate languages with commas.
+            </p>
           </div>
         </div>
         <div className="border border-[var(--color-gray-100)] bg-white p-5 shadow-sm md:p-7">

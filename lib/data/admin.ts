@@ -220,6 +220,7 @@ export async function getAdminTour(id: string) {
           reviewCount: tour.reviewCount ?? 0,
           groupSize: tour.groupSize,
           departurePoint: tour.departurePoint ?? "",
+          languages: tour.languages,
           priceFrom: tour.priceFrom ?? 0,
           heroImage: tour.heroImage ?? "",
           images: tour.images,

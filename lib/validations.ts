@@ -111,6 +111,7 @@ export const adminTourSchema = z.object({
   reviewCount: z.number().int().min(0).optional(),
   groupSize: z.string().trim().min(1, "Add group size."),
   departurePoint: z.string().trim().optional(),
+  languages: z.array(z.string().trim()),
   priceFrom: z.number().min(0).optional(),
   heroImage: optionalAdminImageSource,
   images: z.array(adminImageListItem),
