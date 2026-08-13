@@ -16,6 +16,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { HotelAvailabilityForm } from "@/components/content/hotel-availability-form";
+import { TourDetailGallery } from "@/components/tours/tour-detail-interactions";
 import { formatPrice, type Tour } from "@/lib/content";
 import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
@@ -93,42 +94,6 @@ function hotelViewLabel(item: Tour) {
     : item.city?.toLowerCase().includes("red sea") || item.city?.toLowerCase().includes("hurghada")
       ? "Sea View"
       : "City View";
-}
-
-function HotelGallery({ images, title }: { images: string[]; title: string }) {
-  const displayImages = images.length ? images : ["/images/luxor-temple.jpg"];
-  const mainImage = displayImages[0];
-  const thumbnails = displayImages.slice(1, 4);
-
-  return (
-    <div className="overflow-hidden rounded-3xl border border-[rgb(214_173_84_/_18%)] bg-white p-3 shadow-[0_18px_48px_rgb(6_17_31_/_8%)]">
-      <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-[var(--color-sand)]">
-        <Image
-          src={mainImage}
-          alt={title}
-          fill
-          priority
-          sizes="(min-width: 1024px) 58vw, 100vw"
-          className="object-cover"
-        />
-      </div>
-      {thumbnails.length ? (
-        <div className="mt-3 grid grid-cols-3 gap-3">
-          {thumbnails.map((image, index) => (
-            <div key={`${image}-${index}`} className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[var(--color-sand)]">
-              <Image
-                src={image}
-                alt={`${title} preview ${index + 2}`}
-                fill
-                sizes="(min-width: 1024px) 18vw, 30vw"
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
 }
 
 function HotelContentPanel({
@@ -341,7 +306,13 @@ export function ContentDetailPage({
 
             <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
               <main className="space-y-6">
-                <HotelGallery images={images} title={item.title} />
+                <TourDetailGallery
+                  title={item.title}
+                  images={images}
+                  eyebrow="Stay gallery"
+                  heading="In the frame"
+                  sectionId="hotel-gallery"
+                />
 
                 <HotelContentPanel eyebrow="Overview" title="Description">
                   <p className="text-base leading-8 text-[var(--color-navy)]/68">

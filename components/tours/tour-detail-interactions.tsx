@@ -68,9 +68,18 @@ export function TourFaqAccordion({ items }: { items: FaqItem[] }) {
 type TourDetailGalleryProps = {
   title: string;
   images: string[];
+  eyebrow?: string;
+  heading?: string;
+  sectionId?: string;
 };
 
-export function TourDetailGallery({ title, images }: TourDetailGalleryProps) {
+export function TourDetailGallery({
+  title,
+  images,
+  eyebrow = "Tour gallery",
+  heading = "In the frame",
+  sectionId = "tour-gallery",
+}: TourDetailGalleryProps) {
   const [mobileIndex, setMobileIndex] = useState(0);
   const galleryImages = images.map((url, index) => ({
     url,
@@ -112,15 +121,15 @@ export function TourDetailGallery({ title, images }: TourDetailGalleryProps) {
   }
 
   return (
-    <section id="tour-gallery">
+    <section id={sectionId}>
       <GalleryLightbox
         images={galleryImages}
         renderGallery={(openImage) => (
           <>
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="eyebrow text-[var(--color-gold)]">Tour gallery</p>
-                <h2 className="mt-2 text-[28px] font-bold leading-tight text-[var(--color-navy)]">In the frame</h2>
+                <p className="eyebrow text-[var(--color-gold)]">{eyebrow}</p>
+                <h2 className="mt-2 text-[28px] font-bold leading-tight text-[var(--color-navy)]">{heading}</h2>
               </div>
               {images.length > 1 ? (
                 <button
