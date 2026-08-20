@@ -2,11 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
-  BadgeCheck,
   ConciergeBell,
   Handshake,
   Headphones,
-  MapPinned,
   MessageCircle,
   Pyramid,
   Star,
@@ -917,7 +915,9 @@ export async function Homepage() {
                         className="group flex min-h-44 flex-col justify-between bg-[var(--color-ivory)] px-6 py-6 outline-none transition-colors hover:bg-[rgb(214_173_84_/_14%)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-gold)] sm:px-8 sm:py-7"
                       >
                         <div>
-                          <BadgeCheck aria-hidden="true" className="size-6 text-[var(--color-gold-dark)]" strokeWidth={1.7} />
+                          <span className="flex size-12 items-center justify-center border border-[rgb(6_17_31_/_12%)] bg-white p-2">
+                            <Image src="/brand-icons/tripadvisor.svg" alt="" width={32} height={32} className="size-8" />
+                          </span>
                           <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-navy)]">Tripadvisor</p>
                           <p className="mt-3 max-w-sm text-sm leading-6 text-[var(--color-navy)]/62">
                             Read what travelers say about their time with Jack Egypt Tour.
@@ -938,7 +938,9 @@ export async function Homepage() {
                         className={`group flex min-h-44 flex-col justify-between bg-white px-6 py-6 outline-none transition-colors hover:bg-[var(--color-ivory)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-gold)] sm:px-8 sm:py-7 ${tripadvisorUrl ? "border-t border-[rgb(6_17_31_/_14%)] md:border-l md:border-t-0" : ""}`}
                       >
                         <div>
-                          <MapPinned aria-hidden="true" className="size-6 text-[var(--color-gold-dark)]" strokeWidth={1.7} />
+                          <span className="flex size-12 items-center justify-center border border-[rgb(6_17_31_/_12%)] bg-[var(--color-ivory)] p-2">
+                            <Image src="/brand-icons/google.svg" alt="" width={32} height={32} className="size-8" />
+                          </span>
                           <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-navy)]">Google</p>
                           <p className="mt-3 max-w-sm text-sm leading-6 text-[var(--color-navy)]/62">
                             Find our business profile and traveler feedback on Google.

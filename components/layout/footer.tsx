@@ -1,16 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
-import { BadgeCheck, Camera, MapPinned, ThumbsUp, type LucideIcon } from "lucide-react";
 import { safeExternalHttpUrl, type PublicSettings } from "@/lib/data/settings";
 
 export function Footer({ settings }: { settings: PublicSettings }) {
   const socialLinks = [
-    { href: safeExternalHttpUrl(settings.socialFacebook), icon: ThumbsUp, label: "Facebook" },
-    { href: safeExternalHttpUrl(settings.socialInstagram), icon: Camera, label: "Instagram" },
-  ].filter((link): link is { href: string; icon: LucideIcon; label: string } => Boolean(link.href));
+    { href: safeExternalHttpUrl(settings.socialFacebook), logo: "/brand-icons/facebook.svg", label: "Facebook" },
+    { href: safeExternalHttpUrl(settings.socialInstagram), logo: "/brand-icons/instagram.svg", label: "Instagram" },
+  ].filter((link) => Boolean(link.href));
   const trustLinks = [
-    { href: safeExternalHttpUrl(settings.socialTripadvisor), icon: BadgeCheck, label: "Tripadvisor" },
-    { href: safeExternalHttpUrl(settings.socialGoogleBusiness), icon: MapPinned, label: "Google" },
-  ].filter((link): link is { href: string; icon: LucideIcon; label: string } => Boolean(link.href));
+    { href: safeExternalHttpUrl(settings.socialTripadvisor), logo: "/brand-icons/tripadvisor.svg", label: "Tripadvisor" },
+    { href: safeExternalHttpUrl(settings.socialGoogleBusiness), logo: "/brand-icons/google.svg", label: "Google" },
+  ].filter((link) => Boolean(link.href));
 
   return (
     <footer className="section-dark pattern-overlay overflow-hidden border-t border-[rgb(214_173_84_/_24%)] pb-20 text-white sm:pb-0">
@@ -59,10 +59,10 @@ export function Footer({ settings }: { settings: PublicSettings }) {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`Visit Jack Egypt Tour on ${link.label}`}
-                      className="inline-flex min-h-11 items-center gap-3 border-b border-white/10 text-sm text-white/75 transition-colors hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
-                    >
-                      <link.icon aria-hidden="true" className="size-4 shrink-0 text-[var(--color-gold-light)]" strokeWidth={1.8} />
+                    aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                    className="inline-flex min-h-11 items-center gap-3 border-b border-white/10 text-sm text-white/75 transition-colors hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
+                  >
+                      <Image src={link.logo} alt="" width={18} height={18} className="size-[18px] shrink-0" />
                       <span>{link.label}</span>
                     </a>
                   ))}
@@ -79,10 +79,10 @@ export function Footer({ settings }: { settings: PublicSettings }) {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`Visit Jack Egypt Tour on ${link.label}`}
-                      className="inline-flex min-h-11 items-center gap-3 border-b border-white/10 text-sm text-white/75 transition-colors hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
-                    >
-                      <link.icon aria-hidden="true" className="size-4 shrink-0 text-[var(--color-gold-light)]" strokeWidth={1.8} />
+                    aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                    className="inline-flex min-h-11 items-center gap-3 border-b border-white/10 text-sm text-white/75 transition-colors hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
+                  >
+                      <Image src={link.logo} alt="" width={18} height={18} className="size-[18px] shrink-0" />
                       <span>{link.label}</span>
                     </a>
                   ))}
