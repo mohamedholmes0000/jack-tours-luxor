@@ -1,14 +1,14 @@
 import Link from "next/link";
-import type { PublicSettings } from "@/lib/data/settings";
+import { BadgeCheck, Camera, MapPinned, ThumbsUp, type LucideIcon } from "lucide-react";
+import { safeExternalHttpUrl, type PublicSettings } from "@/lib/data/settings";
 
 export function Footer({ settings }: { settings: PublicSettings }) {
   const socialLinks = [
-    { href: settings.socialFacebook, label: "Facebook" },
-    { href: settings.socialInstagram, label: "Instagram" },
-    { href: settings.socialTripadvisor, label: "TripAdvisor" },
-    { href: settings.socialTwitter, label: "X" },
-    { href: settings.socialYoutube, label: "YouTube" },
-  ].filter((link) => link.href);
+    { href: safeExternalHttpUrl(settings.socialFacebook), icon: ThumbsUp, label: "Facebook" },
+    { href: safeExternalHttpUrl(settings.socialInstagram), icon: Camera, label: "Instagram" },
+    { href: safeExternalHttpUrl(settings.socialTripadvisor), icon: BadgeCheck, label: "Tripadvisor" },
+    { href: safeExternalHttpUrl(settings.socialGoogleBusiness), icon: MapPinned, label: "Google Business Profile" },
+  ].filter((link): link is { href: string; icon: LucideIcon; label: string } => Boolean(link.href));
 
   return (
     <footer className="section-dark pattern-overlay overflow-hidden border-t border-[rgb(214_173_84_/_24%)] pb-20 text-white sm:pb-0">
@@ -48,10 +48,19 @@ export function Footer({ settings }: { settings: PublicSettings }) {
             <p>24/7 WhatsApp support</p>
             <p>{settings.email}</p>
             {socialLinks.length ? (
-              <div className="flex flex-wrap gap-3 pt-2 text-[var(--color-gold-light)]">
+              <div className="flex flex-wrap gap-2 pt-2 text-[var(--color-gold-light)]">
                 {socialLinks.map((link) => (
-                  <a key={link.label} href={link.href} target="_blank" rel="noreferrer">
-                    {link.label}
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                    title={link.label}
+                    className="inline-flex size-11 items-center justify-center border border-white/20 text-[var(--color-gold-light)] transition-colors hover:border-[var(--color-gold-light)] hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
+                  >
+                    <link.icon aria-hidden="true" className="size-4" strokeWidth={1.8} />
+                    <span className="sr-only">{link.label}</span>
                   </a>
                 ))}
               </div>

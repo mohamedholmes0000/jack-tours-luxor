@@ -61,23 +61,21 @@ export function GlobalSettingsForm({ initialValues }: { initialValues: AdminGlob
         </section>
 
         <section>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">Social Media</p>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">Social & Trust Profiles</p>
           <div className="mt-4 grid gap-5 md:grid-cols-2">
             <FormField label="Facebook URL">
-              <input className={inputClassName} value={values.socialFacebook || ""} onChange={(event) => update("socialFacebook", event.target.value)} />
+              <input className={inputClassName} type="url" value={values.socialFacebook || ""} onChange={(event) => update("socialFacebook", event.target.value)} placeholder="https://facebook.com/your-page" />
             </FormField>
             <FormField label="Instagram URL">
-              <input className={inputClassName} value={values.socialInstagram || ""} onChange={(event) => update("socialInstagram", event.target.value)} />
+              <input className={inputClassName} type="url" value={values.socialInstagram || ""} onChange={(event) => update("socialInstagram", event.target.value)} placeholder="https://instagram.com/your-profile" />
             </FormField>
             <FormField label="Tripadvisor profile URL">
-              <input className={inputClassName} value={values.socialTripadvisor || ""} onChange={(event) => update("socialTripadvisor", event.target.value)} />
+              <input className={inputClassName} type="url" value={values.socialTripadvisor || ""} onChange={(event) => update("socialTripadvisor", event.target.value)} placeholder="https://www.tripadvisor.com/..." />
               <p className="mt-2 text-xs text-[var(--color-gray-600)]">One official business/profile link used by the homepage Reviews section.</p>
             </FormField>
-            <FormField label="Twitter/X URL">
-              <input className={inputClassName} value={values.socialTwitter || ""} onChange={(event) => update("socialTwitter", event.target.value)} />
-            </FormField>
-            <FormField label="YouTube URL">
-              <input className={inputClassName} value={values.socialYoutube || ""} onChange={(event) => update("socialYoutube", event.target.value)} />
+            <FormField label="Google Business Profile URL">
+              <input className={inputClassName} type="url" value={values.socialGoogleBusiness || ""} onChange={(event) => update("socialGoogleBusiness", event.target.value)} placeholder="https://g.page/..." />
+              <p className="mt-2 text-xs text-[var(--color-gray-600)]">Shown as an optional action in the homepage Reviews section.</p>
             </FormField>
           </div>
         </section>

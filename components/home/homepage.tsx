@@ -23,7 +23,7 @@ import {
   getTestimonialsSafe,
   getToursSafe,
 } from "@/lib/data/public";
-import { getPublicSettings } from "@/lib/data/settings";
+import { getPublicSettings, safeExternalHttpUrl } from "@/lib/data/settings";
 import { safeImageSrc } from "@/lib/images";
 import { getTourJourneyType } from "@/lib/tour-journey-type";
 import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
@@ -116,17 +116,6 @@ function cleanSettingText(value: string | undefined) {
 function normalizeInquiryCtaLabel(value: string | undefined, fallback = "Plan Your Trip") {
   const label = cleanSettingText(value);
   return !label || label.toLowerCase() === "book now" ? fallback : label;
-}
-
-function safeExternalHttpUrl(value: string | undefined) {
-  if (!value) return "";
-
-  try {
-    const url = new URL(value.trim());
-    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : "";
-  } catch {
-    return "";
-  }
 }
 
 const whyReasons = [
@@ -300,7 +289,8 @@ export async function Homepage() {
   const homepageTestimonials = isTestimonialPreview
     ? [...realActiveTestimonials, ...previewFill].slice(0, 3)
     : realActiveTestimonials;
-  const tripadvisorUrl = safeExternalHttpUrl(settings.tripAdvisorUrl);
+  const tripadvisorUrl = safeExternalHttpUrl(settings.socialTripadvisor);
+  const googleBusinessUrl = safeExternalHttpUrl(settings.socialGoogleBusiness);
   const oneDayTour = safeTours.find(
     (tour) => getTourJourneyType(tour) === "one-day",
   );
@@ -853,16 +843,31 @@ export async function Homepage() {
                   <p className="text-sm leading-6 text-[var(--color-navy)]/58">
                     A closer look at the care, pacing, and local coordination behind each journey.
                   </p>
-                  {tripadvisorUrl ? (
-                    <a
-                      href={tripadvisorUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group mt-3 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-navy)] outline-none transition-colors hover:text-[var(--color-gold-dark)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none"
-                    >
-                      View all reviews on Tripadvisor
-                      <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
-                    </a>
+                  {tripadvisorUrl || googleBusinessUrl ? (
+                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 md:justify-end">
+                      {tripadvisorUrl ? (
+                        <a
+                          href={tripadvisorUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-navy)] outline-none transition-colors hover:text-[var(--color-gold-dark)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none"
+                        >
+                          View all reviews on Tripadvisor
+                          <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
+                        </a>
+                      ) : null}
+                      {googleBusinessUrl ? (
+                        <a
+                          href={googleBusinessUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-navy)] outline-none transition-colors hover:text-[var(--color-gold-dark)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none"
+                        >
+                          View us on Google
+                          <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
+                        </a>
+                      ) : null}
+                    </div>
                   ) : null}
                 </div>
               </div>

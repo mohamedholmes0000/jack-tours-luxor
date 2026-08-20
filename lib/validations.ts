@@ -255,7 +255,20 @@ export const adminSettingsSchema = z.object({
   homepageTrustItem3: z.string().trim().optional(),
 });
 
-const optionalUrl = z.string().trim().url("Use a full URL.").optional().or(z.literal(""));
+const optionalUrl = z
+  .string()
+  .trim()
+  .refine((value) => {
+    if (!value) return true;
+
+    try {
+      const url = new URL(value);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+      return false;
+    }
+  }, "Use a full http:// or https:// URL.")
+  .optional();
 const localPath = z
   .string()
   .trim()
@@ -266,6 +279,7 @@ export const adminGlobalSettingsSchema = z.object({
   globalPhoneNumber: z.string().trim().optional(),
   globalEmail: z.string().trim().email("Add a valid email.").optional().or(z.literal("")),
   socialFacebook: optionalUrl,
+  socialGoogleBusiness: optionalUrl,
   socialInstagram: optionalUrl,
   socialTripadvisor: optionalUrl,
   socialTwitter: optionalUrl,

@@ -22,6 +22,17 @@ export type PublicSettings = AdminSettingsValues &
   PublicHeaderFooterSettings &
   AdminContactMapValues;
 
+export function safeExternalHttpUrl(value: string | null | undefined) {
+  if (!value) return "";
+
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
 const defaultFooterLinks: FooterLink[] = [
   { label: "Home", url: "/" },
   { label: "Tours", url: "/tours" },
@@ -106,6 +117,7 @@ export const defaultSettings: PublicSettings = {
   navLink4Url: "/about",
   phone: REAL_PHONE_DISPLAY,
   socialFacebook: "",
+  socialGoogleBusiness: "",
   socialInstagram: "",
   socialTripadvisor: "",
   socialTwitter: "",
@@ -234,6 +246,7 @@ export async function getPublicSettings(): Promise<PublicSettings> {
         navLink4Url: headerFooter?.navLink4Url || defaultSettings.navLink4Url,
         phone,
         socialFacebook: globalSettings?.socialFacebook || globalSettings?.facebookUrl || legacySettings.facebookUrl || "",
+        socialGoogleBusiness: legacySettings.socialGoogleBusiness || "",
         socialInstagram: globalSettings?.socialInstagram || globalSettings?.instagramUrl || legacySettings.instagramUrl || "",
         socialTripadvisor: globalSettings?.socialTripadvisor || globalSettings?.tripAdvisorUrl || legacySettings.tripAdvisorUrl || "",
         socialTwitter: globalSettings?.socialTwitter || "",
@@ -254,6 +267,7 @@ export async function getGlobalSettingsSafe(): Promise<AdminGlobalSettingsValues
     globalPhoneNumber: settings.globalPhoneNumber,
     globalWhatsappNumber: settings.globalWhatsappNumber,
     socialFacebook: settings.socialFacebook,
+    socialGoogleBusiness: settings.socialGoogleBusiness,
     socialInstagram: settings.socialInstagram,
     socialTripadvisor: settings.socialTripadvisor,
     socialTwitter: settings.socialTwitter,

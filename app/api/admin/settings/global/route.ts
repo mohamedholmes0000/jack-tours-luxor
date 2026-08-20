@@ -17,20 +17,29 @@ export async function PUT(request: Request) {
     return NextResponse.json({ ok: false, message: "Database is not configured." }, { status: 503 });
   }
 
-  await prisma.globalSettings.upsert({
-    where: { id: "global" },
-    update: parsed.data,
-    create: {
-      id: "global",
-      ...parsed.data,
-      email: parsed.data.globalEmail || null,
-      facebookUrl: parsed.data.socialFacebook || null,
-      instagramUrl: parsed.data.socialInstagram || null,
-      phone: parsed.data.globalPhoneNumber || null,
-      tripAdvisorUrl: parsed.data.socialTripadvisor || null,
-      whatsappNumber: parsed.data.globalWhatsappNumber || null,
-    },
-  });
+  const { socialGoogleBusiness, ...globalSettings } = parsed.data;
+
+  await prisma.$transaction([
+    prisma.globalSettings.upsert({
+      where: { id: "global" },
+      update: globalSettings,
+      create: {
+        id: "global",
+        ...globalSettings,
+        email: globalSettings.globalEmail || null,
+        facebookUrl: globalSettings.socialFacebook || null,
+        instagramUrl: globalSettings.socialInstagram || null,
+        phone: globalSettings.globalPhoneNumber || null,
+        tripAdvisorUrl: globalSettings.socialTripadvisor || null,
+        whatsappNumber: globalSettings.globalWhatsappNumber || null,
+      },
+    }),
+    prisma.siteSetting.upsert({
+      where: { key: "socialGoogleBusiness" },
+      update: { value: socialGoogleBusiness || "" },
+      create: { key: "socialGoogleBusiness", value: socialGoogleBusiness || "" },
+    }),
+  ]);
 
   revalidatePath("/", "layout");
   revalidatePath("/contact");
