@@ -6,8 +6,10 @@ export function Footer({ settings }: { settings: PublicSettings }) {
   const socialLinks = [
     { href: safeExternalHttpUrl(settings.socialFacebook), icon: ThumbsUp, label: "Facebook" },
     { href: safeExternalHttpUrl(settings.socialInstagram), icon: Camera, label: "Instagram" },
+  ].filter((link): link is { href: string; icon: LucideIcon; label: string } => Boolean(link.href));
+  const trustLinks = [
     { href: safeExternalHttpUrl(settings.socialTripadvisor), icon: BadgeCheck, label: "Tripadvisor" },
-    { href: safeExternalHttpUrl(settings.socialGoogleBusiness), icon: MapPinned, label: "Google Business Profile" },
+    { href: safeExternalHttpUrl(settings.socialGoogleBusiness), icon: MapPinned, label: "Google" },
   ].filter((link): link is { href: string; icon: LucideIcon; label: string } => Boolean(link.href));
 
   return (
@@ -48,21 +50,43 @@ export function Footer({ settings }: { settings: PublicSettings }) {
             <p>24/7 WhatsApp support</p>
             <p>{settings.email}</p>
             {socialLinks.length ? (
-              <div className="flex flex-wrap gap-2 pt-2 text-[var(--color-gold-light)]">
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Visit Jack Egypt Tour on ${link.label}`}
-                    title={link.label}
-                    className="inline-flex size-11 items-center justify-center border border-white/20 text-[var(--color-gold-light)] transition-colors hover:border-[var(--color-gold-light)] hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
-                  >
-                    <link.icon aria-hidden="true" className="size-4" strokeWidth={1.8} />
-                    <span className="sr-only">{link.label}</span>
-                  </a>
-                ))}
+              <div className="border-t border-white/10 pt-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-white/45">Social</p>
+                <div className="mt-2 flex flex-col">
+                  {socialLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                      className="inline-flex min-h-11 items-center gap-3 border-b border-white/10 text-sm text-white/75 transition-colors hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
+                    >
+                      <link.icon aria-hidden="true" className="size-4 shrink-0 text-[var(--color-gold-light)]" strokeWidth={1.8} />
+                      <span>{link.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            {trustLinks.length ? (
+              <div className="border-t border-white/10 pt-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-white/45">Traveler Reviews / Find Us</p>
+                <div className="mt-2 flex flex-col">
+                  {trustLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                      className="inline-flex min-h-11 items-center gap-3 border-b border-white/10 text-sm text-white/75 transition-colors hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
+                    >
+                      <link.icon aria-hidden="true" className="size-4 shrink-0 text-[var(--color-gold-light)]" strokeWidth={1.8} />
+                      <span>{link.label}</span>
+                    </a>
+                  ))}
+                </div>
               </div>
             ) : null}
           </div>

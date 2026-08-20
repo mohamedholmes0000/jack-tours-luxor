@@ -2,9 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
+  BadgeCheck,
   ConciergeBell,
   Handshake,
   Headphones,
+  MapPinned,
   MessageCircle,
   Pyramid,
   Star,
@@ -843,32 +845,6 @@ export async function Homepage() {
                   <p className="text-sm leading-6 text-[var(--color-navy)]/58">
                     A closer look at the care, pacing, and local coordination behind each journey.
                   </p>
-                  {tripadvisorUrl || googleBusinessUrl ? (
-                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 md:justify-end">
-                      {tripadvisorUrl ? (
-                        <a
-                          href={tripadvisorUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-navy)] outline-none transition-colors hover:text-[var(--color-gold-dark)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none"
-                        >
-                          View all reviews on Tripadvisor
-                          <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
-                        </a>
-                      ) : null}
-                      {googleBusinessUrl ? (
-                        <a
-                          href={googleBusinessUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-navy)] outline-none transition-colors hover:text-[var(--color-gold-dark)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none"
-                        >
-                          View us on Google
-                          <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
-                        </a>
-                      ) : null}
-                    </div>
-                  ) : null}
                 </div>
               </div>
 
@@ -918,6 +894,65 @@ export async function Homepage() {
                   ))}
                 </div>
               </div>
+
+              {tripadvisorUrl || googleBusinessUrl ? (
+                <aside className="mt-10 border-t border-[rgb(6_17_31_/_14%)] pt-8 sm:mt-12 sm:pt-10">
+                  <div className="max-w-2xl">
+                    <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-[var(--color-gold-dark)]">
+                      Traveler Trust
+                    </p>
+                    <h3 className="mt-3 font-serif text-3xl font-semibold leading-tight text-[var(--color-navy)] sm:text-4xl">
+                      Continue the conversation beyond our stories.
+                    </h3>
+                  </div>
+                  <div
+                    className={`mt-7 grid border-y border-[rgb(6_17_31_/_14%)] ${tripadvisorUrl && googleBusinessUrl ? "md:grid-cols-2" : "md:grid-cols-1"}`}
+                  >
+                    {tripadvisorUrl ? (
+                      <a
+                        href={tripadvisorUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="View Jack Egypt Tour traveler reviews on Tripadvisor"
+                        className="group flex min-h-44 flex-col justify-between bg-[var(--color-ivory)] px-6 py-6 outline-none transition-colors hover:bg-[rgb(214_173_84_/_14%)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-gold)] sm:px-8 sm:py-7"
+                      >
+                        <div>
+                          <BadgeCheck aria-hidden="true" className="size-6 text-[var(--color-gold-dark)]" strokeWidth={1.7} />
+                          <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-navy)]">Tripadvisor</p>
+                          <p className="mt-3 max-w-sm text-sm leading-6 text-[var(--color-navy)]/62">
+                            Read what travelers say about their time with Jack Egypt Tour.
+                          </p>
+                        </div>
+                        <span className="mt-6 inline-flex min-h-11 items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-gold-dark)]">
+                          View on Tripadvisor
+                          <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
+                        </span>
+                      </a>
+                    ) : null}
+                    {googleBusinessUrl ? (
+                      <a
+                        href={googleBusinessUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="View Jack Egypt Tour on Google"
+                        className={`group flex min-h-44 flex-col justify-between bg-white px-6 py-6 outline-none transition-colors hover:bg-[var(--color-ivory)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-gold)] sm:px-8 sm:py-7 ${tripadvisorUrl ? "border-t border-[rgb(6_17_31_/_14%)] md:border-l md:border-t-0" : ""}`}
+                      >
+                        <div>
+                          <MapPinned aria-hidden="true" className="size-6 text-[var(--color-gold-dark)]" strokeWidth={1.7} />
+                          <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-navy)]">Google</p>
+                          <p className="mt-3 max-w-sm text-sm leading-6 text-[var(--color-navy)]/62">
+                            Find our business profile and traveler feedback on Google.
+                          </p>
+                        </div>
+                        <span className="mt-6 inline-flex min-h-11 items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-gold-dark)]">
+                          View on Google
+                          <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
+                        </span>
+                      </a>
+                    ) : null}
+                  </div>
+                </aside>
+              ) : null}
             </div>
           </div>
         </section>
