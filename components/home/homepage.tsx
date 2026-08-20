@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Pyramid,
   Star,
+  UsersRound,
 } from "lucide-react";
 import { DestinationCarousel } from "@/components/home/destination-carousel";
 import { HomeFaq } from "@/components/home/home-faq";
@@ -131,6 +132,21 @@ function getConfiguredReviewCount(value: string | undefined) {
 
   const numericCount = Number(count);
   return Number.isSafeInteger(numericCount) ? new Intl.NumberFormat("en-US").format(numericCount) : "";
+}
+
+function PlatformRatingStars({ platform, rating }: { platform: "google" | "tripadvisor"; rating: string }) {
+  const filledStars = Math.max(0, Math.min(5, Math.round(Number(rating))));
+  const starClassName = platform === "tripadvisor" ? "bg-[#00AF87] text-white" : "text-[var(--color-gold)]";
+
+  return (
+    <div className={`mt-5 flex items-center justify-center gap-1 ${platform === "tripadvisor" ? "" : "gap-0.5"}`} role="img" aria-label={`${rating} out of 5 on ${platform === "tripadvisor" ? "Tripadvisor" : "Google"}`}>
+      {Array.from({ length: 5 }, (_, index) => (
+        <span key={index} className={platform === "tripadvisor" ? `flex size-6 items-center justify-center ${starClassName}` : starClassName}>
+          <Star aria-hidden="true" className={platform === "tripadvisor" ? "size-3.5" : "size-7"} fill={index < filledStars ? "currentColor" : "none"} strokeWidth={1.7} />
+        </span>
+      ))}
+    </div>
+  );
 }
 
 const whyReasons = [
@@ -914,6 +930,11 @@ export async function Homepage() {
 
               {tripadvisorUrl || googleBusinessUrl ? (
                 <aside className="mt-12 pt-2 sm:mt-14">
+                  <div className="mx-auto flex max-w-4xl items-center gap-5 text-[var(--color-gold-dark)] sm:gap-8">
+                    <span className="h-px flex-1 bg-[rgb(183_137_43_/_55%)]" />
+                    <UsersRound aria-hidden="true" className="size-8 shrink-0" strokeWidth={1.35} />
+                    <span className="h-px flex-1 bg-[rgb(183_137_43_/_55%)]" />
+                  </div>
                   <div className="mx-auto max-w-2xl text-center">
                     <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-[var(--color-gold-dark)]">
                       Traveler Trust
@@ -923,27 +944,43 @@ export async function Homepage() {
                     </h3>
                   </div>
                   <div
-                    className={`mx-auto mt-8 grid max-w-4xl ${tripadvisorUrl && googleBusinessUrl ? "md:grid-cols-2" : "md:grid-cols-1"}`}
+                    className={`mx-auto mt-6 grid max-w-4xl ${tripadvisorUrl && googleBusinessUrl ? "md:grid-cols-2" : "md:grid-cols-1"}`}
                   >
                     {tripadvisorUrl ? (
-                      <div className="flex flex-col items-center px-6 pb-8 text-center sm:px-10 md:pb-0 md:pr-14">
-                        <Image src="/brand-icons/tripadvisor.svg" alt="Tripadvisor" width={48} height={48} className="size-12" />
-                        <p className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-navy)]">Tripadvisor</p>
-                        {tripadvisorRating ? <p className="mt-5 font-serif text-4xl font-semibold leading-none text-[var(--color-navy)]">{tripadvisorRating}</p> : null}
-                        {tripadvisorReviewCount ? <p className="mt-2 text-sm text-[var(--color-navy)]/60">Based on {tripadvisorReviewCount} reviews</p> : null}
-                        <a href={tripadvisorUrl} target="_blank" rel="noopener noreferrer" aria-label="Read Jack Egypt Tour reviews on Tripadvisor" className="group mt-6 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-navy)] outline-none transition-colors hover:text-[var(--color-gold-dark)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none">
+                      <div className="flex flex-col items-center px-6 pb-10 text-center sm:px-10 md:pb-0 md:pr-16">
+                        <a href={tripadvisorUrl} target="_blank" rel="noopener noreferrer" aria-label="Open Jack Egypt Tour on Tripadvisor" className="group inline-flex min-h-12 items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4">
+                          <Image src="/brand-icons/tripadvisor.svg" alt="" width={44} height={44} className="size-11" />
+                          <span className="text-3xl font-bold tracking-tight text-[var(--color-navy)] transition-colors group-hover:text-[var(--color-gold-dark)]">Tripadvisor</span>
+                        </a>
+                        {tripadvisorRating ? <PlatformRatingStars platform="tripadvisor" rating={tripadvisorRating} /> : null}
+                        {tripadvisorRating || tripadvisorReviewCount ? (
+                          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-serif text-xl text-[var(--color-navy)] sm:text-2xl">
+                            {tripadvisorRating ? <span>{tripadvisorRating}</span> : null}
+                            {tripadvisorRating && tripadvisorReviewCount ? <span className="h-7 w-px bg-[rgb(6_17_31_/_16%)]" /> : null}
+                            {tripadvisorReviewCount ? <span className="text-base text-[var(--color-navy)]/72 sm:text-lg">Based on {tripadvisorReviewCount} reviews</span> : null}
+                          </div>
+                        ) : null}
+                        <a href={tripadvisorUrl} target="_blank" rel="noopener noreferrer" aria-label="Read Jack Egypt Tour reviews on Tripadvisor" className="group mt-6 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 font-serif text-lg text-[var(--color-gold-dark)] outline-none transition-colors hover:text-[var(--color-navy)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none">
                           Read Tripadvisor reviews
                           <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
                         </a>
                       </div>
                     ) : null}
                     {googleBusinessUrl ? (
-                      <div className={`flex flex-col items-center px-6 pb-8 text-center sm:px-10 md:pb-0 ${tripadvisorUrl ? "border-t border-[rgb(6_17_31_/_14%)] pt-8 md:border-l md:border-t-0 md:pl-14 md:pt-0" : "pt-0"}`}>
-                        <Image src="/brand-icons/google.svg" alt="Google" width={48} height={48} className="size-12" />
-                        <p className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-navy)]">Google</p>
-                        {googleRating ? <p className="mt-5 font-serif text-4xl font-semibold leading-none text-[var(--color-navy)]">{googleRating}</p> : null}
-                        {googleReviewCount ? <p className="mt-2 text-sm text-[var(--color-navy)]/60">Based on {googleReviewCount} reviews</p> : null}
-                        <a href={googleBusinessUrl} target="_blank" rel="noopener noreferrer" aria-label="Read Jack Egypt Tour reviews on Google" className="group mt-6 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-navy)] outline-none transition-colors hover:text-[var(--color-gold-dark)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none">
+                      <div className={`flex flex-col items-center px-6 pb-10 text-center sm:px-10 md:pb-0 ${tripadvisorUrl ? "border-t border-[rgb(183_137_43_/_55%)] pt-10 md:border-l md:border-t-0 md:pl-16 md:pt-0" : "pt-0"}`}>
+                        <a href={googleBusinessUrl} target="_blank" rel="noopener noreferrer" aria-label="Open Jack Egypt Tour on Google" className="group inline-flex min-h-12 items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4">
+                          <Image src="/brand-icons/google.svg" alt="" width={44} height={44} className="size-11" />
+                          <span className="text-3xl font-medium tracking-tight text-[var(--color-navy)] transition-colors group-hover:text-[var(--color-gold-dark)]">Google</span>
+                        </a>
+                        {googleRating ? <PlatformRatingStars platform="google" rating={googleRating} /> : null}
+                        {googleRating || googleReviewCount ? (
+                          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-serif text-xl text-[var(--color-navy)] sm:text-2xl">
+                            {googleRating ? <span>{googleRating}</span> : null}
+                            {googleRating && googleReviewCount ? <span className="h-7 w-px bg-[rgb(6_17_31_/_16%)]" /> : null}
+                            {googleReviewCount ? <span className="text-base text-[var(--color-navy)]/72 sm:text-lg">Based on {googleReviewCount} reviews</span> : null}
+                          </div>
+                        ) : null}
+                        <a href={googleBusinessUrl} target="_blank" rel="noopener noreferrer" aria-label="Read Jack Egypt Tour reviews on Google" className="group mt-6 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 font-serif text-lg text-[var(--color-gold-dark)] outline-none transition-colors hover:text-[var(--color-navy)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none">
                           Read Google reviews
                           <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
                         </a>
