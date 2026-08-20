@@ -246,7 +246,7 @@ body:has(.public-site) footer {
   opacity: 1;
   position: absolute;
   right: 0;
-  top: 1.5rem;
+  top: 2.5rem;
   transform: none;
   width: 100%;
   z-index: 60;
