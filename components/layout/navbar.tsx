@@ -1,29 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { Mail, MessageCircle, Phone } from "lucide-react";
 import { MobileNavigation } from "@/components/layout/mobile-navigation";
 import type { PublicSettings } from "@/lib/data/settings";
 import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
-
-function PhoneIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none">
-      <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.3 1.3.4 2.6.6 4 .6.7 0 1.2.5 1.2 1.2v3.5c0 .7-.5 1.2-1.2 1.2C10.8 21.4 2.6 13.2 2.6 3.4c0-.7.5-1.2 1.2-1.2h3.5c.7 0 1.2.5 1.2 1.2 0 1.4.2 2.8.6 4 .1.4 0 .9-.3 1.2l-2.2 2.2Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function MailIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none">
-      <path d="M4 6.5h16v11H4v-11Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
-      <path d="m5 7 7 5.4L19 7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 function UserIcon({ className = "" }: { className?: string }) {
   return (
@@ -34,33 +18,15 @@ function UserIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function SocialIcon({ label }: { label: "Facebook" | "Instagram" | "TripAdvisor" }) {
-  if (label === "Instagram") {
-    return (
-      <svg className="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-        <rect x="4" y="4" width="16" height="16" rx="5" stroke="currentColor" strokeWidth="1.7" />
-        <circle cx="12" cy="12" r="3.5" stroke="currentColor" strokeWidth="1.7" />
-        <circle cx="17" cy="7" r="1" fill="currentColor" />
-      </svg>
-    );
-  }
+function safeExternalHttpUrl(value: string | undefined) {
+  if (!value) return "";
 
-  if (label === "TripAdvisor") {
-    return (
-      <svg className="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-        <path d="M3 9.5h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="8" cy="13" r="3.2" stroke="currentColor" strokeWidth="1.6" />
-        <circle cx="16" cy="13" r="3.2" stroke="currentColor" strokeWidth="1.6" />
-        <path d="M10.3 16.3 12 18l1.7-1.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : "";
+  } catch {
+    return "";
   }
-
-  return (
-    <svg className="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-      <path d="M14 8h3V4h-3c-3 0-5 2-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9c0-.6.4-1 1-1Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
-    </svg>
-  );
 }
 
 function buildHeaderNavItems(items: Array<{ href: string; label: string }>) {
@@ -108,10 +74,11 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
     { href: settings.navLink4Url, label: settings.navLink4Label },
   ]);
   const socialLinks = [
-    { href: settings.socialFacebook, label: "Facebook" as const },
-    { href: settings.socialInstagram, label: "Instagram" as const },
-    { href: settings.socialTripadvisor, label: "TripAdvisor" as const },
-  ].filter((link) => link.href);
+    { href: safeExternalHttpUrl(settings.socialFacebook), label: "Facebook", logo: "/brand-icons/facebook.svg" },
+    { href: safeExternalHttpUrl(settings.socialInstagram), label: "Instagram", logo: "/brand-icons/instagram.svg" },
+    { href: safeExternalHttpUrl(settings.socialTripadvisor), label: "Tripadvisor", logo: "/brand-icons/tripadvisor.svg" },
+    { href: safeExternalHttpUrl(settings.socialGoogleBusiness), label: "Google", logo: "/brand-icons/google.svg" },
+  ].filter((link) => Boolean(link.href));
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -142,29 +109,30 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
   return (
     <>
       <div className={`site-header-utility hidden border-b border-white/10 md:block ${isHomeRoute ? "site-header-utility-home" : ""}`}>
-        <div className={`container-premium flex items-center justify-between font-normal text-white/60 ${isHomeRoute ? "h-[23px] text-[0.68rem]" : "h-9 text-xs"}`}>
-          <div className="flex items-center gap-3">
-            <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-flex items-center gap-2 transition hover:text-[var(--color-gold-light)]">
-              <PhoneIcon className="size-3.5 text-white/50" />
+        <div className="container-premium flex h-10 items-center justify-between font-normal text-[0.78rem] text-white/78">
+          <div className="flex items-center gap-5">
+            <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-flex min-h-8 items-center gap-2.5 font-medium transition hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)]">
+              <Phone aria-hidden="true" className="size-4 text-[var(--color-gold-light)]" strokeWidth={1.8} />
               {phone}
             </a>
-            <span className="text-white/25">|</span>
-            <a href={`mailto:${email}`} className="inline-flex items-center gap-2 transition hover:text-[var(--color-gold-light)]">
-              <MailIcon className="size-3.5 text-white/50" />
+            <span aria-hidden="true" className="h-4 w-px bg-white/25" />
+            <a href={`mailto:${email}`} className="inline-flex min-h-8 items-center gap-2.5 font-medium transition hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)]">
+              <Mail aria-hidden="true" className="size-4 text-[var(--color-gold-light)]" strokeWidth={1.8} />
               {email}
             </a>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             {socialLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                aria-label={link.label}
-                target={link.href === "#" ? undefined : "_blank"}
-                rel={link.href === "#" ? undefined : "noreferrer"}
-                className="text-white/50 transition hover:text-[var(--color-gold-light)]"
+                aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                title={link.label}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid size-9 place-items-center rounded-full border border-white/15 bg-white/95 transition-transform hover:scale-105 hover:border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
               >
-                <SocialIcon label={link.label} />
+                <Image src={link.logo} alt="" width={22} height={22} className="size-[22px]" />
               </a>
             ))}
           </div>
