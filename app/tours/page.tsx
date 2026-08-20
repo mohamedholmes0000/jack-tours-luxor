@@ -10,7 +10,15 @@ export const metadata: Metadata = {
 };
 
 type ToursPageProps = {
-  searchParams?: Promise<{ category?: string; journey?: string }>;
+  searchParams?: Promise<{
+    category?: string;
+    journey?: string;
+    destination?: string;
+    durationMin?: string;
+    durationMax?: string;
+    priceMin?: string;
+    priceMax?: string;
+  }>;
 };
 
 export default async function ToursPage({ searchParams }: ToursPageProps) {
@@ -43,6 +51,11 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
         tours={tours}
         initialCategory={params?.category}
         initialJourney={params?.journey}
+        initialDestination={params?.destination}
+        initialDurationMin={params?.durationMin}
+        initialDurationMax={params?.durationMax}
+        initialPriceMin={params?.priceMin}
+        initialPriceMax={params?.priceMax}
       />
     </>
   );

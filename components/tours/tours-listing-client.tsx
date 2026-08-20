@@ -17,6 +17,11 @@ type ToursListingClientProps = {
   tours: Tour[];
   initialCategory?: string;
   initialJourney?: string;
+  initialDestination?: string;
+  initialDurationMin?: string;
+  initialDurationMax?: string;
+  initialPriceMin?: string;
+  initialPriceMax?: string;
 };
 
 const categoryFilters = [
@@ -142,6 +147,31 @@ function normalizeCategoryFilter(category?: string) {
 
 function normalizeJourneyFilter(journey?: string): TourJourneyType | null {
   return journey === "one-day" || journey === "multi-day" ? journey : null;
+}
+
+function parseSearchNumber(value?: string) {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+}
+
+function durationInDays(duration: string) {
+  const lower = duration.toLowerCase();
+  const dayMatch = lower.match(/(\d+(?:\.\d+)?)\s*(day|days)/);
+  const hourMatch = lower.match(/(\d+(?:\.\d+)?)\s*(hour|hours|hr|hrs)/);
+
+  if (dayMatch) {
+    return Number(dayMatch[1]);
+  }
+
+  if (hourMatch) {
+    return Number(hourMatch[1]) / 24;
+  }
+
+  return null;
 }
 
 function ToggleCheckbox({
@@ -274,6 +304,11 @@ export function ToursListingClient({
   tours,
   initialCategory,
   initialJourney,
+  initialDestination,
+  initialDurationMin,
+  initialDurationMax,
+  initialPriceMin,
+  initialPriceMax,
 }: ToursListingClientProps) {
   const basePriceValues = tours.map((tour) => tour.priceFrom).filter((price) => price > 0);
   const baseMinPrice = Math.floor(Math.min(...basePriceValues, 0));
@@ -292,9 +327,19 @@ export function ToursListingClient({
   const [selectedJourney, setSelectedJourney] = useState<TourJourneyType | null>(
     normalizedInitialJourney,
   );
-  const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
-  const [minPrice, setMinPrice] = useState(baseMinPrice);
-  const [maxPrice, setMaxPrice] = useState(baseMaxPrice);
+  const [selectedDestinations, setSelectedDestinations] = useState<string[]>(
+    initialDestination ? [initialDestination] : [],
+  );
+  const [minPrice, setMinPrice] = useState(() => {
+    const initialPrice = parseSearchNumber(initialPriceMin);
+    return initialPrice === null ? baseMinPrice : Math.max(baseMinPrice, initialPrice);
+  });
+  const [maxPrice, setMaxPrice] = useState(() => {
+    const initialPrice = parseSearchNumber(initialPriceMax);
+    return initialPrice === null ? baseMaxPrice : Math.min(baseMaxPrice, initialPrice);
+  });
+  const [searchDurationMin, setSearchDurationMin] = useState(() => parseSearchNumber(initialDurationMin));
+  const [searchDurationMax, setSearchDurationMax] = useState(() => parseSearchNumber(initialDurationMax));
   const [sort, setSort] = useState<SortOption>("recommended");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -315,6 +360,8 @@ export function ToursListingClient({
     setSelectedJourney(null);
     setMinPrice(baseMinPrice);
     setMaxPrice(baseMaxPrice);
+    setSearchDurationMin(null);
+    setSearchDurationMax(null);
   }
 
   function toggleValue<T extends string>(value: T, values: T[], setter: (values: T[]) => void) {
@@ -336,15 +383,24 @@ export function ToursListingClient({
         const matchesPrice = !price || (price >= minPrice && price <= maxPrice);
         const matchesDuration =
           !selectedDurations.length || selectedDurations.includes(durationBucket(tour.duration));
+        const parsedDuration = durationInDays(tour.duration);
+        const matchesSearchDuration =
+          parsedDuration === null ||
+          ((searchDurationMin === null || parsedDuration >= searchDurationMin) &&
+            (searchDurationMax === null || parsedDuration <= searchDurationMax));
         const matchesJourney =
           !selectedJourney || getTourJourneyType(tour) === selectedJourney;
         const matchesDestination =
-          !selectedDestinations.length || selectedDestinations.includes(tour.city || "Luxor");
+          !selectedDestinations.length ||
+          selectedDestinations.some(
+            (destination) => destination.toLowerCase() === (tour.city || "Luxor").toLowerCase(),
+          );
 
         return (
           matchesCategory &&
           matchesPrice &&
           matchesDuration &&
+          matchesSearchDuration &&
           matchesJourney &&
           matchesDestination
         );
@@ -372,6 +428,8 @@ export function ToursListingClient({
     selectedDestinations,
     selectedDurations,
     selectedJourney,
+    searchDurationMax,
+    searchDurationMin,
     sort,
     tours,
   ]);

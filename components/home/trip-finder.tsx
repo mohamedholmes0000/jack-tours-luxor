@@ -305,11 +305,11 @@ export function TripFinder({ destinations }: { destinations: string[] }) {
   return (
     <div className="container-premium relative z-20 -mt-8 sm:-mt-10 lg:-mt-12">
       <form
-        action="/trip-planner"
+        action={tab === "Tours" ? "/tours" : "/trip-planner"}
         method="get"
         className="relative mx-auto max-w-6xl rounded-[1.35rem] border border-[rgb(6_17_31_/_9%)] bg-white shadow-[0_20px_46px_rgb(6_17_31_/_13%)] sm:rounded-[1.6rem]"
       >
-        <input type="hidden" name="plannerType" value={tab.toLowerCase()} />
+        {tab !== "Tours" ? <input type="hidden" name="plannerType" value={tab.toLowerCase()} /> : null}
 
         <div
           className="grid grid-cols-3 rounded-t-[1.3rem] border-b border-[rgb(6_17_31_/_9%)] bg-[rgb(6_17_31_/_3%)] p-2 sm:rounded-t-[1.55rem] md:gap-2 md:p-3"
@@ -337,10 +337,18 @@ export function TripFinder({ destinations }: { destinations: string[] }) {
         {tab === "Tours" ? (
           <div className="grid gap-px rounded-b-[1.3rem] bg-[rgb(6_17_31_/_9%)] sm:rounded-b-[1.55rem] lg:grid-cols-[1.15fr_1fr_1fr_auto]">
             <input type="hidden" name="destination" value={destination} />
-            <input type="hidden" name="durationMin" value={durationMin} />
-            <input type="hidden" name="durationMax" value={durationMax} />
-            <input type="hidden" name="priceMin" value={priceMin} />
-            <input type="hidden" name="priceMax" value={priceMax} />
+            {durationMin !== 1 || durationMax !== 16 ? (
+              <>
+                <input type="hidden" name="durationMin" value={durationMin} />
+                <input type="hidden" name="durationMax" value={durationMax} />
+              </>
+            ) : null}
+            {priceMin !== 0 || priceMax !== 3000 ? (
+              <>
+                <input type="hidden" name="priceMin" value={priceMin} />
+                <input type="hidden" name="priceMax" value={priceMax} />
+              </>
+            ) : null}
             <SelectionField icon={MapPin} label="Destination" onChange={setDestination} options={destinationOptions} placeholder="Search a Place" value={destination} />
             <RangeField icon={Clock3} label="Duration" min={1} max={16} onMinChange={setDurationMin} onMaxChange={setDurationMax} suffix=" Days" valueMin={durationMin} valueMax={durationMax} />
             <RangeField icon={Tag} label="Price" min={0} max={3000} step={50} onMinChange={setPriceMin} onMaxChange={setPriceMax} prefix="$" valueMin={priceMin} valueMax={priceMax} />
