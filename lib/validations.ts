@@ -269,6 +269,20 @@ const optionalUrl = z
     }
   }, "Use a full http:// or https:// URL.")
   .optional();
+const optionalPlatformRating = z
+  .string()
+  .trim()
+  .refine((value) => {
+    if (!value) return true;
+    const rating = Number(value);
+    return /^\d+(?:\.\d+)?$/.test(value) && Number.isFinite(rating) && rating >= 0 && rating <= 5;
+  }, "Use a rating from 0 to 5.")
+  .optional();
+const optionalReviewCount = z
+  .string()
+  .trim()
+  .refine((value) => !value || (/^\d+$/.test(value) && Number.isSafeInteger(Number(value))), "Use a non-negative whole number.")
+  .optional();
 const localPath = z
   .string()
   .trim()
@@ -278,12 +292,16 @@ export const adminGlobalSettingsSchema = z.object({
   globalWhatsappNumber: z.string().trim().optional(),
   globalPhoneNumber: z.string().trim().optional(),
   globalEmail: z.string().trim().email("Add a valid email.").optional().or(z.literal("")),
+  googleRating: optionalPlatformRating,
+  googleReviewCount: optionalReviewCount,
   socialFacebook: optionalUrl,
   socialGoogleBusiness: optionalUrl,
   socialInstagram: optionalUrl,
   socialTripadvisor: optionalUrl,
   socialTwitter: optionalUrl,
   socialYoutube: optionalUrl,
+  tripadvisorRating: optionalPlatformRating,
+  tripadvisorReviewCount: optionalReviewCount,
 });
 
 export const adminHeaderSettingsSchema = z.object({

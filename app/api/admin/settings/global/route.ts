@@ -17,7 +17,20 @@ export async function PUT(request: Request) {
     return NextResponse.json({ ok: false, message: "Database is not configured." }, { status: 503 });
   }
 
-  const { socialGoogleBusiness, ...globalSettings } = parsed.data;
+  const {
+    googleRating,
+    googleReviewCount,
+    socialGoogleBusiness,
+    tripadvisorRating,
+    tripadvisorReviewCount,
+    ...globalSettings
+  } = parsed.data;
+  const reviewPlatformSettings = {
+    googleRating,
+    googleReviewCount,
+    tripadvisorRating,
+    tripadvisorReviewCount,
+  };
 
   await prisma.$transaction([
     prisma.globalSettings.upsert({
@@ -39,6 +52,13 @@ export async function PUT(request: Request) {
       update: { value: socialGoogleBusiness || "" },
       create: { key: "socialGoogleBusiness", value: socialGoogleBusiness || "" },
     }),
+    ...Object.entries(reviewPlatformSettings).map(([key, value]) =>
+      prisma.siteSetting.upsert({
+        where: { key },
+        update: { value: value || "" },
+        create: { key, value: value || "" },
+      }),
+    ),
   ]);
 
   revalidatePath("/", "layout");

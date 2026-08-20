@@ -69,14 +69,36 @@ export function GlobalSettingsForm({ initialValues }: { initialValues: AdminGlob
             <FormField label="Instagram URL">
               <input className={inputClassName} type="url" value={values.socialInstagram || ""} onChange={(event) => update("socialInstagram", event.target.value)} placeholder="https://instagram.com/your-profile" />
             </FormField>
-            <FormField label="Tripadvisor profile URL">
-              <input className={inputClassName} type="url" value={values.socialTripadvisor || ""} onChange={(event) => update("socialTripadvisor", event.target.value)} placeholder="https://www.tripadvisor.com/..." />
-              <p className="mt-2 text-xs text-[var(--color-gray-600)]">One official business/profile link used by the homepage Reviews section.</p>
-            </FormField>
-            <FormField label="Google Business Profile URL">
-              <input className={inputClassName} type="url" value={values.socialGoogleBusiness || ""} onChange={(event) => update("socialGoogleBusiness", event.target.value)} placeholder="https://g.page/..." />
-              <p className="mt-2 text-xs text-[var(--color-gray-600)]">Shown as an optional action in the homepage Reviews section.</p>
-            </FormField>
+            <div className="grid gap-5 md:col-span-2 md:grid-cols-2">
+              <div className="grid gap-5">
+                <FormField label="Tripadvisor profile URL">
+                  <input className={inputClassName} type="url" value={values.socialTripadvisor || ""} onChange={(event) => update("socialTripadvisor", event.target.value)} placeholder="https://www.tripadvisor.com/..." />
+                  <p className="mt-2 text-xs text-[var(--color-gray-600)]">Used by the homepage Reviews section.</p>
+                </FormField>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <FormField label="Tripadvisor Rating">
+                    <input className={inputClassName} type="number" min="0" max="5" step="0.1" inputMode="decimal" value={values.tripadvisorRating || ""} onChange={(event) => update("tripadvisorRating", event.target.value)} placeholder="Optional" />
+                  </FormField>
+                  <FormField label="Tripadvisor Review Count">
+                    <input className={inputClassName} type="number" min="0" step="1" inputMode="numeric" value={values.tripadvisorReviewCount || ""} onChange={(event) => update("tripadvisorReviewCount", event.target.value)} placeholder="Optional" />
+                  </FormField>
+                </div>
+              </div>
+              <div className="grid gap-5">
+                <FormField label="Google Business Profile URL">
+                  <input className={inputClassName} type="url" value={values.socialGoogleBusiness || ""} onChange={(event) => update("socialGoogleBusiness", event.target.value)} placeholder="https://g.page/..." />
+                  <p className="mt-2 text-xs text-[var(--color-gray-600)]">Used by the homepage Reviews section.</p>
+                </FormField>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <FormField label="Google Rating">
+                    <input className={inputClassName} type="number" min="0" max="5" step="0.1" inputMode="decimal" value={values.googleRating || ""} onChange={(event) => update("googleRating", event.target.value)} placeholder="Optional" />
+                  </FormField>
+                  <FormField label="Google Review Count">
+                    <input className={inputClassName} type="number" min="0" step="1" inputMode="numeric" value={values.googleReviewCount || ""} onChange={(event) => update("googleReviewCount", event.target.value)} placeholder="Optional" />
+                  </FormField>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </div>

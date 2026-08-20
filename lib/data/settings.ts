@@ -93,6 +93,8 @@ export const defaultSettings: PublicSettings = {
   globalEmail: "info@jackegypttour.com",
   globalPhoneNumber: REAL_PHONE_DISPLAY,
   globalWhatsappNumber: REAL_WHATSAPP_NUMBER,
+  googleRating: "",
+  googleReviewCount: "",
   homepageHeroEyebrow: "Private Egypt · est. Luxor",
   homepageHeroHeadline: "Egypt, privately",
   homepageHeroHeadlineAccent: "composed.",
@@ -122,6 +124,8 @@ export const defaultSettings: PublicSettings = {
   socialTripadvisor: "",
   socialTwitter: "",
   socialYoutube: "",
+  tripadvisorRating: "",
+  tripadvisorReviewCount: "",
   tripAdvisorUrl: "",
   whatsappNumber: REAL_WHATSAPP_NUMBER,
 };
@@ -233,6 +237,8 @@ export async function getPublicSettings(): Promise<PublicSettings> {
         globalEmail: email,
         globalPhoneNumber: phone,
         globalWhatsappNumber: whatsappNumber,
+        googleRating: legacySettings.googleRating || "",
+        googleReviewCount: legacySettings.googleReviewCount || "",
         instagramUrl: globalSettings?.socialInstagram || globalSettings?.instagramUrl || legacySettings.instagramUrl || "",
         logoLine1: headerFooter?.logoLine1 || headerFooter?.logoText || defaultSettings.logoLine1,
         logoLine2: headerFooter?.logoLine2 || headerFooter?.logoSubtitle || defaultSettings.logoLine2,
@@ -251,6 +257,8 @@ export async function getPublicSettings(): Promise<PublicSettings> {
         socialTripadvisor: globalSettings?.socialTripadvisor || globalSettings?.tripAdvisorUrl || legacySettings.tripAdvisorUrl || "",
         socialTwitter: globalSettings?.socialTwitter || "",
         socialYoutube: globalSettings?.socialYoutube || "",
+        tripadvisorRating: legacySettings.tripadvisorRating || "",
+        tripadvisorReviewCount: legacySettings.tripadvisorReviewCount || "",
         tripAdvisorUrl:
           globalSettings?.socialTripadvisor || globalSettings?.tripAdvisorUrl || legacySettings.tripAdvisorUrl || "",
         whatsappNumber,
@@ -266,12 +274,16 @@ export async function getGlobalSettingsSafe(): Promise<AdminGlobalSettingsValues
     globalEmail: settings.globalEmail,
     globalPhoneNumber: settings.globalPhoneNumber,
     globalWhatsappNumber: settings.globalWhatsappNumber,
+    googleRating: settings.googleRating,
+    googleReviewCount: settings.googleReviewCount,
     socialFacebook: settings.socialFacebook,
     socialGoogleBusiness: settings.socialGoogleBusiness,
     socialInstagram: settings.socialInstagram,
     socialTripadvisor: settings.socialTripadvisor,
     socialTwitter: settings.socialTwitter,
     socialYoutube: settings.socialYoutube,
+    tripadvisorRating: settings.tripadvisorRating,
+    tripadvisorReviewCount: settings.tripadvisorReviewCount,
   };
 }
 
