@@ -59,6 +59,8 @@ function inferTourCity(parts: string[]) {
 }
 
 function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number]): Tour {
+  const heroImage = safeImageSrc(tour.heroImage);
+
   return {
     contentType: tour.contentType ?? "TOUR",
     slug: tour.slug,
@@ -87,10 +89,10 @@ function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number])
     itinerary: Array.isArray(tour.itinerary)
       ? (tour.itinerary as Array<{ title: string; description: string }>)
       : [],
-    heroImage: safeImageSrc(tour.heroImage, tours[0].heroImage),
+    heroImage,
     images: tour.images.length
-      ? tour.images.map((image) => safeImageSrc(image, tours[0].heroImage))
-      : [safeImageSrc(tour.heroImage, tours[0].heroImage)],
+      ? tour.images.map((image) => safeImageSrc(image, heroImage))
+      : [heroImage],
     featured: tour.featured,
   };
 }
@@ -154,7 +156,8 @@ export type HomepageCityDestinationCard = {
   subtitle: string;
   image: string;
   href: string;
-  countLabel: string;
+  tourCount: number;
+  activityCount: number;
 };
 
 type DbCityDestination = {
@@ -168,17 +171,24 @@ function normalizeCityTerm(value: string) {
   return value.trim().toLowerCase().replace(/&/g, "and");
 }
 
-function countStaticToursByCity(city: string) {
+function countStaticContentByCity(city: string, contentType: "TOUR" | "ACTIVITY") {
   const normalizedCity = normalizeCityTerm(city);
 
   if (!normalizedCity) {
     return 0;
   }
 
-  return tours.filter((tour) => normalizeCityTerm(tour.city || "") === normalizedCity).length;
+  return tours.filter(
+    (tour) =>
+      (tour.contentType ?? "TOUR") === contentType &&
+      normalizeCityTerm(tour.city || "") === normalizedCity,
+  ).length;
 }
 
-export async function getTourCountByCity(city: string): Promise<number> {
+async function getPublishedContentCountByCity(
+  city: string,
+  contentType: "TOUR" | "ACTIVITY",
+): Promise<number> {
   const trimmedCity = city.trim();
 
   if (!trimmedCity) {
@@ -189,7 +199,7 @@ export async function getTourCountByCity(city: string): Promise<number> {
     async () =>
       prisma.tour.count({
         where: {
-          contentType: "TOUR",
+          contentType,
           published: true,
           city: {
             equals: trimmedCity,
@@ -197,28 +207,36 @@ export async function getTourCountByCity(city: string): Promise<number> {
           },
         },
       }),
-    countStaticToursByCity(trimmedCity),
+    countStaticContentByCity(trimmedCity, contentType),
   );
 }
 
-function tourCountLabel(count: number) {
-  if (count <= 0) {
-    return "Coming soon";
-  }
+export function getTourCountByCity(city: string): Promise<number> {
+  return getPublishedContentCountByCity(city, "TOUR");
+}
 
-  return `${count} ${count === 1 ? "Tour" : "Tours"}`;
+export function getActivityCountByCity(city: string): Promise<number> {
+  return getPublishedContentCountByCity(city, "ACTIVITY");
 }
 
 async function buildCityCards(source: HomepageCityDestination[]): Promise<HomepageCityDestinationCard[]> {
   return Promise.all(
-    source.map(async (city) => ({
-      slug: city.slug,
-      name: city.name,
-      subtitle: city.subtitle,
-      image: city.image,
-      href: city.href,
-      countLabel: tourCountLabel(await getTourCountByCity(city.name)),
-    })),
+    source.map(async (city) => {
+      const [tourCount, activityCount] = await Promise.all([
+        getTourCountByCity(city.name),
+        getActivityCountByCity(city.name),
+      ]);
+
+      return {
+        slug: city.slug,
+        name: city.name,
+        subtitle: city.subtitle,
+        image: city.image,
+        href: city.href,
+        tourCount,
+        activityCount,
+      };
+    }),
   );
 }
 
@@ -255,7 +273,10 @@ export async function getHomepageCityDestinationsSafe() {
       return Promise.all(homepageCityDestinations.map(async (fallbackCity) => {
         const city = dbCitiesBySlug.get(fallbackCity.slug);
         const name = city?.name || fallbackCity.name;
-        const count = await getTourCountByCity(name);
+        const [tourCount, activityCount] = await Promise.all([
+          getTourCountByCity(name),
+          getActivityCountByCity(name),
+        ]);
 
         return {
           slug: fallbackCity.slug,
@@ -263,7 +284,8 @@ export async function getHomepageCityDestinationsSafe() {
           subtitle: city?.subtitle || fallbackCity.subtitle,
           image: safeImageSrc(city?.heroImage, fallbackCity.image),
           href: fallbackCity.href,
-          countLabel: tourCountLabel(count),
+          tourCount,
+          activityCount,
         };
       }));
     },

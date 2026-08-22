@@ -298,6 +298,7 @@ function splitAccentText(
 export async function Homepage() {
   const [
     safeTours,
+    safeActivities,
     settings,
     homepageSettings,
     topDestinations,
@@ -305,6 +306,7 @@ export async function Homepage() {
     testimonials,
   ] = await Promise.all([
     getToursSafe("TOUR"),
+    getToursSafe("ACTIVITY"),
     getPublicSettings(),
     getHomepageSettingsSafe(),
     getHomepageCityDestinationsSafe(),
@@ -560,7 +562,7 @@ export async function Homepage() {
       </section>
       ) : null}
 
-      <PromotionalToursCarousel tours={safeTours} />
+      <PromotionalToursCarousel tours={safeTours} activities={safeActivities} />
 
       {/* ============================================================
           3 · EDITORIAL PAUSE — pure ivory wall, one serif sentence.

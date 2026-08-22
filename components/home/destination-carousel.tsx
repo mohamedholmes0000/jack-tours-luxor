@@ -9,8 +9,38 @@ type DestinationCarouselItem = {
   subtitle: string;
   image: string;
   href: string;
-  countLabel: string;
+  tourCount: number;
+  activityCount: number;
 };
+
+function contentCountLabel(count: number, singular: string, plural: string) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+function DestinationCounts({ item }: { item: DestinationCarouselItem }) {
+  if (item.tourCount <= 0 && item.activityCount <= 0) {
+    return (
+      <span className="mt-2 block text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[var(--color-gold-dark)]">
+        Coming soon
+      </span>
+    );
+  }
+
+  return (
+    <span className="mt-2 block space-y-1 text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[var(--color-gold-dark)]">
+      {item.tourCount > 0 ? (
+        <span className="block">
+          {contentCountLabel(item.tourCount, "Tour", "Tours")}
+        </span>
+      ) : null}
+      {item.activityCount > 0 ? (
+        <span className="block">
+          {contentCountLabel(item.activityCount, "Activity", "Activities")}
+        </span>
+      ) : null}
+    </span>
+  );
+}
 
 function ChevronLeftIcon() {
   return (
@@ -187,11 +217,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
                 <span className="mt-2 block line-clamp-2 text-[0.76rem] leading-5 text-[var(--color-navy)]/58">
                   {item.subtitle}
                 </span>
-                {item.countLabel ? (
-                  <span className="mt-1 block text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[var(--color-gold-dark)]">
-                    {item.countLabel}
-                  </span>
-                ) : null}
+                <DestinationCounts item={item} />
               </span>
             </Link>
           ))}
@@ -274,11 +300,7 @@ export function DestinationCarousel({ items }: { items: DestinationCarouselItem[
               <span className="mt-2 block min-h-10 text-[0.76rem] leading-5 text-[var(--color-navy)]/58">
                 {item.subtitle}
               </span>
-              {item.countLabel ? (
-                <span className="mt-1 block text-[0.68rem] font-semibold uppercase tracking-[0.09em] text-[var(--color-gold-dark)]">
-                  {item.countLabel}
-                </span>
-              ) : null}
+              <DestinationCounts item={item} />
             </span>
           </Link>
         ))}
