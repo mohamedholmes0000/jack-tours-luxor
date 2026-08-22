@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Clock3, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock3 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import type { Tour } from "@/lib/content";
+import { getTourJourneyType } from "@/lib/tour-journey-type";
 
 type PromoJourney = {
   id: string;
@@ -14,7 +15,7 @@ type PromoJourney = {
   duration: string;
   image: string;
   href: string;
-  ribbon: string;
+  journeyType?: string;
   price: string;
   rating?: number;
   reviewCount?: number;
@@ -29,7 +30,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "8 Hours",
     image: "/photos/alexandria.jpg",
     href: "/trip-planner?journey=cairo-old-city-and-citadel",
-    ribbon: "Cairo day tour",
+    journeyType: "One Day",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -40,7 +41,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "8 Hours",
     image: "/photos/pyramids.jpg",
     href: "/trip-planner?journey=dahshour-sakkara-and-memphis",
-    ribbon: "Ancient Cairo",
+    journeyType: "One Day",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -51,7 +52,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "8 Hours",
     image: "/photos/pyramids.jpg",
     href: "/trip-planner?journey=museum-pyramids-and-khan-al-khalili",
-    ribbon: "Cairo highlights",
+    journeyType: "One Day",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -62,7 +63,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "1 Day",
     image: "/photos/alexandria.jpg",
     href: "/trip-planner?journey=alexandria-explorer",
-    ribbon: "Mediterranean day",
+    journeyType: "One Day",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -73,7 +74,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "9 Days",
     image: "/photos/felucca.jpg",
     href: "/trip-planner?journey=nile-dream-by-felucca",
-    ribbon: "Felucca journey",
+    journeyType: "Multi Day",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -84,7 +85,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "4 Days",
     image: "/photos/aswan.jpg",
     href: "/trip-planner?journey=aswan-luxor-nile-cruise",
-    ribbon: "Nile cruise",
+    journeyType: "Nile Cruise",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -95,7 +96,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "5 Days",
     image: "/photos/nile.jpg",
     href: "/trip-planner?journey=luxor-aswan-nile-cruise",
-    ribbon: "Nile cruise",
+    journeyType: "Nile Cruise",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -106,7 +107,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "6 Days",
     image: "/photos/abu-simbel.jpg",
     href: "/trip-planner?journey=best-of-egypt",
-    ribbon: "Egypt highlights",
+    journeyType: "Multi Day",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -117,7 +118,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "8 Days",
     image: "/photos/hatshepsut.jpg",
     href: "/trip-planner?journey=nile-pearl",
-    ribbon: "Private journey",
+    journeyType: "Multi Day",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -128,7 +129,7 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "9 Days",
     image: "/photos/felucca.jpg",
     href: "/trip-planner?journey=nile-dream",
-    ribbon: "Along the Nile",
+    journeyType: "Multi Day",
     price: "Request a quote",
     planningPreview: true,
   },
@@ -139,21 +140,20 @@ const referenceJourneyPreviews: PromoJourney[] = [
     duration: "11 Days",
     image: "/photos/red-sea.jpg",
     href: "/trip-planner?journey=see-and-sea",
-    ribbon: "Culture & coast",
+    journeyType: "Multi Day",
     price: "Request a quote",
     planningPreview: true,
   },
 ];
 
-function tourRibbon(tour: Tour) {
+function tourJourneyLabel(tour: Tour) {
   const category = tour.category.toLowerCase();
-  const duration = tour.duration.toLowerCase();
+  const journeyType = getTourJourneyType(tour);
 
-  if (category.includes("cruise")) return "Nile cruise";
-  if (category.includes("luxury")) return "Private luxury";
-  if (category.includes("custom") || tour.priceFrom <= 0) return "Tailor made";
-  if (duration.includes("1 day") || category.includes("day tour")) return "One day";
-  return "Multi day";
+  if (category.includes("cruise")) return "Nile Cruise";
+  if (category.includes("custom") || journeyType === null) return "Custom";
+
+  return journeyType === "multi-day" ? "Multi Day" : "One Day";
 }
 
 function priceLabel(tour: Tour) {
@@ -165,36 +165,18 @@ function priceLabel(tour: Tour) {
       ? `$${amount}`
       : `${tour.priceCurrency} ${amount}`;
 
-  return `Starts from ${price}`;
+  return `From ${price}`;
 }
 
-function realTourImage(tour: Tour, index: number) {
-  const searchValue = `${tour.slug} ${tour.title} ${tour.category}`.toLowerCase();
-
-  if (searchValue.includes("cruise")) {
-    return index % 2 === 0 ? "/photos/felucca.jpg" : "/photos/nile.jpg";
-  }
-  if (searchValue.includes("balloon")) return "/photos/hatshepsut.jpg";
-  if (searchValue.includes("7-day") || searchValue.includes("cairo")) {
-    return "/photos/pyramids.jpg";
-  }
-  if (searchValue.includes("valley") || searchValue.includes("karnak")) {
-    return "/photos/valley-of-kings.jpg";
-  }
-  if (searchValue.includes("tailor")) return "/photos/aswan.jpg";
-
-  return tour.heroImage;
-}
-
-function toPromoJourney(tour: Tour, index: number): PromoJourney {
+function toPromoJourney(tour: Tour): PromoJourney {
   return {
     id: `tour-${tour.slug}`,
     title: tour.title,
     category: tour.category,
     duration: tour.duration,
-    image: realTourImage(tour, index),
+    image: tour.heroImage,
     href: `/tours/${tour.slug}`,
-    ribbon: tourRibbon(tour),
+    journeyType: tourJourneyLabel(tour),
     price: priceLabel(tour),
     rating: tour.rating,
     reviewCount: tour.reviewCount,
@@ -203,50 +185,6 @@ function toPromoJourney(tour: Tour, index: number): PromoJourney {
 
 function normalizeTitle(title: string) {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-}
-
-function JourneyMeta({ journey }: { journey: PromoJourney }) {
-  if (journey.planningPreview) {
-    return (
-      <span className="text-[0.68rem] font-medium text-[var(--color-navy)]/56">
-        Available for custom planning
-      </span>
-    );
-  }
-
-  if (!journey.reviewCount) {
-    return (
-      <span className="text-[0.68rem] font-medium text-[var(--color-navy)]/50">
-        Private journey
-      </span>
-    );
-  }
-
-  const rating = Math.max(0, Math.min(5, Math.round(journey.rating ?? 0)));
-
-  return (
-    <span
-      className="inline-flex items-center gap-2"
-      aria-label={`${(journey.rating ?? 0).toFixed(1)} out of 5 from ${journey.reviewCount} reviews`}
-    >
-      <span
-        className="flex items-center gap-0.5 text-[var(--color-gold-dark)]"
-        aria-hidden="true"
-      >
-        {Array.from({ length: 5 }, (_, index) => (
-          <Star
-            key={index}
-            className="size-3.5"
-            fill={index < rating ? "currentColor" : "none"}
-            strokeWidth={1.7}
-          />
-        ))}
-      </span>
-      <span className="text-[0.68rem] font-medium text-[var(--color-navy)]/62">
-        {journey.reviewCount} {journey.reviewCount === 1 ? "review" : "reviews"}
-      </span>
-    </span>
-  );
 }
 
 function JourneyCard({
@@ -275,16 +213,6 @@ function JourneyCard({
           sizes="(min-width: 1280px) 320px, (min-width: 640px) 328px, 84vw"
           className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.055] motion-reduce:transition-none"
         />
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-[rgb(6_17_31_/_18%)] via-transparent to-transparent"
-        />
-        <span className="absolute left-0 top-0 z-10 bg-[var(--color-gold-dark)] px-4 py-2 text-[0.64rem] font-bold uppercase tracking-[0.1em] text-white">
-          {journey.ribbon}
-        </span>
-        <span className="absolute left-0 top-8 z-10 bg-[var(--color-navy-mid)] px-4 py-2.5 text-[0.76rem] font-bold text-white shadow-[0_8px_18px_rgb(6_17_31_/_18%)]">
-          {journey.price}
-        </span>
         <span className="absolute inset-x-0 bottom-0 h-1 bg-[var(--color-gold)]" />
       </Link>
 
@@ -308,8 +236,8 @@ function JourneyCard({
           ) : null}
         </p>
 
-        <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[rgb(6_17_31_/_11%)] pt-3">
-          <JourneyMeta journey={journey} />
+        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[rgb(6_17_31_/_11%)] pt-3 text-[0.68rem] font-medium text-[var(--color-navy)]/62">
+          <span>{journey.journeyType ?? "Private journey"}</span>
           <span className="inline-flex items-center gap-1.5 text-[0.68rem] font-medium text-[var(--color-navy)]/62">
             <Clock3
               aria-hidden="true"
@@ -317,6 +245,9 @@ function JourneyCard({
               strokeWidth={1.8}
             />
             {journey.duration}
+          </span>
+          <span className="border border-[rgb(183_137_43_/_38%)] bg-[rgb(183_137_43_/_10%)] px-2 py-1 text-[0.72rem] font-extrabold text-[var(--color-gold-dark)]">
+            {journey.price}
           </span>
         </div>
       </div>
