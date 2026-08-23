@@ -305,6 +305,7 @@ export const adminGlobalSettingsSchema = z.object({
 });
 
 export const adminHeaderSettingsSchema = z.object({
+  logoImage: optionalAdminImageSource,
   logoLine1: z.string().trim().min(1, "Add logo line 1."),
   logoLine2: z.string().trim().min(1, "Add logo line 2."),
   navLink1Label: z.string().trim().min(1),

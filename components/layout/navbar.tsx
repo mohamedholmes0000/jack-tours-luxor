@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 import { Mail, MessageCircle, Phone } from "lucide-react";
 import { MobileNavigation } from "@/components/layout/mobile-navigation";
+import { SiteLogo } from "@/components/layout/site-logo";
 import type { PublicSettings } from "@/lib/data/settings";
 import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 
@@ -67,6 +68,7 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
   const email = settings.email || "admin@jacktoursluxor.com";
   const inquiryCtaLabel = normalizeInquiryCtaLabel(settings.bookNowLabel);
   const whatsappHref = buildWhatsAppUrlForNumber(undefined, settings.whatsappNumber);
+  const logoAlt = `${settings.logoLine1} ${settings.logoLine2}`.trim();
   const navItems = buildHeaderNavItems([
     { href: settings.navLink1Url, label: settings.navLink1Label },
     { href: settings.navLink2Url, label: settings.navLink2Label },
@@ -141,13 +143,24 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
 
       <header className={`site-main-header hidden border-b transition-[background,border-color,box-shadow,backdrop-filter] duration-200 ease-in-out md:block ${isHomeRoute ? "site-main-header-home" : ""} ${isNavStuck ? "header-stuck" : ""}`}>
         <div className={`container-premium grid grid-cols-[1fr_auto_1fr] items-center gap-5 lg:gap-8 ${isHomeRoute ? "h-[59px]" : "h-[72px]"}`}>
-          <Link href="/" className="flex flex-col leading-none">
-            <span className={`font-serif font-semibold uppercase leading-none tracking-[0.08em] ${isHomeRoute ? "text-[1.75rem] text-[var(--color-gold-light)] lg:text-[1.95rem]" : "text-[1.85rem] text-[var(--color-navy)] lg:text-[2.05rem]"}`}>
-              {settings.logoLine1}
-            </span>
-            <span className={`mt-0.5 font-sans font-medium uppercase tracking-[0.2em] ${isHomeRoute ? "text-[0.56rem] text-white/72 lg:text-[0.6rem]" : "text-[0.62rem] text-[var(--color-navy)]/70 lg:text-[0.65rem]"}`}>
-              {settings.logoLine2}
-            </span>
+          <Link href="/" className="flex min-w-0 items-center leading-none" aria-label={logoAlt}>
+            <SiteLogo
+              alt={logoAlt}
+              logoImage={settings.logoImage}
+              width={480}
+              height={120}
+              sizes="(max-width: 1023px) 152px, 176px"
+              className={`w-auto max-w-[9.5rem] object-contain object-left lg:max-w-[11rem] ${isHomeRoute ? "h-9" : "h-11"}`}
+            >
+              <span className="flex flex-col">
+                <span className={`font-serif font-semibold uppercase leading-none tracking-[0.08em] ${isHomeRoute ? "text-[1.75rem] text-[var(--color-gold-light)] lg:text-[1.95rem]" : "text-[1.85rem] text-[var(--color-navy)] lg:text-[2.05rem]"}`}>
+                  {settings.logoLine1}
+                </span>
+                <span className={`mt-0.5 font-sans font-medium uppercase tracking-[0.2em] ${isHomeRoute ? "text-[0.56rem] text-white/72 lg:text-[0.6rem]" : "text-[0.62rem] text-[var(--color-navy)]/70 lg:text-[0.65rem]"}`}>
+                  {settings.logoLine2}
+                </span>
+              </span>
+            </SiteLogo>
           </Link>
 
           <nav className={`flex items-center gap-6 font-sans font-medium uppercase tracking-[0.08em] lg:gap-12 ${isHomeRoute ? "text-[0.78rem] text-white/86" : "text-[0.76rem] text-[var(--color-navy)] lg:text-[0.82rem]"}`}>

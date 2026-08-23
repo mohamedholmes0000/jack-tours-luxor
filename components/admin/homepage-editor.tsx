@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { createElement, useEffect, useMemo, useRef, useState } from "react";
+import { createElement, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
 } from "lucide-react";
@@ -13,6 +13,7 @@ import {
 } from "@/lib/homepage-settings";
 import { getLucideIcon } from "@/lib/icons";
 import { isAllowedAdminImageSrc, safeImageSrc } from "@/lib/images";
+import { InteractiveImageCropper } from "@/components/admin/interactive-image-cropper";
 
 type SectionKey =
   | "customizeTrip"
@@ -39,8 +40,6 @@ type ImageField =
   | "whyCollageImage3";
 
 const allowedHomepageImageTypes = ["image/jpeg", "image/png", "image/webp"];
-const homepageCropAspectRatio = 16 / 10;
-const homepageCropMaxWidth = 1800;
 
 function validateHomepageImageFile(file: File) {
   if (!allowedHomepageImageTypes.includes(file.type)) {
@@ -52,84 +51,6 @@ function validateHomepageImageFile(file: File) {
   }
 
   return null;
-}
-
-function loadImageFromFile(file: File) {
-  return new Promise<{ image: HTMLImageElement; objectUrl: string }>((resolve, reject) => {
-    const objectUrl = URL.createObjectURL(file);
-    const image = new window.Image();
-    image.onload = () => resolve({ image, objectUrl });
-    image.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      reject(new Error("Unable to read this image for cropping."));
-    };
-    image.src = objectUrl;
-  });
-}
-
-async function createInteractiveHomepageCrop(
-  file: File,
-  crop: {
-    frameHeight: number;
-    frameWidth: number;
-    offsetX: number;
-    offsetY: number;
-    zoom: number;
-  },
-) {
-  const { image, objectUrl } = await loadImageFromFile(file);
-
-  try {
-    const sourceWidth = image.naturalWidth;
-    const sourceHeight = image.naturalHeight;
-
-    if (!sourceWidth || !sourceHeight) {
-      throw new Error("Unable to read this image size.");
-    }
-
-    const outputWidth = homepageCropMaxWidth;
-    const outputHeight = Math.round(outputWidth / homepageCropAspectRatio);
-    const canvas = document.createElement("canvas");
-    canvas.width = outputWidth;
-    canvas.height = outputHeight;
-
-    const context = canvas.getContext("2d");
-    if (!context) {
-      throw new Error("Unable to prepare the crop canvas.");
-    }
-
-    context.fillStyle = "#f8f3e8";
-    context.fillRect(0, 0, outputWidth, outputHeight);
-
-    const safeFrameWidth = crop.frameWidth || outputWidth;
-    const safeFrameHeight = crop.frameHeight || outputHeight;
-    const previewToOutput = outputWidth / safeFrameWidth;
-    const outputOffsetX = crop.offsetX * previewToOutput;
-    const outputOffsetY = crop.offsetY * (outputHeight / safeFrameHeight);
-    const coverScale = Math.max(outputWidth / sourceWidth, outputHeight / sourceHeight) * crop.zoom;
-    const renderedWidth = sourceWidth * coverScale;
-    const renderedHeight = sourceHeight * coverScale;
-    const imageX = (outputWidth - renderedWidth) / 2 + outputOffsetX;
-    const imageY = (outputHeight - renderedHeight) / 2 + outputOffsetY;
-
-    context.drawImage(image, imageX, imageY, renderedWidth, renderedHeight);
-
-    const blob = await new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob(
-        (result) => {
-          if (result) resolve(result);
-          else reject(new Error("Unable to create the cropped image."));
-        },
-        "image/jpeg",
-        0.9,
-      );
-    });
-
-    const filename = `${file.name.replace(/\.[^.]+$/, "") || "homepage-image"}-crop.jpg`;
-    return new File([blob], filename, { type: "image/jpeg" });
-  } finally {
-    URL.revokeObjectURL(objectUrl);
-  }
 }
 
 function TextInput({
@@ -298,20 +219,7 @@ function ImageUploadField({
   value?: string;
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const cropFrameRef = useRef<HTMLDivElement | null>(null);
-  const dragStateRef = useRef<{
-    pointerId: number;
-    startOffsetX: number;
-    startOffsetY: number;
-    startX: number;
-    startY: number;
-  } | null>(null);
-  const [cropPreviewUrl, setCropPreviewUrl] = useState<string | null>(null);
   const [pendingCropFile, setPendingCropFile] = useState<File | null>(null);
-  const [cropFrameSize, setCropFrameSize] = useState({ height: 400, width: 640 });
-  const [cropImageSize, setCropImageSize] = useState<{ height: number; width: number } | null>(null);
-  const [cropOffset, setCropOffset] = useState({ x: 0, y: 0 });
-  const [cropZoom, setCropZoom] = useState(1);
   const [cropping, setCropping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [failedPreviewSrc, setFailedPreviewSrc] = useState<string | null>(null);
@@ -321,52 +229,9 @@ function ImageUploadField({
   const previewIsUnsupported = Boolean(rawValue && !isAllowedAdminImageSrc(rawValue));
   const previewFailed = Boolean(rawValue && failedPreviewSrc === previewSrc);
 
-  useEffect(() => {
-    return () => {
-      if (cropPreviewUrl) URL.revokeObjectURL(cropPreviewUrl);
-    };
-  }, [cropPreviewUrl]);
-
   function clearCropStep() {
-    if (cropPreviewUrl) URL.revokeObjectURL(cropPreviewUrl);
-    setCropPreviewUrl(null);
     setPendingCropFile(null);
-    setCropImageSize(null);
-    setCropOffset({ x: 0, y: 0 });
-    setCropZoom(1);
     setCropping(false);
-  }
-
-  function measureCropFrame() {
-    const rect = cropFrameRef.current?.getBoundingClientRect();
-    if (!rect?.width || !rect.height) return cropFrameSize;
-    const nextSize = { height: rect.height, width: rect.width };
-    setCropFrameSize(nextSize);
-    return nextSize;
-  }
-
-  function clampCropOffset(
-    offset: { x: number; y: number },
-    zoom = cropZoom,
-    frameSize = cropFrameSize,
-    imageSize = cropImageSize,
-  ) {
-    if (!imageSize) return offset;
-
-    const displayScale = Math.max(frameSize.width / imageSize.width, frameSize.height / imageSize.height) * zoom;
-    const renderedWidth = imageSize.width * displayScale;
-    const renderedHeight = imageSize.height * displayScale;
-    const maxX = Math.max(0, (renderedWidth - frameSize.width) / 2);
-    const maxY = Math.max(0, (renderedHeight - frameSize.height) / 2);
-
-    return {
-      x: Math.min(maxX, Math.max(-maxX, offset.x)),
-      y: Math.min(maxY, Math.max(-maxY, offset.y)),
-    };
-  }
-
-  function updateCropOffset(offset: { x: number; y: number }, zoom = cropZoom) {
-    setCropOffset(clampCropOffset(offset, zoom, measureCropFrame()));
   }
 
   function openCropStep(file: File) {
@@ -378,12 +243,7 @@ function ImageUploadField({
       return;
     }
 
-    if (cropPreviewUrl) URL.revokeObjectURL(cropPreviewUrl);
     setPendingCropFile(file);
-    setCropPreviewUrl(URL.createObjectURL(file));
-    setCropImageSize(null);
-    setCropOffset({ x: 0, y: 0 });
-    setCropZoom(1);
   }
 
   async function uploadFile(file: File) {
@@ -404,13 +264,15 @@ function ImageUploadField({
       const result = (await response.json().catch(() => null)) as { ok?: boolean; message?: string; url?: string } | null;
 
       if (!response.ok || !result?.ok || !result.url) {
-        setError(result?.message || "Unable to upload image.");
-        return;
+        const message = result?.message || "Unable to upload image.";
+        setError(message);
+        throw new Error(message);
       }
 
       if (!isAllowedAdminImageSrc(result.url)) {
-        setError("Upload returned an unsupported image source. Use Cloudinary, /api/uploads, /uploads, /photos, /images, or a trusted remote image URL.");
-        return;
+        const message = "Upload returned an unsupported image source. Use Cloudinary, /api/uploads, /uploads, /photos, /images, or a trusted remote image URL.";
+        setError(message);
+        throw new Error(message);
       }
 
       setFailedPreviewSrc(null);
@@ -421,24 +283,12 @@ function ImageUploadField({
     }
   }
 
-  async function cropAndUpload() {
-    if (!pendingCropFile) return;
-
+  async function cropAndUpload(croppedFile: File) {
     setCropping(true);
     setError(null);
 
     try {
-      const frameSize = measureCropFrame();
-      const croppedFile = await createInteractiveHomepageCrop(pendingCropFile, {
-        frameHeight: frameSize.height,
-        frameWidth: frameSize.width,
-        offsetX: cropOffset.x,
-        offsetY: cropOffset.y,
-        zoom: cropZoom,
-      });
       await uploadFile(croppedFile);
-    } catch (cropError) {
-      setError(cropError instanceof Error ? cropError.message : "Unable to crop this image.");
     } finally {
       setCropping(false);
     }
@@ -528,113 +378,18 @@ function ImageUploadField({
         </div>
       ) : null}
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      {pendingCropFile && cropPreviewUrl ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-[var(--color-navy)]/70 px-4 py-6">
-          <div className="w-full max-w-2xl rounded-3xl bg-white p-5 shadow-2xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="font-serif text-2xl font-semibold text-[var(--color-navy)]">Crop image</p>
-                <p className="mt-1 text-sm leading-6 text-[var(--color-gray-600)]">
-                  Drag the image to choose the visible area, then adjust zoom. The crop frame is 16:10.
-                </p>
-              </div>
-              <button className="btn-secondary" disabled={uploading || cropping} type="button" onClick={clearCropStep}>
-                Cancel
-              </button>
-            </div>
-            <div
-              ref={cropFrameRef}
-              className="relative mt-5 aspect-[16/10] touch-none overflow-hidden rounded-2xl border border-[rgb(214_173_84_/_35%)] bg-[var(--color-ivory)]"
-              onPointerDown={(event) => {
-                if (uploading || cropping) return;
-                measureCropFrame();
-                dragStateRef.current = {
-                  pointerId: event.pointerId,
-                  startOffsetX: cropOffset.x,
-                  startOffsetY: cropOffset.y,
-                  startX: event.clientX,
-                  startY: event.clientY,
-                };
-                event.currentTarget.setPointerCapture(event.pointerId);
-              }}
-              onPointerMove={(event) => {
-                const dragState = dragStateRef.current;
-                if (!dragState || dragState.pointerId !== event.pointerId) return;
-                updateCropOffset({
-                  x: dragState.startOffsetX + event.clientX - dragState.startX,
-                  y: dragState.startOffsetY + event.clientY - dragState.startY,
-                });
-              }}
-              onPointerUp={(event) => {
-                if (dragStateRef.current?.pointerId === event.pointerId) {
-                  dragStateRef.current = null;
-                  event.currentTarget.releasePointerCapture(event.pointerId);
-                }
-              }}
-              onPointerCancel={() => {
-                dragStateRef.current = null;
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element -- Crop preview uses a temporary blob: URL before upload. */}
-              <img
-                src={cropPreviewUrl}
-                alt="Crop preview"
-                draggable={false}
-                className="absolute left-1/2 top-1/2 max-w-none select-none"
-                style={
-                  cropImageSize
-                    ? {
-                        height:
-                          cropImageSize.height *
-                          Math.max(cropFrameSize.width / cropImageSize.width, cropFrameSize.height / cropImageSize.height) *
-                          cropZoom,
-                        transform: `translate(-50%, -50%) translate(${cropOffset.x}px, ${cropOffset.y}px)`,
-                        width:
-                          cropImageSize.width *
-                          Math.max(cropFrameSize.width / cropImageSize.width, cropFrameSize.height / cropImageSize.height) *
-                          cropZoom,
-                      }
-                    : { height: "100%", objectFit: "cover", width: "100%" }
-                }
-                onLoad={(event) => {
-                  const image = event.currentTarget;
-                  const frameSize = measureCropFrame();
-                  const imageSize = { height: image.naturalHeight, width: image.naturalWidth };
-                  setCropImageSize(imageSize);
-                  setCropOffset(clampCropOffset({ x: 0, y: 0 }, cropZoom, frameSize, imageSize));
-                }}
-              />
-              <div aria-hidden className="pointer-events-none absolute inset-0 ring-2 ring-inset ring-white/80" />
-              <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_54%,rgba(6,17,31,0.16))]" />
-            </div>
-            <label className="mt-4 grid gap-2 text-sm font-semibold text-[var(--color-navy)]">
-              Zoom
-              <input
-                className="accent-[var(--color-gold)]"
-                disabled={uploading || cropping}
-                max="2.5"
-                min="1"
-                step="0.01"
-                type="range"
-                value={cropZoom}
-                onChange={(event) => {
-                  const nextZoom = Number(event.target.value);
-                  setCropZoom(nextZoom);
-                  updateCropOffset(cropOffset, nextZoom);
-                }}
-              />
-            </label>
-            <p className="mt-3 break-all text-xs leading-5 text-[var(--color-gray-600)]">Selected file: {pendingCropFile.name}</p>
-            <div className="mt-5 flex flex-wrap justify-end gap-3">
-              <button className="btn-secondary" disabled={uploading || cropping} type="button" onClick={() => inputRef.current?.click()}>
-                Choose Different
-              </button>
-              <button className="btn-primary" disabled={uploading || cropping} type="button" onClick={() => void cropAndUpload()}>
-                {uploading || cropping ? "Processing..." : "Crop & Upload"}
-              </button>
-            </div>
-          </div>
-        </div>
+      {pendingCropFile ? (
+        <InteractiveImageCropper
+          key={`${pendingCropFile.name}-${pendingCropFile.lastModified}-${pendingCropFile.size}`}
+          aspectRatio={16 / 10}
+          aspectRatioLabel="16:10"
+          file={pendingCropFile}
+          fileNamePrefix={pendingCropFile.name.replace(/\.[^.]+$/, "") || "homepage-image"}
+          onCancel={clearCropStep}
+          onChooseDifferent={() => inputRef.current?.click()}
+          onCrop={cropAndUpload}
+          processing={uploading || cropping}
+        />
       ) : null}
     </div>
   );

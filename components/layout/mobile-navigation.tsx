@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SiteLogo } from "@/components/layout/site-logo";
 import type { PublicSettings } from "@/lib/data/settings";
 
 function MenuIcon({ className = "", strokeWidth = 1.8 }: { className?: string; strokeWidth?: number }) {
@@ -96,6 +97,7 @@ export function MobileNavigation({
   const phoneHref = phone.replace(/[^\d+]/g, "");
   const email = settings.email || "admin@jacktoursluxor.com";
   const inquiryCtaLabel = normalizeInquiryCtaLabel(settings.bookNowLabel);
+  const logoAlt = `${settings.logoLine1} ${settings.logoLine2}`.trim();
   const navItems = buildMobileNavItems([
     { href: settings.navLink1Url, label: settings.navLink1Label },
     { href: settings.navLink2Url, label: settings.navLink2Label },
@@ -179,15 +181,27 @@ export function MobileNavigation({
           <div className="contents">
             <Link
               href="/"
-              className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center whitespace-nowrap leading-none"
+              aria-label={logoAlt}
+              className="absolute left-1/2 top-1/2 flex max-w-[calc(100%-9rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center leading-none"
               onClick={closeMenu}
             >
-              <span className={`font-serif text-[1.12rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-gold)] ${isHomeRoute ? "text-[var(--color-gold-light)]" : ""}`}>
-                {settings.logoLine1}
-              </span>
-              <span className={`mt-0.5 font-sans text-[0.48rem] font-medium uppercase tracking-[0.16em] ${isHomeRoute ? "text-white/72" : "text-[var(--color-navy)]/70"}`}>
-                {settings.logoLine2}
-              </span>
+              <SiteLogo
+                alt={logoAlt}
+                logoImage={settings.logoImage}
+                width={400}
+                height={100}
+                sizes="152px"
+                className="h-8 w-auto max-w-[9.5rem] object-contain"
+              >
+                <span className="flex flex-col items-center whitespace-nowrap">
+                  <span className={`font-serif text-[1.12rem] font-semibold uppercase leading-none tracking-[0.08em] text-[var(--color-gold)] ${isHomeRoute ? "text-[var(--color-gold-light)]" : ""}`}>
+                    {settings.logoLine1}
+                  </span>
+                  <span className={`mt-0.5 font-sans text-[0.48rem] font-medium uppercase tracking-[0.16em] ${isHomeRoute ? "text-white/72" : "text-[var(--color-navy)]/70"}`}>
+                    {settings.logoLine2}
+                  </span>
+                </span>
+              </SiteLogo>
             </Link>
 
             <Link
@@ -225,13 +239,24 @@ export function MobileNavigation({
           onClick={(event) => event.stopPropagation()}
         >
           <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="font-serif text-3xl font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)]">
-                {settings.logoLine1}
-              </p>
-              <p className="mt-1 font-sans text-[0.62rem] font-medium uppercase tracking-[0.2em] text-white/64">
-                {settings.logoLine2}
-              </p>
+            <div className="flex min-h-12 items-center">
+              <SiteLogo
+                alt={logoAlt}
+                logoImage={settings.logoImage}
+                width={480}
+                height={120}
+                sizes="176px"
+                className="h-12 w-auto max-w-44 object-contain object-left"
+              >
+                <span>
+                  <span className="block font-serif text-3xl font-semibold uppercase tracking-[0.08em] text-[var(--color-gold-light)]">
+                    {settings.logoLine1}
+                  </span>
+                  <span className="mt-1 block font-sans text-[0.62rem] font-medium uppercase tracking-[0.2em] text-white/64">
+                    {settings.logoLine2}
+                  </span>
+                </span>
+              </SiteLogo>
             </div>
             <button
               type="button"

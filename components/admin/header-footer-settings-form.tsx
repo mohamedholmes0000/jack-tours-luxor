@@ -1,11 +1,161 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import Image from "next/image";
+import { useRef, useState, type FormEvent } from "react";
+import { InteractiveImageCropper } from "@/components/admin/interactive-image-cropper";
 import { FormField, inputClassName, textareaClassName } from "@/components/forms/form-field";
 import type { FooterLink, PublicHeaderFooterSettings } from "@/lib/data/settings";
+import { isAllowedAdminImageSrc, safeImageSrc } from "@/lib/images";
 
 function formatLinks(links: FooterLink[]) {
   return JSON.stringify(links, null, 2);
+}
+
+const allowedLogoImageTypes = ["image/jpeg", "image/png", "image/webp"];
+const logoCropAspectRatio = 4 / 1;
+
+function validateLogoImageFile(file: File) {
+  if (!allowedLogoImageTypes.includes(file.type)) {
+    return "Use a JPG, PNG, or WebP image.";
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    return "Image must be 5MB or smaller.";
+  }
+
+  return null;
+}
+
+function WebsiteLogoField({
+  disabled,
+  onChange,
+  value,
+}: {
+  disabled: boolean;
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [pendingCropFile, setPendingCropFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const rawValue = value.trim();
+  const previewSrc = rawValue ? safeImageSrc(rawValue, "") : "";
+  const previewIsUnavailable = Boolean(rawValue && !previewSrc);
+
+  function openCropStep(file: File) {
+    const validationError = validateLogoImageFile(file);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError(null);
+    setPendingCropFile(file);
+  }
+
+  async function uploadLogo(file: File) {
+    setUploading(true);
+    setError(null);
+    const payload = new FormData();
+    payload.append("file", file);
+
+    try {
+      const response = await fetch("/api/admin/uploads/homepage", { method: "POST", body: payload });
+      const result = (await response.json().catch(() => null)) as { ok?: boolean; message?: string; url?: string } | null;
+
+      if (!response.ok || !result?.ok || !result.url) {
+        const message = result?.message || "Unable to upload logo.";
+        setError(message);
+        throw new Error(message);
+      }
+
+      if (!isAllowedAdminImageSrc(result.url)) {
+        const message = "Upload returned an unsupported image source.";
+        setError(message);
+        throw new Error(message);
+      }
+
+      onChange(result.url);
+      setPendingCropFile(null);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="grid gap-3 md:col-span-2">
+      <div>
+        <p className="text-sm font-medium text-[var(--color-navy)]">Website Logo</p>
+        <p className="mt-1 text-xs leading-5 text-[var(--color-gray-600)]">
+          Upload a JPG, PNG, or WebP logo. It is cropped to a fixed 4:1 horizontal ratio before saving.
+        </p>
+      </div>
+      <div className="relative grid min-h-32 place-items-center overflow-hidden rounded-xl border border-dashed border-[rgb(214_173_84_/_45%)] bg-[var(--color-ivory)] p-4">
+        {previewSrc ? (
+          <Image
+            src={previewSrc}
+            alt="Current website logo"
+            width={640}
+            height={160}
+            unoptimized
+            className="h-20 w-full max-w-md object-contain"
+          />
+        ) : previewIsUnavailable ? (
+          <p className="text-center text-sm text-red-700">The saved logo cannot be displayed. Replace it with a supported image.</p>
+        ) : (
+          <p className="text-center text-sm text-[var(--color-gray-600)]">No custom logo. The current JACK / EGYPT TOUR logo remains the public fallback.</p>
+        )}
+        {uploading ? (
+          <div className="absolute inset-0 grid place-items-center bg-[var(--color-navy)]/70 text-sm font-bold uppercase tracking-[0.12em] text-white">
+            Uploading...
+          </div>
+        ) : null}
+      </div>
+      <input
+        ref={inputRef}
+        className="sr-only"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        disabled={disabled}
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) openCropStep(file);
+          event.target.value = "";
+        }}
+      />
+      <div className="flex flex-wrap gap-2">
+        <button className="btn-secondary" disabled={disabled || uploading} type="button" onClick={() => inputRef.current?.click()}>
+          {rawValue ? "Replace Logo" : "Upload Logo"}
+        </button>
+        <button
+          className="btn-secondary"
+          disabled={disabled || uploading || !rawValue}
+          type="button"
+          onClick={() => onChange("")}
+        >
+          Use Text Fallback
+        </button>
+      </div>
+      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {pendingCropFile ? (
+        <InteractiveImageCropper
+          key={`${pendingCropFile.name}-${pendingCropFile.lastModified}-${pendingCropFile.size}`}
+          aspectRatio={logoCropAspectRatio}
+          aspectRatioLabel="4:1"
+          backgroundColor={null}
+          file={pendingCropFile}
+          fileNamePrefix="website-logo"
+          maxOutputWidth={1600}
+          outputType="image/png"
+          onCancel={() => setPendingCropFile(null)}
+          onChooseDifferent={() => inputRef.current?.click()}
+          onCrop={uploadLogo}
+          processing={uploading}
+        />
+      ) : null}
+    </div>
+  );
 }
 
 export function HeaderFooterSettingsForm({ initialValues }: { initialValues: PublicHeaderFooterSettings }) {
@@ -57,7 +207,7 @@ export function HeaderFooterSettingsForm({ initialValues }: { initialValues: Pub
   return (
     <form className="space-y-5" onSubmit={save}>
       <p className="rounded-xl border border-[rgb(214_173_84_/_24%)] bg-[var(--color-ivory)] p-4 text-sm leading-6 text-[var(--color-gray-600)]">
-        Live source for public logo text, header navigation labels/URLs, Book Now label, footer explore links, footer description, and copyright. Contact details and social links come from Global Settings.
+        Live source for the public website logo, fallback logo text, header navigation labels/URLs, Book Now label, footer explore links, footer description, and copyright. Contact details and social links come from Global Settings.
       </p>
       <section className="rounded-2xl border border-[var(--color-gray-100)] bg-white p-5 shadow-sm">
         <button
@@ -74,6 +224,7 @@ export function HeaderFooterSettingsForm({ initialValues }: { initialValues: Pub
 
         {openHeader ? (
           <div className="mt-6 grid gap-5 md:grid-cols-2">
+            <WebsiteLogoField disabled={loading} value={values.logoImage || ""} onChange={(value) => update("logoImage", value)} />
             <FormField label="Logo line 1">
               <input className={inputClassName} value={values.logoLine1} onChange={(event) => update("logoLine1", event.target.value)} />
             </FormField>
