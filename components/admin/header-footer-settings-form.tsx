@@ -27,12 +27,22 @@ function validateLogoImageFile(file: File) {
 }
 
 function WebsiteLogoField({
+  clearLabel,
   disabled,
+  emptyStateMessage,
   onChange,
+  previewAlt,
+  title,
+  usage,
   value,
 }: {
+  clearLabel: string;
   disabled: boolean;
+  emptyStateMessage: string;
   onChange: (value: string) => void;
+  previewAlt: string;
+  title: string;
+  usage: string;
   value: string;
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -84,18 +94,18 @@ function WebsiteLogoField({
   }
 
   return (
-    <div className="grid gap-3 md:col-span-2">
+    <section className="grid gap-3 rounded-xl border border-[var(--color-gray-100)] bg-[var(--color-ivory)]/45 p-4">
       <div>
-        <p className="text-sm font-medium text-[var(--color-navy)]">Website Logo</p>
+        <p className="text-sm font-semibold text-[var(--color-navy)]">{title}</p>
         <p className="mt-1 text-xs leading-5 text-[var(--color-gray-600)]">
-          Upload a JPG, PNG, or WebP logo. It is cropped to a fixed 4:1 horizontal ratio before saving.
+          {usage} Upload a JPG, PNG, or WebP logo. It is cropped to a fixed 4:1 horizontal ratio before saving.
         </p>
       </div>
       <div className="relative grid min-h-32 place-items-center overflow-hidden rounded-xl border border-dashed border-[rgb(214_173_84_/_45%)] bg-[var(--color-ivory)] p-4">
         {previewSrc ? (
           <Image
             src={previewSrc}
-            alt="Current website logo"
+            alt={previewAlt}
             width={640}
             height={160}
             unoptimized
@@ -104,7 +114,7 @@ function WebsiteLogoField({
         ) : previewIsUnavailable ? (
           <p className="text-center text-sm text-red-700">The saved logo cannot be displayed. Replace it with a supported image.</p>
         ) : (
-          <p className="text-center text-sm text-[var(--color-gray-600)]">No custom logo. The current JACK / EGYPT TOUR logo remains the public fallback.</p>
+          <p className="text-center text-sm text-[var(--color-gray-600)]">{emptyStateMessage}</p>
         )}
         {uploading ? (
           <div className="absolute inset-0 grid place-items-center bg-[var(--color-navy)]/70 text-sm font-bold uppercase tracking-[0.12em] text-white">
@@ -126,7 +136,7 @@ function WebsiteLogoField({
       />
       <div className="flex flex-wrap gap-2">
         <button className="btn-secondary" disabled={disabled || uploading} type="button" onClick={() => inputRef.current?.click()}>
-          {rawValue ? "Replace Logo" : "Upload Logo"}
+          {rawValue ? `Replace ${title}` : `Upload ${title}`}
         </button>
         <button
           className="btn-secondary"
@@ -134,7 +144,7 @@ function WebsiteLogoField({
           type="button"
           onClick={() => onChange("")}
         >
-          Use Text Fallback
+          {clearLabel}
         </button>
       </div>
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
@@ -154,7 +164,7 @@ function WebsiteLogoField({
           processing={uploading}
         />
       ) : null}
-    </div>
+    </section>
   );
 }
 
@@ -224,7 +234,34 @@ export function HeaderFooterSettingsForm({ initialValues }: { initialValues: Pub
 
         {openHeader ? (
           <div className="mt-6 grid gap-5 md:grid-cols-2">
-            <WebsiteLogoField disabled={loading} value={values.logoImage || ""} onChange={(value) => update("logoImage", value)} />
+            <div className="grid gap-4 md:col-span-2">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-gold)]">Logo Settings</p>
+                <p className="mt-1 text-sm text-[var(--color-gray-600)]">Manage independent desktop and mobile navigation logos.</p>
+              </div>
+              <div className="grid gap-4 xl:grid-cols-2">
+                <WebsiteLogoField
+                  clearLabel="Use Text Fallback"
+                  disabled={loading}
+                  emptyStateMessage="No custom desktop logo. The current JACK / EGYPT TOUR logo remains the public fallback."
+                  previewAlt="Current desktop logo"
+                  title="Desktop Logo"
+                  usage="Used in the desktop navigation."
+                  value={values.logoImage || ""}
+                  onChange={(value) => update("logoImage", value)}
+                />
+                <WebsiteLogoField
+                  clearLabel="Use Desktop Logo"
+                  disabled={loading}
+                  emptyStateMessage="No mobile logo. The desktop logo will be used automatically."
+                  previewAlt="Current mobile logo"
+                  title="Mobile Logo"
+                  usage="Optional logo optimized for the mobile header. If empty, the desktop logo will be used automatically."
+                  value={values.mobileLogoImage || ""}
+                  onChange={(value) => update("mobileLogoImage", value)}
+                />
+              </div>
+            </div>
             <FormField label="Logo line 1">
               <input className={inputClassName} value={values.logoLine1} onChange={(event) => update("logoLine1", event.target.value)} />
             </FormField>

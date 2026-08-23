@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SiteLogo } from "@/components/layout/site-logo";
 import type { PublicSettings } from "@/lib/data/settings";
+import { safeImageSrc } from "@/lib/images";
 
 function MenuIcon({ className = "", strokeWidth = 1.8 }: { className?: string; strokeWidth?: number }) {
   return (
@@ -98,6 +99,7 @@ export function MobileNavigation({
   const email = settings.email || "admin@jacktoursluxor.com";
   const inquiryCtaLabel = normalizeInquiryCtaLabel(settings.bookNowLabel);
   const logoAlt = `${settings.logoLine1} ${settings.logoLine2}`.trim();
+  const mobileLogoImage = safeImageSrc(settings.mobileLogoImage, "") || settings.logoImage;
   const navItems = buildMobileNavItems([
     { href: settings.navLink1Url, label: settings.navLink1Label },
     { href: settings.navLink2Url, label: settings.navLink2Label },
@@ -187,7 +189,7 @@ export function MobileNavigation({
             >
               <SiteLogo
                 alt={logoAlt}
-                logoImage={settings.logoImage}
+                logoImage={mobileLogoImage}
                 width={400}
                 height={100}
                 sizes="152px"
@@ -242,7 +244,7 @@ export function MobileNavigation({
             <div className="flex min-h-12 items-center">
               <SiteLogo
                 alt={logoAlt}
-                logoImage={settings.logoImage}
+                logoImage={mobileLogoImage}
                 width={480}
                 height={120}
                 sizes="176px"

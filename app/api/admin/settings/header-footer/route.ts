@@ -19,38 +19,50 @@ export async function PUT(request: Request) {
     return NextResponse.json({ ok: false, message: "Database is not configured." }, { status: 503 });
   }
 
-  await prisma.headerFooter.upsert({
-    where: { id: "header-footer" },
-    update: {
-      ...parsed.data,
-      footerCol1Links: parsed.data.footerCol1Links,
-      footerExploreLinks: parsed.data.footerCol1Links,
-      footerCopyrightText: parsed.data.footerCopyright || null,
-      headerNavLinks: [
-        { label: parsed.data.navLink1Label, url: parsed.data.navLink1Url },
-        { label: parsed.data.navLink2Label, url: parsed.data.navLink2Url },
-        { label: parsed.data.navLink3Label, url: parsed.data.navLink3Url },
-        { label: parsed.data.navLink4Label, url: parsed.data.navLink4Url },
-      ],
-      logoSubtitle: parsed.data.logoLine2,
-      logoText: parsed.data.logoLine1,
-    },
-    create: {
-      id: "header-footer",
-      ...parsed.data,
-      bookNowHref: "/trip-planner",
-      footerCol1Links: parsed.data.footerCol1Links,
-      footerExploreLinks: parsed.data.footerCol1Links,
-      footerCopyrightText: parsed.data.footerCopyright || null,
-      headerNavLinks: [
-        { label: parsed.data.navLink1Label, url: parsed.data.navLink1Url },
-        { label: parsed.data.navLink2Label, url: parsed.data.navLink2Url },
-        { label: parsed.data.navLink3Label, url: parsed.data.navLink3Url },
-        { label: parsed.data.navLink4Label, url: parsed.data.navLink4Url },
-      ],
-      logoSubtitle: parsed.data.logoLine2,
-      logoText: parsed.data.logoLine1,
-    },
+  const { mobileLogoImage, ...headerFooterValues } = parsed.data;
+
+  await prisma.$transaction(async (transaction) => {
+    await transaction.headerFooter.upsert({
+      where: { id: "header-footer" },
+      update: {
+        ...headerFooterValues,
+        footerCol1Links: headerFooterValues.footerCol1Links,
+        footerExploreLinks: headerFooterValues.footerCol1Links,
+        footerCopyrightText: headerFooterValues.footerCopyright || null,
+        headerNavLinks: [
+          { label: headerFooterValues.navLink1Label, url: headerFooterValues.navLink1Url },
+          { label: headerFooterValues.navLink2Label, url: headerFooterValues.navLink2Url },
+          { label: headerFooterValues.navLink3Label, url: headerFooterValues.navLink3Url },
+          { label: headerFooterValues.navLink4Label, url: headerFooterValues.navLink4Url },
+        ],
+        logoSubtitle: headerFooterValues.logoLine2,
+        logoText: headerFooterValues.logoLine1,
+      },
+      create: {
+        id: "header-footer",
+        ...headerFooterValues,
+        bookNowHref: "/trip-planner",
+        footerCol1Links: headerFooterValues.footerCol1Links,
+        footerExploreLinks: headerFooterValues.footerCol1Links,
+        footerCopyrightText: headerFooterValues.footerCopyright || null,
+        headerNavLinks: [
+          { label: headerFooterValues.navLink1Label, url: headerFooterValues.navLink1Url },
+          { label: headerFooterValues.navLink2Label, url: headerFooterValues.navLink2Url },
+          { label: headerFooterValues.navLink3Label, url: headerFooterValues.navLink3Url },
+          { label: headerFooterValues.navLink4Label, url: headerFooterValues.navLink4Url },
+        ],
+        logoSubtitle: headerFooterValues.logoLine2,
+        logoText: headerFooterValues.logoLine1,
+      },
+    });
+
+    if (mobileLogoImage !== undefined) {
+      await transaction.siteSetting.upsert({
+        where: { key: "mobileLogoImage" },
+        update: { value: mobileLogoImage },
+        create: { key: "mobileLogoImage", value: mobileLogoImage },
+      });
+    }
   });
 
   revalidatePath("/", "layout");
