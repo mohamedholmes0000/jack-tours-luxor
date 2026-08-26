@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { replaceLegacyBrandText } from "@/lib/brand";
 import { optionalAdminImageSource } from "@/lib/validations";
 
 export const curatedHomepageIcons = [
@@ -269,7 +270,7 @@ export function mapHomepageSettingsToEditorValues(
 ): HomepageEditorValues {
   if (!settings) return defaultHomepageEditorValues;
 
-  return {
+  const values = {
     ...defaultHomepageEditorValues,
     ...settings,
     destinationsVisible: settings.destinationsVisible ?? defaultHomepageEditorValues.destinationsVisible,
@@ -284,6 +285,23 @@ export function mapHomepageSettingsToEditorValues(
     whyServices: normalizeServices(settings.whyServices),
     whyVisible: settings.whyVisible ?? defaultHomepageEditorValues.whyVisible,
   } as HomepageEditorValues;
+
+  return {
+    ...values,
+    customizeTripDescription: replaceLegacyBrandText(values.customizeTripDescription),
+    heroEyebrow: replaceLegacyBrandText(values.heroEyebrow),
+    heroHeadline: replaceLegacyBrandText(values.heroHeadline),
+    heroHeadlineAccent: replaceLegacyBrandText(values.heroHeadlineAccent),
+    heroSubheadline: replaceLegacyBrandText(values.heroSubheadline),
+    heroTrustBadges: values.heroTrustBadges.map(replaceLegacyBrandText),
+    whyDescription: replaceLegacyBrandText(values.whyDescription),
+    whyEyebrow: replaceLegacyBrandText(values.whyEyebrow),
+    whyHeading: replaceLegacyBrandText(values.whyHeading),
+    whyHeadingAccent: replaceLegacyBrandText(values.whyHeadingAccent),
+    ourWorldBody: replaceLegacyBrandText(values.ourWorldBody),
+    ourWorldReadMoreLabel: replaceLegacyBrandText(values.ourWorldReadMoreLabel),
+    finalCtaDescription: replaceLegacyBrandText(values.finalCtaDescription),
+  };
 }
 
 export function normalizeHomepageIconName(value: string) {

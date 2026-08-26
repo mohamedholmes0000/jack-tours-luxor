@@ -5,6 +5,7 @@ import type {
   AdminHeaderSettingsValues,
   AdminSettingsValues,
 } from "@/lib/validations";
+import { replaceLegacyBrandText, replaceLegacyLogoSubtitle } from "@/lib/brand";
 import { prisma, tryDatabase } from "@/lib/data/safe-db";
 
 export type FooterLink = {
@@ -221,7 +222,17 @@ export async function getPublicSettings(): Promise<PublicSettings> {
         address: globalSettings?.address || legacySettings.address || defaultSettings.address,
         bookNowHref: headerFooter?.bookNowHref || defaultSettings.bookNowHref,
         bookNowLabel: headerFooter?.bookNowLabel || defaultSettings.bookNowLabel,
-        companyName: globalSettings?.companyName || legacySettings.companyName || defaultSettings.companyName,
+        companyName: replaceLegacyBrandText(
+          globalSettings?.companyName || legacySettings.companyName || defaultSettings.companyName,
+        ),
+        defaultSeoTitle: replaceLegacyBrandText(
+          globalSettings?.defaultSeoTitle || legacySettings.defaultSeoTitle || defaultSettings.defaultSeoTitle,
+        ),
+        defaultSeoDescription: replaceLegacyBrandText(
+          globalSettings?.defaultSeoDescription ||
+            legacySettings.defaultSeoDescription ||
+            defaultSettings.defaultSeoDescription,
+        ),
         contactMapLocation: contactPage?.contactMapLocation || defaultSettings.contactMapLocation,
         contactMapVisible: contactPage?.contactMapVisible ?? defaultSettings.contactMapVisible,
         contactMapZoom: contactPage?.contactMapZoom || defaultSettings.contactMapZoom,
@@ -230,12 +241,17 @@ export async function getPublicSettings(): Promise<PublicSettings> {
         footerCol1Heading: headerFooter?.footerCol1Heading || defaultSettings.footerCol1Heading,
         footerCol1Links: parseFooterLinks(headerFooter?.footerCol1Links || headerFooter?.footerExploreLinks),
         footerCol2Heading: headerFooter?.footerCol2Heading || defaultSettings.footerCol2Heading,
-        footerCopyright:
+        footerCopyright: replaceLegacyBrandText(
           headerFooter?.footerCopyright ||
-          headerFooter?.footerCopyrightText ||
-          defaultSettings.footerCopyright,
-        footerDescription: headerFooter?.footerDescription || defaultSettings.footerDescription,
-        footerTagline: headerFooter?.footerTagline || defaultSettings.footerTagline,
+            headerFooter?.footerCopyrightText ||
+            defaultSettings.footerCopyright,
+        ),
+        footerDescription: replaceLegacyBrandText(
+          headerFooter?.footerDescription || defaultSettings.footerDescription,
+        ),
+        footerTagline: replaceLegacyBrandText(
+          headerFooter?.footerTagline || defaultSettings.footerTagline,
+        ),
         globalEmail: email,
         globalPhoneNumber: phone,
         globalWhatsappNumber: whatsappNumber,
@@ -244,8 +260,12 @@ export async function getPublicSettings(): Promise<PublicSettings> {
         instagramUrl: globalSettings?.socialInstagram || globalSettings?.instagramUrl || legacySettings.instagramUrl || "",
         logoImage: headerFooter?.logoImage ?? legacySettings.logoImage ?? defaultSettings.logoImage,
         mobileLogoImage: legacySettings.mobileLogoImage ?? defaultSettings.mobileLogoImage,
-        logoLine1: headerFooter?.logoLine1 || headerFooter?.logoText || defaultSettings.logoLine1,
-        logoLine2: headerFooter?.logoLine2 || headerFooter?.logoSubtitle || defaultSettings.logoLine2,
+        logoLine1: replaceLegacyBrandText(
+          headerFooter?.logoLine1 || headerFooter?.logoText || defaultSettings.logoLine1,
+        ),
+        logoLine2: replaceLegacyLogoSubtitle(
+          headerFooter?.logoLine2 || headerFooter?.logoSubtitle || defaultSettings.logoLine2,
+        ),
         navLink1Label: headerFooter?.navLink1Label || defaultSettings.navLink1Label,
         navLink1Url: headerFooter?.navLink1Url || defaultSettings.navLink1Url,
         navLink2Label: headerFooter?.navLink2Label || defaultSettings.navLink2Label,

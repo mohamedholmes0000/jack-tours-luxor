@@ -18,6 +18,7 @@ import {
   mapHomepageSettingsToEditorValues,
   type HomepageEditorValues,
 } from "@/lib/homepage-settings";
+import { replaceLegacyBrandText } from "@/lib/brand";
 import { safeImageSrc } from "@/lib/images";
 
 const cityNames = ["Luxor", "Aswan", "Cairo", "Hurghada", "Abu Simbel", "Red Sea"];
@@ -64,12 +65,12 @@ function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number])
   return {
     contentType: tour.contentType ?? "TOUR",
     slug: tour.slug,
-    title: tour.title,
-    category: tour.category,
-    shortDescription: tour.shortDescription,
-    overview: tour.overview,
-    highlights: tour.highlights,
-    duration: tour.duration,
+    title: replaceLegacyBrandText(tour.title),
+    category: replaceLegacyBrandText(tour.category),
+    shortDescription: replaceLegacyBrandText(tour.shortDescription),
+    overview: replaceLegacyBrandText(tour.overview),
+    highlights: tour.highlights.map(replaceLegacyBrandText),
+    duration: replaceLegacyBrandText(tour.duration),
     city: tour.city ?? inferTourCity([
       tour.title,
       tour.category,
@@ -79,15 +80,18 @@ function mapTour(tour: Awaited<ReturnType<typeof prisma.tour.findMany>>[number])
     ]),
     rating: tour.rating ?? 0,
     reviewCount: tour.reviewCount ?? 0,
-    groupSize: tour.groupSize,
-    departurePoint: tour.departurePoint ?? "Flexible",
-    languages: tour.languages,
+    groupSize: replaceLegacyBrandText(tour.groupSize),
+    departurePoint: replaceLegacyBrandText(tour.departurePoint ?? "Flexible"),
+    languages: tour.languages.map(replaceLegacyBrandText),
     priceFrom: tour.priceFrom ?? 0,
     priceCurrency: tour.priceCurrency,
     included: tour.included,
     excluded: tour.excluded,
     itinerary: Array.isArray(tour.itinerary)
-      ? (tour.itinerary as Array<{ title: string; description: string }>)
+      ? (tour.itinerary as Array<{ title: string; description: string }>).map((item) => ({
+          title: replaceLegacyBrandText(item.title),
+          description: replaceLegacyBrandText(item.description),
+        }))
       : [],
     heroImage,
     images: tour.images.length
@@ -105,8 +109,8 @@ function mapDestination(
 
   return {
     slug: destination.slug,
-    name: destination.name,
-    overview: destination.overview,
+    name: replaceLegacyBrandText(destination.name),
+    overview: replaceLegacyBrandText(destination.overview),
     description: fallbackDestination.description,
     bestTime: fallbackDestination.bestTime,
     duration: fallbackDestination.duration,
@@ -119,7 +123,7 @@ function mapDestination(
             fallbackDestination.highlights[index] ?? fallbackDestination.highlights[0];
 
           return {
-            title,
+            title: replaceLegacyBrandText(title),
             image: fallbackHighlight.image,
             description: fallbackHighlight.description,
           };
@@ -137,16 +141,19 @@ function mapBlogPost(post: Awaited<ReturnType<typeof prisma.blogPost.findMany>>[
 
   return {
     slug: post.slug,
-    title: post.title,
-    excerpt: post.excerpt,
+    title: replaceLegacyBrandText(post.title),
+    excerpt: replaceLegacyBrandText(post.excerpt),
     publishedAt: post.createdAt.toISOString().slice(0, 10),
     readTime: "4 min read",
     heroImage: safeImageSrc(post.heroImage, blogArticles[0].heroImage),
     sections: contentText
-      ? [{ heading: post.title, body: contentText }]
+      ? [{ heading: replaceLegacyBrandText(post.title), body: replaceLegacyBrandText(contentText) }]
       : content.length
-        ? content
-        : [{ heading: post.title, body: post.excerpt }],
+        ? content.map((section) => ({
+            heading: replaceLegacyBrandText(section.heading),
+            body: replaceLegacyBrandText(section.body),
+          }))
+        : [{ heading: replaceLegacyBrandText(post.title), body: replaceLegacyBrandText(post.excerpt) }],
   };
 }
 
@@ -356,8 +363,8 @@ export async function getFaqsSafe() {
       return dbFaqs.length
         ? dbFaqs.map((faq) => ({
             category: faq.category as (typeof faqs)[number]["category"],
-            question: faq.question,
-            answer: faq.answer,
+            question: replaceLegacyBrandText(faq.question),
+            answer: replaceLegacyBrandText(faq.answer),
           }))
         : faqs;
     },
@@ -385,11 +392,13 @@ export async function getTestimonialsSafe(): Promise<PublicTestimonial[]> {
 
       return dbTestimonials.map((testimonial) => ({
         id: testimonial.id,
-        name: testimonial.name,
-        location: testimonial.country || testimonial.nationality,
+        name: replaceLegacyBrandText(testimonial.name),
+        location: testimonial.country || testimonial.nationality
+          ? replaceLegacyBrandText(testimonial.country || testimonial.nationality || "")
+          : null,
         rating: testimonial.rating,
-        text: testimonial.text,
-        source: testimonial.source,
+        text: replaceLegacyBrandText(testimonial.text),
+        source: testimonial.source ? replaceLegacyBrandText(testimonial.source) : null,
       }));
     },
     [],
@@ -430,12 +439,12 @@ function mapGalleryImage(
   return {
     id: image.id,
     url: safeImageSrc(image.url, galleryImages[0].url),
-    alt: image.alt,
-    title: image.title || image.alt,
-    caption: image.caption || undefined,
+    alt: replaceLegacyBrandText(image.alt),
+    title: replaceLegacyBrandText(image.title || image.alt),
+    caption: image.caption ? replaceLegacyBrandText(image.caption) : undefined,
     description:
-      image.description ||
-      image.caption ||
+      (image.description ? replaceLegacyBrandText(image.description) : "") ||
+      (image.caption ? replaceLegacyBrandText(image.caption) : "") ||
       (category === "Experiences"
         ? "A private Egypt travel moment from the gallery."
         : `A ${category} gallery image from Jack Luxor Tour.`),
@@ -471,14 +480,14 @@ export async function getGalleryAlbumsSafe(): Promise<GalleryAlbum[]> {
               category,
               coverImage: safeImageSrc(album.coverImage || images[0]?.url, galleryImages[0].url),
               description:
-                album.description ||
+                (album.description ? replaceLegacyBrandText(album.description) : "") ||
                 (category === "Experiences"
                   ? "Private moments, ancient places, and Nile light captured across Egypt."
                   : `A curated ${category} album from private Jack Luxor Tour journeys.`),
               imageCount: images.length,
               images,
               slug: album.slug,
-              title: album.title,
+              title: replaceLegacyBrandText(album.title),
             };
           })
         : fallbackAlbums;
