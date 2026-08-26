@@ -7,7 +7,7 @@ import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Trip Planner",
   description:
-    "Plan a private Egypt trip with Jack Egypt Tour using a short WhatsApp-led trip planner.",
+    "Plan a private Egypt trip with Jack Luxor Tour using a short WhatsApp-led trip planner.",
 };
 
 export default async function TripPlannerPage() {

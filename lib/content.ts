@@ -193,7 +193,7 @@ export const tours: Tour[] = [
     category: "Nile Cruises",
     shortDescription: "A compact Nile cruise experience between Luxor and Aswan.",
     overview:
-      "A graceful short Nile journey pairing temple visits with unhurried river time. Jack Egypt Tour coordinates cruise selection, transfers, guiding, and on-the-ground support so the route feels seamless.",
+      "A graceful short Nile journey pairing temple visits with unhurried river time. Jack Luxor Tour coordinates cruise selection, transfers, guiding, and on-the-ground support so the route feels seamless.",
     highlights: [
       "Curated Nile cruise planning",
       "Luxor and Aswan landmark visits",
@@ -334,7 +334,7 @@ export const tours: Tour[] = [
     category: "Custom Egypt Tours",
     shortDescription: "A flexible private journey designed around your dates, pace, and interests.",
     overview:
-      "Share your dates, travel style, preferred hotels, and dream stops. Jack Egypt Tour turns the brief into a practical, elegant Egypt itinerary with WhatsApp-first planning from a local team.",
+      "Share your dates, travel style, preferred hotels, and dream stops. Jack Luxor Tour turns the brief into a practical, elegant Egypt itinerary with WhatsApp-first planning from a local team.",
     highlights: [
       "Built around your dates and priorities",
       "Luxor-based local planning",
@@ -382,7 +382,7 @@ export const destinations: Destination[] = [
     slug: "luxor",
     name: "Luxor",
     overview:
-      "The home base of Jack Egypt Tour, where temples, tombs, river light, and private Egyptologist-led touring come together with rare depth.",
+      "The home base of Jack Luxor Tour, where temples, tombs, river light, and private Egyptologist-led touring come together with rare depth.",
     description:
       "Luxor is the open-air heart of ancient Egypt, where daily life moves beside temples, tombs, and the Nile. The city gives travelers rare access to both monumental history and quiet local rhythm, from sunrise balloon views to golden afternoons at Karnak. It is the natural base for private Egyptologist-led touring because the great sites are close, layered, and best experienced with time to pause.",
     bestTime: "October to April",
@@ -734,7 +734,7 @@ export const faqs: FAQItem[] = [
     category: "Custom Trips",
     question: "Can travel agents and tour operators work with you?",
     answer:
-      "Yes. Jack Egypt Tour can support selected B2B requests for local services, groups, and destination management basics without a full portal in this MVP.",
+      "Yes. Jack Luxor Tour can support selected B2B requests for local services, groups, and destination management basics without a full portal in this MVP.",
   },
 ];
 
@@ -825,7 +825,7 @@ export const blogArticles: BlogArticle[] = [
         body: "Summer requires an early start, shaded breaks, and realistic expectations. A private guide and driver help reduce waiting, unnecessary walking, and heat exposure.",
       },
       {
-        heading: "How Jack Egypt Tour plans timing",
+        heading: "How Jack Luxor Tour plans timing",
         body: "We recommend pickup times around your hotel, cruise schedule, and priority sites rather than forcing every traveler into the same fixed template.",
       },
     ],

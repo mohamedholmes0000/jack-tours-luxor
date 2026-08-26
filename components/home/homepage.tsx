@@ -180,7 +180,7 @@ const previewTestimonials = [
     name: "Sofia Martinez",
     rating: 5,
     source: null,
-    text: "Jack Egypt Tour made Egypt feel effortless. Every transfer, temple visit, and local experience was handled with care.",
+    text: "Jack Luxor Tour made Egypt feel effortless. Every transfer, temple visit, and local experience was handled with care.",
   },
   {
     id: "preview-marco-bellini",
@@ -430,12 +430,12 @@ export async function Homepage() {
       !normalizedWhyDescription || normalizedWhyDescription === normalizedLegacyWhyDescription
         ? "Egypt is extraordinary. Its people, places, and stories stay with you forever. We combine local insight with personal service to design journeys that are meaningful and entirely your own."
         : homepageSettings.whyDescription,
-    eyebrow: homepageSettings.whyEyebrow || "Why Jack Egypt Tour",
+    eyebrow: homepageSettings.whyEyebrow || "Why Jack Luxor Tour",
     image1: safeImageSrc(homepageSettings.whyCollageImage1, "/photos/karnak.jpg"),
     visible: homepageSettings.whyVisible,
   };
   const legacyCustomizeDescription =
-    "Share your dates, interests, budget, preferred places, and travel style. Jack Egypt Tour will help shape a private Egypt route with local care, flexible pacing, and easy WhatsApp support from first idea to final detail.";
+    "Share your dates, interests, budget, preferred places, and travel style. Jack Luxor Tour will help shape a private Egypt route with local care, flexible pacing, and easy WhatsApp support from first idea to final detail.";
   const customizeTrip = {
     ctaHref: homepageSettings.customizeTripCtaHref || "/trip-planner",
     ctaLabel: homepageSettings.customizeTripCtaLabel || "Plan Your Trip",
@@ -448,7 +448,7 @@ export async function Homepage() {
     image: whyUs.image1,
   };
   const customizeWhatsAppHref = buildWhatsAppUrlForNumber(
-    "Hello Jack Egypt Tour, I would like help planning a private Egypt trip.",
+    "Hello Jack Luxor Tour, I would like help planning a private Egypt trip.",
     settings.whatsappNumber,
   );
 
@@ -465,7 +465,7 @@ export async function Homepage() {
     primaryHref: homepageSettings.finalCtaPrimaryButtonHref || "/trip-planner",
     primaryLabel: normalizeInquiryCtaLabel(homepageSettings.finalCtaPrimaryButtonLabel),
     whatsappHref: buildWhatsAppUrlForNumber(
-      "Hello Jack Egypt Tour, I would like to start planning a private Egypt trip.",
+      "Hello Jack Luxor Tour, I would like to start planning a private Egypt trip.",
       settings.whatsappNumber,
     ),
     visible: homepageSettings.finalCtaVisible,
@@ -494,7 +494,7 @@ export async function Homepage() {
     eyebrow: homepageSettings.ourWorldEyebrow || "Our world",
     image: safeImageSrc(homepageSettings.ourWorldImage, brandStoryImage),
     location: homepageSettings.ourWorldReadMoreHref || "Luxor, Upper Egypt",
-    signature: homepageSettings.ourWorldReadMoreLabel || "Jack Egypt Tour",
+    signature: homepageSettings.ourWorldReadMoreLabel || "Jack Luxor Tour",
     visible: homepageSettings.ourWorldVisible,
   };
   const ourWorldHeading = splitAccentText(
@@ -615,7 +615,7 @@ export async function Homepage() {
             <figure className="relative aspect-[16/10] h-full overflow-hidden bg-[var(--color-sand)] sm:aspect-[16/9] lg:min-h-[310px] lg:aspect-auto">
               <Image
                 src={customizeTrip.image}
-                alt="Private Egypt journey planned by Jack Egypt Tour"
+                alt="Private Egypt journey planned by Jack Luxor Tour"
                 fill
                 unoptimized={customizeTrip.image.startsWith("/uploads/") || customizeTrip.image.startsWith("/api/uploads/")}
                 sizes="(min-width: 1024px) 48vw, 100vw"
@@ -942,7 +942,7 @@ export async function Homepage() {
                       Traveler Trust
                     </p>
                     <h3 className="mt-3 font-serif text-2xl font-semibold leading-tight text-[var(--color-navy)] sm:text-3xl">
-                      See why travelers choose Jack Egypt Tour
+                      See why travelers choose Jack Luxor Tour
                     </h3>
                   </div>
                   <div
@@ -950,7 +950,7 @@ export async function Homepage() {
                   >
                     {tripadvisorUrl ? (
                       <div className="flex flex-col items-center px-6 pb-10 text-center sm:px-10 md:pb-0 md:pr-16">
-                        <a href={tripadvisorUrl} target="_blank" rel="noopener noreferrer" aria-label="Open Jack Egypt Tour on Tripadvisor" className="group inline-flex min-h-12 items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4">
+                        <a href={tripadvisorUrl} target="_blank" rel="noopener noreferrer" aria-label="Open Jack Luxor Tour on Tripadvisor" className="group inline-flex min-h-12 items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4">
                           <Image src="/brand-icons/tripadvisor.svg" alt="" width={44} height={44} className="size-11" />
                           <span className="text-3xl font-bold tracking-tight text-[var(--color-navy)] transition-colors group-hover:text-[var(--color-gold-dark)]">Tripadvisor</span>
                         </a>
@@ -962,7 +962,7 @@ export async function Homepage() {
                             {tripadvisorReviewCount ? <span className="text-base text-[var(--color-navy)]/72 sm:text-lg">Based on {tripadvisorReviewCount} reviews</span> : null}
                           </div>
                         ) : null}
-                        <a href={tripadvisorUrl} target="_blank" rel="noopener noreferrer" aria-label="Read Jack Egypt Tour reviews on Tripadvisor" className="group mt-6 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 font-serif text-lg text-[var(--color-gold-dark)] outline-none transition-colors hover:text-[var(--color-navy)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none">
+                        <a href={tripadvisorUrl} target="_blank" rel="noopener noreferrer" aria-label="Read Jack Luxor Tour reviews on Tripadvisor" className="group mt-6 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 font-serif text-lg text-[var(--color-gold-dark)] outline-none transition-colors hover:text-[var(--color-navy)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none">
                           Read Tripadvisor reviews
                           <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
                         </a>
@@ -970,7 +970,7 @@ export async function Homepage() {
                     ) : null}
                     {googleBusinessUrl ? (
                       <div className={`flex flex-col items-center px-6 pb-10 text-center sm:px-10 md:pb-0 ${tripadvisorUrl ? "border-t border-[rgb(183_137_43_/_55%)] pt-10 md:border-l md:border-t-0 md:pl-16 md:pt-0" : "pt-0"}`}>
-                        <a href={googleBusinessUrl} target="_blank" rel="noopener noreferrer" aria-label="Open Jack Egypt Tour on Google" className="group inline-flex min-h-12 items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4">
+                        <a href={googleBusinessUrl} target="_blank" rel="noopener noreferrer" aria-label="Open Jack Luxor Tour on Google" className="group inline-flex min-h-12 items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4">
                           <Image src="/brand-icons/google.svg" alt="" width={44} height={44} className="size-11" />
                           <span className="text-3xl font-medium tracking-tight text-[var(--color-navy)] transition-colors group-hover:text-[var(--color-gold-dark)]">Google</span>
                         </a>
@@ -982,7 +982,7 @@ export async function Homepage() {
                             {googleReviewCount ? <span className="text-base text-[var(--color-navy)]/72 sm:text-lg">Based on {googleReviewCount} reviews</span> : null}
                           </div>
                         ) : null}
-                        <a href={googleBusinessUrl} target="_blank" rel="noopener noreferrer" aria-label="Read Jack Egypt Tour reviews on Google" className="group mt-6 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 font-serif text-lg text-[var(--color-gold-dark)] outline-none transition-colors hover:text-[var(--color-navy)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none">
+                        <a href={googleBusinessUrl} target="_blank" rel="noopener noreferrer" aria-label="Read Jack Luxor Tour reviews on Google" className="group mt-6 inline-flex min-h-11 items-center gap-2 border-b border-[var(--color-gold-dark)] pb-1 font-serif text-lg text-[var(--color-gold-dark)] outline-none transition-colors hover:text-[var(--color-navy)] focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-4 motion-reduce:transition-none">
                           Read Google reviews
                           <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
                         </a>

@@ -1,6 +1,6 @@
-# Jack Egypt Tour MVP
+# Jack Luxor Tour MVP
 
-Premium MVP website and admin CMS for Jack Egypt Tour, built with Next.js App Router, TypeScript, Tailwind CSS, Prisma, PostgreSQL, and NextAuth.
+Premium MVP website and admin CMS for Jack Luxor Tour, built with Next.js App Router, TypeScript, Tailwind CSS, Prisma, PostgreSQL, and NextAuth.
 
 ## Local Setup
 

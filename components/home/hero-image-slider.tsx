@@ -82,7 +82,7 @@ export function HeroImageSlider({
       data-home-hero="true"
       className="home-hero relative isolate order-1 overflow-hidden bg-[var(--color-navy)] text-white"
       aria-roledescription={hasMultipleSlides ? "carousel" : undefined}
-      aria-label="Jack Egypt Tour introduction"
+      aria-label="Jack Luxor Tour introduction"
       onKeyDown={(event) => {
         if (!hasMultipleSlides) return;
         if (event.key === "ArrowLeft") {
@@ -146,7 +146,7 @@ export function HeroImageSlider({
           </div>
 
           {trustBadges.length ? (
-            <p className="hero-trust-line" aria-label="Why travelers choose Jack Egypt Tour">
+            <p className="hero-trust-line" aria-label="Why travelers choose Jack Luxor Tour">
               {trustBadges.map((badge, index) => (
                 <span key={`${badge}-${index}`}>
                   {index ? <span aria-hidden className="hero-trust-separator">•</span> : null}

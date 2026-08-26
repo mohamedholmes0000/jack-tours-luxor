@@ -1,5 +1,5 @@
 const DEFAULT_MESSAGE =
-  "Hello Jack Egypt Tour, I am interested in planning a trip to Egypt.";
+  "Hello Jack Luxor Tour, I am interested in planning a trip to Egypt.";
 const DEFAULT_WHATSAPP_NUMBER = "201096586292";
 
 export type TripPlannerMessageInput = {
@@ -104,7 +104,7 @@ function formatTripPlannerDate(value: string) {
 
 export function buildTripPlannerMessage(input: TripPlannerMessageInput): string {
   return [
-    "Hello Jack Egypt Tour,",
+    "Hello Jack Luxor Tour,",
     "I'd like to plan a trip. Here are my details:",
     "",
     tripPlannerLine("Arrival date", formatTripPlannerDate(input.arrivalDate)),
@@ -127,7 +127,7 @@ export function buildTripPlannerMessage(input: TripPlannerMessageInput): string 
 
 export function buildTourInquiryMessage(input: TourInquiryMessageInput): string {
   return [
-    "Hello Jack Egypt Tour, I would like to inquire about a private tour.",
+    "Hello Jack Luxor Tour, I would like to inquire about a private tour.",
     "",
     line("Tour", input.tourTitle),
     line("Tour route", input.tourRoute),
@@ -145,7 +145,7 @@ export function buildTourInquiryMessage(input: TourInquiryMessageInput): string 
 
 export function buildContactMessage(input: ContactMessageInput): string {
   return [
-    "Hello Jack Egypt Tour, I am contacting you from the website.",
+    "Hello Jack Luxor Tour, I am contacting you from the website.",
     "",
     line("Name", input.name),
     line("Email", input.email),

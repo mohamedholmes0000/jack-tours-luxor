@@ -151,7 +151,7 @@ export const defaultHomepageEditorValues: HomepageEditorValues = {
   customizeTripCtaHref: "/trip-planner",
   customizeTripCtaLabel: "Plan Your Trip",
   customizeTripDescription:
-    "Share your dates, interests, budget, preferred places, and travel style. Jack Egypt Tour will help shape a private Egypt route with local care, flexible pacing, and easy WhatsApp support from first idea to final detail.",
+    "Share your dates, interests, budget, preferred places, and travel style. Jack Luxor Tour will help shape a private Egypt route with local care, flexible pacing, and easy WhatsApp support from first idea to final detail.",
   customizeTripEyebrow: "Private planning",
   customizeTripHeading: "Customize Your Egypt Trip, Your Way",
   destinationsEyebrow: "Where we travel",
@@ -201,7 +201,7 @@ export const defaultHomepageEditorValues: HomepageEditorValues = {
   ourWorldHeadingAccent: "quietly capable.",
   ourWorldImage: "/photos/hatshepsut.jpg",
   ourWorldReadMoreHref: "Luxor, Upper Egypt",
-  ourWorldReadMoreLabel: "Jack Egypt Tour",
+  ourWorldReadMoreLabel: "Jack Luxor Tour",
   ourWorldVisible: true,
   statsBackgroundImage: "/photos/felucca.jpg",
   statsItems: [
@@ -222,7 +222,7 @@ export const defaultHomepageEditorValues: HomepageEditorValues = {
   whyCtaLabel: "Plan Your Journey",
   whyDescription:
     "From private guides to seamless logistics, we handle every detail of your Egypt experience so you can focus on the wonder.",
-  whyEyebrow: "Why Jack Egypt Tour",
+  whyEyebrow: "Why Jack Luxor Tour",
   whyHeading: "Everything you need for a",
   whyHeadingAccent: "perfect Egypt journey",
   whyIncludedHeading: "What's included in every journey",

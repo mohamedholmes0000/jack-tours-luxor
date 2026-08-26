@@ -243,7 +243,7 @@ export function HeaderFooterSettingsForm({ initialValues }: { initialValues: Pub
                 <WebsiteLogoField
                   clearLabel="Use Text Fallback"
                   disabled={loading}
-                  emptyStateMessage="No custom desktop logo. The current JACK / EGYPT TOUR logo remains the public fallback."
+                  emptyStateMessage="No custom desktop logo. The current JACK / LUXOR TOUR logo remains the public fallback."
                   previewAlt="Current desktop logo"
                   title="Desktop Logo"
                   usage="Used in the desktop navigation."

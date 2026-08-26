@@ -415,7 +415,7 @@ function fallbackGalleryAlbums(): GalleryAlbum[] {
     description:
       category === "Experiences"
         ? "Private moments, ancient places, and Nile light captured across Egypt."
-        : `A curated ${category} album from private Jack Egypt Tour journeys.`,
+        : `A curated ${category} album from private Jack Luxor Tour journeys.`,
     imageCount: images.length,
     images,
     slug: category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""),
@@ -438,7 +438,7 @@ function mapGalleryImage(
       image.caption ||
       (category === "Experiences"
         ? "A private Egypt travel moment from the gallery."
-        : `A ${category} gallery image from Jack Egypt Tour.`),
+        : `A ${category} gallery image from Jack Luxor Tour.`),
     category,
     order: image.order,
   };
@@ -474,7 +474,7 @@ export async function getGalleryAlbumsSafe(): Promise<GalleryAlbum[]> {
                 album.description ||
                 (category === "Experiences"
                   ? "Private moments, ancient places, and Nile light captured across Egypt."
-                  : `A curated ${category} album from private Jack Egypt Tour journeys.`),
+                  : `A curated ${category} album from private Jack Luxor Tour journeys.`),
               imageCount: images.length,
               images,
               slug: album.slug,

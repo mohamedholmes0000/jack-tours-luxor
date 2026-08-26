@@ -6,7 +6,7 @@ import { getToursSafe } from "@/lib/data/public";
 export const metadata: Metadata = {
   title: "Egypt Hotels",
   description:
-    "Browse hotel options and curated stays arranged by Jack Egypt Tour.",
+    "Browse hotel options and curated stays arranged by Jack Luxor Tour.",
 };
 
 export default async function HotelsPage() {

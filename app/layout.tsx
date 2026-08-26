@@ -36,7 +36,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jacktoursluxor.com"
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPublicSettings();
   const title =
-    settings.defaultSeoTitle || "Jack Egypt Tour | Luxury Egypt Private Tours";
+    settings.defaultSeoTitle || "Jack Luxor Tour | Luxury Egypt Private Tours";
   const description =
     settings.defaultSeoDescription ||
     "Private tailor-made Egypt tours and DMC services from Luxor-based experts.";

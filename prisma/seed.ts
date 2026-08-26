@@ -25,11 +25,11 @@ async function main() {
 
   await prisma.adminUser.upsert({
     where: { email: adminEmail },
-    update: { password, name: "Jack Egypt Tour Admin", role: "SUPER_ADMIN", active: true },
+    update: { password, name: "Jack Luxor Tour Admin", role: "SUPER_ADMIN", active: true },
     create: {
       email: adminEmail,
       password,
-      name: "Jack Egypt Tour Admin",
+      name: "Jack Luxor Tour Admin",
       role: "SUPER_ADMIN",
       active: true,
     },
@@ -101,7 +101,7 @@ async function main() {
         priceFrom: 180,
         included: ["Private guide", "Air-conditioned vehicle", "Pickup and drop-off"],
         excluded: ["Entrance fees", "Meals unless listed", "Personal expenses"],
-        itinerary: [{ title: "Curated experience", description: "A tailored itinerary managed by the Jack Egypt Tour team." }],
+        itinerary: [{ title: "Curated experience", description: "A tailored itinerary managed by the Jack Luxor Tour team." }],
         images: [],
         published: true,
         featured: true,
@@ -128,7 +128,7 @@ async function main() {
   const testimonials = [
     ["Amelia Carter", "United Kingdom", "The Luxor day tour felt personal, calm, and beautifully organized from start to finish."],
     ["Marco Bellini", "Italy", "Fast WhatsApp replies, a superb guide, and a Nile cruise plan that matched our pace perfectly."],
-    ["Sofia Martinez", "Spain", "Jack Egypt Tour made Egypt feel effortless. Every transfer and temple visit was handled with care."],
+    ["Sofia Martinez", "Spain", "Jack Luxor Tour made Egypt feel effortless. Every transfer and temple visit was handled with care."],
   ];
 
   for (const [name, nationality, text] of testimonials) {
@@ -165,12 +165,12 @@ async function main() {
   }
 
   const settings = {
-    companyName: "Jack Egypt Tour",
+    companyName: "Jack Luxor Tour",
     phone: "+20 1096586292",
     whatsappNumber: "201096586292",
     email: "info@jackegypttour.com",
     address: "Luxor, Egypt",
-    defaultMetaTitle: "Jack Egypt Tour | Luxury Egypt Private Tours",
+    defaultMetaTitle: "Jack Luxor Tour | Luxury Egypt Private Tours",
     defaultMetaDescription: "Private tailor-made Egypt tours and DMC services from Luxor-based experts.",
     heroHeadline: "Discover Egypt Beyond Expectations",
     heroSubheadline: "Private tailor-made journeys through Egypt, curated by Luxor-based local experts.",
@@ -212,7 +212,7 @@ async function main() {
       featuredHeadingAccent: "ready to tailor.",
       featuredViewAllLabel: "View all tours",
       featuredViewAllHref: "/tours",
-      whyEyebrow: "WHY JACK EGYPT TOUR",
+      whyEyebrow: "WHY JACK LUXOR TOUR",
       whyHeading: "Everything you need for a",
       whyHeadingAccent: "perfect Egypt journey",
       whyDescription:
@@ -285,7 +285,7 @@ async function main() {
       featuredHeadingAccent: "ready to tailor.",
       featuredViewAllLabel: "View all tours",
       featuredViewAllHref: "/tours",
-      whyEyebrow: "WHY JACK EGYPT TOUR",
+      whyEyebrow: "WHY JACK LUXOR TOUR",
       whyHeading: "Everything you need for a",
       whyHeadingAccent: "perfect Egypt journey",
       whyDescription:
@@ -376,12 +376,12 @@ async function main() {
     update: {
       heroImage: "/photos/hatshepsut.jpg",
       heroEyebrow: "Our Story",
-      heroHeading: "Jack Egypt Tour",
+      heroHeading: "Jack Luxor Tour",
       heroSubtitle: "Luxor-based. Privately run.",
       whoEyebrow: "Who We Are",
       whoHeading: "A Luxor team, quietly capable.",
       whoBody:
-        "Jack Egypt Tour is a Luxor-based team arranging private Egypt travel with local knowledge, calm communication, and polished delivery.\n\nWe arrange private days at Karnak and the Valley of the Kings, slow Nile journeys to Aswan, dawn at Abu Simbel, and Red Sea finales. The work is practical and personal: clear timings, trusted guides, private vehicles, and responsive support.\n\nThe goal is not to sell every possible package. It is to help each traveler choose the right route, the right guide, and the right pace.",
+        "Jack Luxor Tour is a Luxor-based team arranging private Egypt travel with local knowledge, calm communication, and polished delivery.\n\nWe arrange private days at Karnak and the Valley of the Kings, slow Nile journeys to Aswan, dawn at Abu Simbel, and Red Sea finales. The work is practical and personal: clear timings, trusted guides, private vehicles, and responsive support.\n\nThe goal is not to sell every possible package. It is to help each traveler choose the right route, the right guide, and the right pace.",
       whoImage: "/photos/karnak.jpg",
       valuesEyebrow: "How We Work",
       valuesHeading: "Premium travel standards with Egyptian warmth.",
@@ -407,12 +407,12 @@ async function main() {
       id: "about",
       heroImage: "/photos/hatshepsut.jpg",
       heroEyebrow: "Our Story",
-      heroHeading: "Jack Egypt Tour",
+      heroHeading: "Jack Luxor Tour",
       heroSubtitle: "Luxor-based. Privately run.",
       whoEyebrow: "Who We Are",
       whoHeading: "A Luxor team, quietly capable.",
       whoBody:
-        "Jack Egypt Tour is a Luxor-based team arranging private Egypt travel with local knowledge, calm communication, and polished delivery.\n\nWe arrange private days at Karnak and the Valley of the Kings, slow Nile journeys to Aswan, dawn at Abu Simbel, and Red Sea finales. The work is practical and personal: clear timings, trusted guides, private vehicles, and responsive support.\n\nThe goal is not to sell every possible package. It is to help each traveler choose the right route, the right guide, and the right pace.",
+        "Jack Luxor Tour is a Luxor-based team arranging private Egypt travel with local knowledge, calm communication, and polished delivery.\n\nWe arrange private days at Karnak and the Valley of the Kings, slow Nile journeys to Aswan, dawn at Abu Simbel, and Red Sea finales. The work is practical and personal: clear timings, trusted guides, private vehicles, and responsive support.\n\nThe goal is not to sell every possible package. It is to help each traveler choose the right route, the right guide, and the right pace.",
       whoImage: "/photos/karnak.jpg",
       valuesEyebrow: "How We Work",
       valuesHeading: "Premium travel standards with Egyptian warmth.",
@@ -523,7 +523,7 @@ async function main() {
       stepLabels: ["Dates", "Destinations", "Style", "Contact"],
       successRedirectMessage: "Opening WhatsApp…",
       whatsappMessageTemplate:
-        "Hello Jack Egypt Tour,\nI'd like to plan a trip. Here are my details:\n\n{fields}\n\nLooking forward to your reply.",
+        "Hello Jack Luxor Tour,\nI'd like to plan a trip. Here are my details:\n\n{fields}\n\nLooking forward to your reply.",
     },
     create: {
       id: "trip-planner",
@@ -537,7 +537,7 @@ async function main() {
       stepLabels: ["Dates", "Destinations", "Style", "Contact"],
       successRedirectMessage: "Opening WhatsApp…",
       whatsappMessageTemplate:
-        "Hello Jack Egypt Tour,\nI'd like to plan a trip. Here are my details:\n\n{fields}\n\nLooking forward to your reply.",
+        "Hello Jack Luxor Tour,\nI'd like to plan a trip. Here are my details:\n\n{fields}\n\nLooking forward to your reply.",
     },
   });
 
@@ -560,7 +560,7 @@ async function main() {
       socialTwitter: "",
       socialYoutube: "",
       siteFavicon: "/favicon.ico",
-      defaultSeoTitle: "Jack Egypt Tour | Luxury Egypt Private Tours",
+      defaultSeoTitle: "Jack Luxor Tour | Luxury Egypt Private Tours",
       defaultSeoDescription:
         "Private tailor-made Egypt tours and DMC services from Luxor-based experts.",
       defaultOgImage: "/photos/karnak.jpg",
@@ -583,7 +583,7 @@ async function main() {
       socialTwitter: "",
       socialYoutube: "",
       siteFavicon: "/favicon.ico",
-      defaultSeoTitle: "Jack Egypt Tour | Luxury Egypt Private Tours",
+      defaultSeoTitle: "Jack Luxor Tour | Luxury Egypt Private Tours",
       defaultSeoDescription:
         "Private tailor-made Egypt tours and DMC services from Luxor-based experts.",
       defaultOgImage: "/photos/karnak.jpg",
@@ -595,8 +595,8 @@ async function main() {
     update: {
       logoText: "JACK",
       logoLine1: "JACK",
-      logoSubtitle: "EGYPT TOUR",
-      logoLine2: "EGYPT TOUR",
+      logoSubtitle: "LUXOR TOUR",
+      logoLine2: "LUXOR TOUR",
       headerNavLinks: [
         { label: "Tours", url: "/tours" },
         { label: "Activities", url: "/activities" },
@@ -637,7 +637,7 @@ async function main() {
         { label: "Contact", url: "/contact" },
         { label: "FAQ", url: "/faq" },
       ],
-      footerCopyright: "© 2026 Jack Egypt Tour. All rights reserved.",
+      footerCopyright: "© 2026 Jack Luxor Tour. All rights reserved.",
       footerCopyrightText: "All rights reserved.",
       footerWhatsappLabel: "Book Now",
     },
@@ -645,8 +645,8 @@ async function main() {
       id: "header-footer",
       logoText: "JACK",
       logoLine1: "JACK",
-      logoSubtitle: "EGYPT TOUR",
-      logoLine2: "EGYPT TOUR",
+      logoSubtitle: "LUXOR TOUR",
+      logoLine2: "LUXOR TOUR",
       headerNavLinks: [
         { label: "Tours", url: "/tours" },
         { label: "Activities", url: "/activities" },
@@ -687,7 +687,7 @@ async function main() {
         { label: "Contact", url: "/contact" },
         { label: "FAQ", url: "/faq" },
       ],
-      footerCopyright: "© 2026 Jack Egypt Tour. All rights reserved.",
+      footerCopyright: "© 2026 Jack Luxor Tour. All rights reserved.",
       footerCopyrightText: "All rights reserved.",
       footerWhatsappLabel: "Book Now",
     },

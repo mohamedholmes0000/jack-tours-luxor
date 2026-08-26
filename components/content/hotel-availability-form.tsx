@@ -122,7 +122,7 @@ function buildHotelAvailabilityMessage({
   const pageUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return [
-    "Hello Jack Egypt Tour, I want to check availability for:",
+    "Hello Jack Luxor Tour, I want to check availability for:",
     `Hotel: ${hotelTitle}`,
     `Location: ${location}`,
     `Price: ${price}`,

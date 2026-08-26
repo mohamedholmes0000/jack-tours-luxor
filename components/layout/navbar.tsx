@@ -128,7 +128,7 @@ export function Navbar({ isHomeRoute = false, settings }: { isHomeRoute?: boolea
               <a
                 key={link.label}
                 href={link.href}
-                aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                aria-label={`Visit Jack Luxor Tour on ${link.label}`}
                 title={link.label}
                 target="_blank"
                 rel="noopener noreferrer"

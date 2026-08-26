@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About Jack Egypt Tour",
+  title: "About Jack Luxor Tour",
   description:
-    "Learn about Jack Egypt Tour, a Luxor-based Egypt travel agency and DMC focused on private tours and international service standards.",
+    "Learn about Jack Luxor Tour, a Luxor-based Egypt travel agency and DMC focused on private tours and international service standards.",
 };
 
 const values = [
@@ -53,7 +53,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-[rgb(0_0_0_/_50%)]" />
         <div className="relative px-5">
           <p className="eyebrow text-[var(--color-gold-light)]">Our Story</p>
-          <h1 className="mt-3 text-4xl font-bold leading-tight text-white">Jack Egypt Tour</h1>
+          <h1 className="mt-3 text-4xl font-bold leading-tight text-white">Jack Luxor Tour</h1>
           <p className="mt-3 text-base text-white/70">Luxor-based. Privately run.</p>
         </div>
       </section>
@@ -67,7 +67,7 @@ export default function AboutPage() {
             </h2>
             <div className="mt-6 space-y-5 text-base leading-[1.7] text-[var(--color-navy)]/80">
               <p>
-                Jack Egypt Tour is a Luxor-based team arranging private Egypt travel with local
+                Jack Luxor Tour is a Luxor-based team arranging private Egypt travel with local
                 knowledge, calm communication, and polished delivery.
               </p>
               <p>

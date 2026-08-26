@@ -1,8 +1,8 @@
-# Jack Egypt Tour — Permanent AI Context
+# Jack Luxor Tour — Permanent AI Context
 
 ## Project overview
 
-Jack Egypt Tour is a premium, English-language travel website and lightweight CMS for private Egypt trips. It presents tours, activities, hotels, destinations, gallery albums, editorial content, and trip-planning/contact entry points. The repository is a Next.js application with an authenticated admin area and PostgreSQL-backed content when a database is configured.
+Jack Luxor Tour is a premium, English-language travel website and lightweight CMS for private Egypt trips. It presents tours, activities, hotels, destinations, gallery albums, editorial content, and trip-planning/contact entry points. The repository is a Next.js application with an authenticated admin area and PostgreSQL-backed content when a database is configured.
 
 The public site deliberately remains usable without a configured or reachable database by using static fallback content in `lib/content.ts`. Admin writes and persisted inquiries require PostgreSQL.
 

@@ -263,8 +263,8 @@ export function ContentDetailPage({
   const images = Array.from(new Set([item.heroImage, ...item.images])).filter(Boolean);
   const galleryImages = images.slice(1, 4);
   const whatsappMessage = isHotel
-    ? `Hello Jack Egypt Tour, I would like to check availability for ${item.title}. Please send room options and pricing.`
-    : `Hello Jack Egypt Tour, I would like to request the ${item.title} activity. Please send details and availability.`;
+    ? `Hello Jack Luxor Tour, I would like to check availability for ${item.title}. Please send room options and pricing.`
+    : `Hello Jack Luxor Tour, I would like to request the ${item.title} activity. Please send details and availability.`;
   const whatsappHref = buildWhatsAppUrlForNumber(whatsappMessage, whatsappNumber);
   const related = allItems
     .filter((candidate) => candidate.slug !== item.slug)
@@ -319,7 +319,7 @@ export function ContentDetailPage({
                     {item.overview || item.shortDescription || "A carefully selected stay option that can be adapted around your dates, route, and preferred comfort level."}
                   </p>
                   <BulletList
-                    emptyLabel="Hotel coordination through Jack Egypt Tour"
+                    emptyLabel="Hotel coordination through Jack Luxor Tour"
                     icon={<CheckCircle2 className="size-4" />}
                     items={item.highlights}
                   />

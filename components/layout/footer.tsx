@@ -59,7 +59,7 @@ export function Footer({ settings }: { settings: PublicSettings }) {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                    aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                    aria-label={`Visit Jack Luxor Tour on ${link.label}`}
                     className="inline-flex min-h-11 items-center gap-3 border-b border-white/10 text-sm text-white/75 transition-colors hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
                   >
                       <Image src={link.logo} alt="" width={18} height={18} className="size-[18px] shrink-0" />
@@ -79,7 +79,7 @@ export function Footer({ settings }: { settings: PublicSettings }) {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                    aria-label={`Visit Jack Egypt Tour on ${link.label}`}
+                    aria-label={`Visit Jack Luxor Tour on ${link.label}`}
                     className="inline-flex min-h-11 items-center gap-3 border-b border-white/10 text-sm text-white/75 transition-colors hover:text-[var(--color-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-navy)]"
                   >
                       <Image src={link.logo} alt="" width={18} height={18} className="size-[18px] shrink-0" />

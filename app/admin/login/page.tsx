@@ -15,7 +15,7 @@ export default function AdminLoginPage() {
             Admin CMS
           </p>
           <h1 className="mt-5 font-serif text-5xl font-semibold leading-tight md:text-7xl">
-            Manage the Jack Egypt Tour MVP.
+            Manage the Jack Luxor Tour MVP.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-8 text-white/72">
             This first admin slice includes authentication, dashboard metrics, and the tours list.

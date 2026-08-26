@@ -6,7 +6,7 @@ import { getToursSafe } from "@/lib/data/public";
 export const metadata: Metadata = {
   title: "Private Egypt Tours",
   description:
-    "Browse private Luxor tours, Nile cruises, luxury Egypt tours, and tailor-made itineraries from Jack Egypt Tour.",
+    "Browse private Luxor tours, Nile cruises, luxury Egypt tours, and tailor-made itineraries from Jack Luxor Tour.",
 };
 
 type ToursPageProps = {

@@ -7,7 +7,7 @@ import { safeImageSrc } from "@/lib/images";
 export const metadata: Metadata = {
   title: "Egypt Travel Gallery",
   description:
-    "Browse premium Egypt travel albums from Luxor, Nile cruise, Cairo, and private Jack Egypt Tour journeys.",
+    "Browse premium Egypt travel albums from Luxor, Nile cruise, Cairo, and private Jack Luxor Tour journeys.",
 };
 
 type GalleryPageProps = {

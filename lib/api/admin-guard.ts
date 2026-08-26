@@ -40,7 +40,7 @@ export async function getCurrentAdminUser(): Promise<CurrentAdminUser | null> {
     return {
       id: "dev-admin",
       email,
-      name: session?.user?.name || "Jack Egypt Tour Admin",
+      name: session?.user?.name || "Jack Luxor Tour Admin",
       role: "SUPER_ADMIN",
       active: true,
     };

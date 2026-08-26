@@ -8,7 +8,7 @@ import { buildWhatsAppUrlForNumber } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Contact Jack Egypt Tour for private Luxor tours, Egypt itineraries, Nile cruises, and DMC services.",
+    "Contact Jack Luxor Tour for private Luxor tours, Egypt itineraries, Nile cruises, and DMC services.",
 };
 
 function MessageCircleIcon() {
@@ -102,7 +102,7 @@ export default async function ContactPage() {
         <div className="container-premium grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
           <div className="grid gap-4">
             <ContactInfoCard
-              href={buildWhatsAppUrlForNumber("Hello Jack Egypt Tour, I would like to ask about a private Egypt trip.", whatsappNumber)}
+              href={buildWhatsAppUrlForNumber("Hello Jack Luxor Tour, I would like to ask about a private Egypt trip.", whatsappNumber)}
               icon={<MessageCircleIcon />}
               title="WhatsApp"
               detail={whatsappNumber}

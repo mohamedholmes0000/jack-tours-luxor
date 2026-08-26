@@ -6,7 +6,7 @@ import { getDestinationListingSafe } from "@/lib/data/public";
 export const metadata: Metadata = {
   title: "Egypt Destinations",
   description:
-    "Explore Luxor, Cairo, Aswan, Hurghada, and Alexandria with private Egypt travel planning from Jack Egypt Tour.",
+    "Explore Luxor, Cairo, Aswan, Hurghada, and Alexandria with private Egypt travel planning from Jack Luxor Tour.",
 };
 
 export default async function DestinationsPage() {

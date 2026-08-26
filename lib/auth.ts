@@ -48,7 +48,7 @@ export const authOptions: NextAuthOptions = {
           email === "admin@jacktoursluxor.com" &&
           password === "Admin2024!"
         ) {
-          return { id: "dev-admin", email, name: "Jack Egypt Tour Admin", role: "SUPER_ADMIN", active: true };
+          return { id: "dev-admin", email, name: "Jack Luxor Tour Admin", role: "SUPER_ADMIN", active: true };
         }
 
         return null;
